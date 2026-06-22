@@ -47,6 +47,7 @@ NAME_MAP = {
     "Czech Republic": "Czechia",
     "United States": "USA",
     "USMNT": "USA",
+    "Cape Verde Islands": "Cabo Verde",
 }
 
 # The 48 valid team names in the predictor, for a sanity warning.
