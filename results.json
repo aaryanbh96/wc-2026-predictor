@@ -1,0 +1,333 @@
+{
+  "updated": "2026-06-22T23:37:11Z",
+  "matches": [
+    {
+      "id": 537327,
+      "utc": "2026-06-11T19:00:00Z",
+      "home": "Mexico",
+      "away": "South Africa",
+      "hg": 2,
+      "ag": 0
+    },
+    {
+      "id": 537328,
+      "utc": "2026-06-12T02:00:00Z",
+      "home": "Korea Republic",
+      "away": "Czechia",
+      "hg": 2,
+      "ag": 1
+    },
+    {
+      "id": 537333,
+      "utc": "2026-06-12T19:00:00Z",
+      "home": "Canada",
+      "away": "Bosnia and Herzegovina",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "id": 537345,
+      "utc": "2026-06-13T01:00:00Z",
+      "home": "USA",
+      "away": "Paraguay",
+      "hg": 4,
+      "ag": 1
+    },
+    {
+      "id": 537334,
+      "utc": "2026-06-13T19:00:00Z",
+      "home": "Qatar",
+      "away": "Switzerland",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "id": 537339,
+      "utc": "2026-06-13T22:00:00Z",
+      "home": "Brazil",
+      "away": "Morocco",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "id": 537340,
+      "utc": "2026-06-14T01:00:00Z",
+      "home": "Haiti",
+      "away": "Scotland",
+      "hg": 0,
+      "ag": 1
+    },
+    {
+      "id": 537346,
+      "utc": "2026-06-14T04:00:00Z",
+      "home": "Australia",
+      "away": "Türkiye",
+      "hg": 2,
+      "ag": 0
+    },
+    {
+      "id": 537351,
+      "utc": "2026-06-14T17:00:00Z",
+      "home": "Germany",
+      "away": "Curaçao",
+      "hg": 7,
+      "ag": 1
+    },
+    {
+      "id": 537357,
+      "utc": "2026-06-14T20:00:00Z",
+      "home": "Netherlands",
+      "away": "Japan",
+      "hg": 2,
+      "ag": 2
+    },
+    {
+      "id": 537352,
+      "utc": "2026-06-14T23:00:00Z",
+      "home": "Côte d'Ivoire",
+      "away": "Ecuador",
+      "hg": 1,
+      "ag": 0
+    },
+    {
+      "id": 537358,
+      "utc": "2026-06-15T02:00:00Z",
+      "home": "Sweden",
+      "away": "Tunisia",
+      "hg": 5,
+      "ag": 1
+    },
+    {
+      "id": 537369,
+      "utc": "2026-06-15T16:00:00Z",
+      "home": "Spain",
+      "away": "Cabo Verde",
+      "hg": 0,
+      "ag": 0
+    },
+    {
+      "id": 537363,
+      "utc": "2026-06-15T19:00:00Z",
+      "home": "Belgium",
+      "away": "Egypt",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "id": 537370,
+      "utc": "2026-06-15T22:00:00Z",
+      "home": "Saudi Arabia",
+      "away": "Uruguay",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "id": 537364,
+      "utc": "2026-06-16T01:00:00Z",
+      "home": "IR Iran",
+      "away": "New Zealand",
+      "hg": 2,
+      "ag": 2
+    },
+    {
+      "id": 537391,
+      "utc": "2026-06-16T19:00:00Z",
+      "home": "France",
+      "away": "Senegal",
+      "hg": 3,
+      "ag": 1
+    },
+    {
+      "id": 537392,
+      "utc": "2026-06-16T22:00:00Z",
+      "home": "Iraq",
+      "away": "Norway",
+      "hg": 1,
+      "ag": 4
+    },
+    {
+      "id": 537397,
+      "utc": "2026-06-17T01:00:00Z",
+      "home": "Argentina",
+      "away": "Algeria",
+      "hg": 3,
+      "ag": 0
+    },
+    {
+      "id": 537398,
+      "utc": "2026-06-17T04:00:00Z",
+      "home": "Austria",
+      "away": "Jordan",
+      "hg": 3,
+      "ag": 1
+    },
+    {
+      "id": 537403,
+      "utc": "2026-06-17T17:00:00Z",
+      "home": "Portugal",
+      "away": "Congo DR",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "id": 537409,
+      "utc": "2026-06-17T20:00:00Z",
+      "home": "England",
+      "away": "Croatia",
+      "hg": 4,
+      "ag": 2
+    },
+    {
+      "id": 537410,
+      "utc": "2026-06-17T23:00:00Z",
+      "home": "Ghana",
+      "away": "Panama",
+      "hg": 1,
+      "ag": 0
+    },
+    {
+      "id": 537404,
+      "utc": "2026-06-18T02:00:00Z",
+      "home": "Uzbekistan",
+      "away": "Colombia",
+      "hg": 1,
+      "ag": 3
+    },
+    {
+      "id": 537329,
+      "utc": "2026-06-18T16:00:00Z",
+      "home": "Czechia",
+      "away": "South Africa",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "id": 537335,
+      "utc": "2026-06-18T19:00:00Z",
+      "home": "Switzerland",
+      "away": "Bosnia and Herzegovina",
+      "hg": 4,
+      "ag": 1
+    },
+    {
+      "id": 537336,
+      "utc": "2026-06-18T22:00:00Z",
+      "home": "Canada",
+      "away": "Qatar",
+      "hg": 6,
+      "ag": 0
+    },
+    {
+      "id": 537330,
+      "utc": "2026-06-19T01:00:00Z",
+      "home": "Mexico",
+      "away": "Korea Republic",
+      "hg": 1,
+      "ag": 0
+    },
+    {
+      "id": 537348,
+      "utc": "2026-06-19T19:00:00Z",
+      "home": "USA",
+      "away": "Australia",
+      "hg": 2,
+      "ag": 0
+    },
+    {
+      "id": 537342,
+      "utc": "2026-06-19T22:00:00Z",
+      "home": "Scotland",
+      "away": "Morocco",
+      "hg": 0,
+      "ag": 1
+    },
+    {
+      "id": 537341,
+      "utc": "2026-06-20T00:30:00Z",
+      "home": "Brazil",
+      "away": "Haiti",
+      "hg": 3,
+      "ag": 0
+    },
+    {
+      "id": 537347,
+      "utc": "2026-06-20T03:00:00Z",
+      "home": "Türkiye",
+      "away": "Paraguay",
+      "hg": 0,
+      "ag": 1
+    },
+    {
+      "id": 537359,
+      "utc": "2026-06-20T17:00:00Z",
+      "home": "Netherlands",
+      "away": "Sweden",
+      "hg": 5,
+      "ag": 1
+    },
+    {
+      "id": 537353,
+      "utc": "2026-06-20T20:00:00Z",
+      "home": "Germany",
+      "away": "Côte d'Ivoire",
+      "hg": 2,
+      "ag": 1
+    },
+    {
+      "id": 537354,
+      "utc": "2026-06-21T00:00:00Z",
+      "home": "Ecuador",
+      "away": "Curaçao",
+      "hg": 0,
+      "ag": 0
+    },
+    {
+      "id": 537360,
+      "utc": "2026-06-21T04:00:00Z",
+      "home": "Tunisia",
+      "away": "Japan",
+      "hg": 0,
+      "ag": 4
+    },
+    {
+      "id": 537371,
+      "utc": "2026-06-21T16:00:00Z",
+      "home": "Spain",
+      "away": "Saudi Arabia",
+      "hg": 4,
+      "ag": 0
+    },
+    {
+      "id": 537365,
+      "utc": "2026-06-21T19:00:00Z",
+      "home": "Belgium",
+      "away": "IR Iran",
+      "hg": 0,
+      "ag": 0
+    },
+    {
+      "id": 537372,
+      "utc": "2026-06-21T22:00:00Z",
+      "home": "Uruguay",
+      "away": "Cabo Verde",
+      "hg": 2,
+      "ag": 2
+    },
+    {
+      "id": 537366,
+      "utc": "2026-06-22T01:00:00Z",
+      "home": "New Zealand",
+      "away": "Egypt",
+      "hg": 1,
+      "ag": 3
+    },
+    {
+      "id": 537399,
+      "utc": "2026-06-22T17:00:00Z",
+      "home": "Argentina",
+      "away": "Austria",
+      "hg": 2,
+      "ag": 0
+    }
+  ]
+}
