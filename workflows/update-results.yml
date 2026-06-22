@@ -1,0 +1,39 @@
+name: Update World Cup results
+
+on:
+  schedule:
+    # top of every hour
+    - cron: "0 * * * *"
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab
+
+permissions:
+  contents: write          # needed to commit results.json back to the repo
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch finished results
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+        run: python scripts/fetch_results.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "wc-results-bot"
+          git config user.email "actions@github.com"
+          if ! git diff --quiet -- results.json; then
+            git add results.json
+            git commit -m "Update results.json ($(date -u +'%Y-%m-%dT%H:%MZ'))"
+            git push
+          else
+            echo "No changes to results.json"
+          fi
