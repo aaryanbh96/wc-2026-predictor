@@ -112,6 +112,19 @@
   .editrow span{flex:1;}
   .editrow .x{color:var(--bad);cursor:pointer;font-family:var(--mono);}
   .sechead{font-size:12px;font-family:var(--mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin:4px 0 12px;}
+
+  .fc{width:100%;border-collapse:collapse;font-size:13px;}
+  .fc th{font-family:var(--mono);font-size:10px;color:var(--dim);font-weight:400;text-transform:uppercase;letter-spacing:.05em;padding:6px 6px;text-align:right;border-bottom:1px solid var(--line);}
+  .fc th:nth-child(2){text-align:left;}
+  .fc td{padding:7px 6px;text-align:right;font-family:var(--mono);border-bottom:1px solid var(--line);}
+  .fc td:nth-child(2){text-align:left;font-family:var(--sans);}
+  .fc .rank{color:var(--dim);width:26px;}
+  .fc .grp{color:var(--dim);font-size:10px;}
+  .fc .winpct{position:relative;font-weight:650;color:var(--ink);min-width:80px;}
+  .fc .winbar{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(124,109,242,.28),rgba(52,211,153,.28));border-radius:3px;z-index:0;}
+  .fc .winbar+span{position:relative;z-index:1;padding-right:6px;}
+  .fc tr:hover td{background:rgba(255,255,255,.02);}
+  .fc .dim{color:var(--mut);}
 </style>
 </head>
 <body>
@@ -119,7 +132,7 @@
   <header>
     <div class="kicker">Elo + online learning · pre-match ledger · 48 teams</div>
     <h1>World Cup 2026 Predictor</h1>
-    <p class="sub">Predicts each match beforehand, locks the call into a ledger, then grades and learns from it once the result lands. The headline accuracy reflects genuine ahead-of-time predictions — not hindsight.</p>
+    <p class="sub">Forecasts who wins the World Cup by simulating the whole remaining tournament thousands of times from current team ratings. Updates automatically as real results come in. Per-match prediction and a self-grading ledger live in the tabs below.</p>
   </header>
 
   <div class="stats">
@@ -133,7 +146,8 @@
   <div id="syncbar" style="display:none;margin:-8px 0 18px;font-family:var(--mono);font-size:12px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);"></div>
 
   <nav>
-    <button class="tab on" data-t="predict">Predict</button>
+    <button class="tab on" data-t="forecast">Forecast</button>
+    <button class="tab" data-t="predict">Predict match</button>
     <button class="tab" data-t="ledger">Predictions <span class="badge" id="pend-badge" style="display:none;">0</span></button>
     <button class="tab" data-t="result">Log result</button>
     <button class="tab" data-t="ratings">Ratings</button>
@@ -142,7 +156,16 @@
     <button class="tab" data-t="how">How it works</button>
   </nav>
 
-  <section class="panel on" id="p-predict">
+  <section class="panel on" id="p-forecast">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;">
+      <div class="sechead" style="margin:0;">Championship forecast — <span id="fc-nsim">20,000</span> simulations</div>
+      <button class="ghost" id="rerun-sim">Re-run simulation</button>
+    </div>
+    <p class="hint" id="fc-meta" style="margin:0 0 14px;">Each run plays the rest of the tournament forward from current ratings.</p>
+    <div id="forecast-out"><div class="empty">Running the first simulation…</div></div>
+  </section>
+
+  <section class="panel" id="p-predict">
     <div class="row">
       <div class="field"><label>team a</label><select id="pa"></select></div>
       <div class="field"><label>team b</label><select id="pb"></select></div>
@@ -251,7 +274,7 @@
   function initStandings(){ const s={}; SEED.forEach(([n])=>{ s[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; }); return s; }
   function freshState(){
     const s={teams:freshTeams(),games:0,log:[],standings:initStandings(),
-      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[]};
+      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null};
     SEED_RESULTS.forEach(([a,ga,gb,b])=>{
       learn(s,a,ga,gb,b,true,1,true);
       s.seedSigs.push(sigOf(a,ga,gb,b));
@@ -385,6 +408,7 @@
     }
     const res=learn(state,a,ga,gb,b,neutral,stageW,false);
     save(); refreshStats(); renderRatings(); fillAll(); renderLog(); renderGroups(); renderLedger();
+    runForecast(); renderForecast();
     let html=`<div class="card">`;
     if(gradeInfo){
       html+=`<p class="note" style="margin-top:0;">Graded the locked call: <span class="${gradeInfo.hit?'':'danger'}">${gradeInfo.hit?'✓ correct':'✗ missed'}</span> · brier ${gradeInfo.brier.toFixed(3)}</p>`;
@@ -470,6 +494,7 @@
       document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
       t.classList.add('on'); $('p-'+t.dataset.t).classList.add('on');
       const v=t.dataset.t;
+      if(v==='forecast')renderForecast();
       if(v==='ratings')renderRatings(); if(v==='groups')renderGroups();
       if(v==='teams')renderTeams(); if(v==='ledger')renderLedger();
     };
@@ -478,6 +503,10 @@
   $('go-result').onclick=doResult;
   $('show-log').onclick=()=>{ const b=$('logbox'); b.style.display=b.style.display==='none'?'block':'none'; renderLog(); };
   $('sync-now').onclick=()=>fetchResults(true);
+  $('rerun-sim').onclick=()=>{
+    $('forecast-out').innerHTML='<div class="empty">Running simulation…</div>';
+    setTimeout(()=>{ runForecast(); renderForecast(); },30);
+  };
   $('add-team').onclick=()=>{
     const nm=$('nt-name').value.trim(); if(!nm) return;
     if(state.teams[nm]){ alert('That team already exists.'); return; }
@@ -487,6 +516,85 @@
   };
   $('reset-all').onclick=()=>{ if(confirm('Reset to seed, re-apply round-1, and clear the ledger?')){ state=freshState(); save(); refreshStats(); renderRatings(); renderTeams(); fillAll(); renderLog(); renderGroups(); renderLedger(); $('predict-out').innerHTML=''; $('result-out').innerHTML=''; } };
   $('export').onclick=()=>{ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='wc2026_predictor.json'; a.click(); URL.revokeObjectURL(url); };
+
+  // ---- Monte Carlo: simulate the rest of the tournament to forecast the winner ----
+  const NSIM=20000;
+  function pWinKO(a,b){ // knockout win prob (draws resolved), neutral venue
+    return 1/(1+Math.pow(10,((rating(b)-rating(a))/400)));
+  }
+  function simGroup(teams){
+    const pts={},gd={};
+    teams.forEach(t=>{pts[t]=0;gd[t]=0;});
+    for(let i=0;i<teams.length;i++) for(let j=i+1;j<teams.length;j++){
+      const a=teams[i],b=teams[j];
+      const eA=1/(1+Math.pow(10,((rating(b)-rating(a))/400)));
+      const drawW=0.27*(1-Math.abs(eA-0.5)*1.4);
+      const r=Math.random();
+      if(r<drawW){pts[a]++;pts[b]++;}
+      else if(r<drawW+eA*(1-drawW)){pts[a]+=3;gd[a]++;gd[b]--;}
+      else{pts[b]+=3;gd[b]++;gd[a]--;}
+    }
+    return teams.slice().sort((x,y)=> pts[y]-pts[x] || gd[y]-gd[x] || rating(y)-rating(x));
+  }
+  function runForecast(nsim){
+    nsim=nsim||NSIM;
+    const all=names();
+    const groups={}; all.forEach(n=>{ (groups[state.teams[n].group]=groups[state.teams[n].group]||[]).push(n); });
+    const gkeys=Object.keys(groups).sort();
+    const tally={}; all.forEach(t=> tally[t]={r16:0,qf:0,sf:0,final:0,win:0});
+    const stages=['r16','qf','sf','final','win'];
+    for(let s=0;s<nsim;s++){
+      const firsts=[],seconds=[],thirds=[];
+      for(const g of gkeys){
+        const o=simGroup(groups[g]);
+        firsts.push(o[0]); seconds.push(o[1]); if(o[2]!==undefined) thirds.push(o[2]);
+      }
+      // best 8 third-place teams — approximated by rating (proxy for points)
+      thirds.sort((a,b)=>rating(b)-rating(a));
+      const qual=firsts.concat(seconds, thirds.slice(0,8));
+      // shuffle into a single-elim bracket
+      for(let i=qual.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [qual[i],qual[j]]=[qual[j],qual[i]]; }
+      let cur=qual;
+      for(const stage of stages){
+        const nxt=[];
+        for(let k=0;k+1<cur.length;k+=2){
+          const a=cur[k],b=cur[k+1];
+          nxt.push(Math.random()<pWinKO(a,b)?a:b);
+        }
+        nxt.forEach(w=> tally[w][stage]++);
+        cur=nxt;
+      }
+    }
+    state.forecast={tally, nsim, at:Date.now()};
+    save();
+  }
+  function renderForecast(){
+    const fc=state.forecast;
+    if(!fc){ $('forecast-out').innerHTML='<div class="empty">No simulation yet.</div>'; return; }
+    const all=names();
+    const ranked=all.slice().sort((a,b)=> fc.tally[b].win-fc.tally[a].win || rating(b)-rating(a));
+    const pct=(v)=> (100*v/fc.nsim);
+    const fmt=(v)=>{ const p=pct(v); return p<0.1&&p>0?'<0.1':p.toFixed(1); };
+    const maxWin=pct(fc.tally[ranked[0]].win)||1;
+    const rows=ranked.map((t,i)=>{
+      const r=fc.tally[t], wp=pct(r.win);
+      const w=Math.max(2,Math.round(100*wp/maxWin));
+      return `<tr>
+        <td class="rank">${i+1}</td>
+        <td>${t} <span class="grp">${state.teams[t].group}</span></td>
+        <td class="winpct"><span class="winbar" style="width:${w}%"></span><span>${fmt(r.win)}%</span></td>
+        <td class="dim">${fmt(r.final)}</td>
+        <td class="dim">${fmt(r.sf)}</td>
+        <td class="dim">${fmt(r.qf)}</td>
+        <td class="dim">${fmt(r.r16)}</td>
+      </tr>`;
+    }).join('');
+    $('forecast-out').innerHTML=`<table class="fc">
+      <tr><th></th><th>team</th><th>win</th><th>final</th><th>semi</th><th>quarter</th><th>last 16</th></tr>
+      ${rows}</table>`;
+    $('fc-nsim').textContent=fc.nsim.toLocaleString();
+    $('fc-meta').textContent=`Last simulated ${new Date(fc.at).toLocaleString()} · ${fc.nsim.toLocaleString()} runs from current ratings. Third-place qualifiers approximated by rating; treat as an estimate, not the official bracket.`;
+  }
 
   // ---- auto-update: read results.json written hourly by the GitHub Action ----
   function syncBar(msg, kind){
@@ -515,6 +623,7 @@
         state.syncedIds.push(id); applied++;
       }
       save();
+      if(applied>0){ runForecast(); renderForecast(); }
       const when = data.updated ? new Date(data.updated).toLocaleString() : 'unknown';
       let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · feed updated ${when}`
                        : `Up to date · feed updated ${when}`;
@@ -526,6 +635,8 @@
   }
 
   fillAll(); refreshStats(); renderRatings();
+  if(!state.forecast) runForecast();
+  renderForecast();
   fetchResults(false);   // auto-sync on page load
 })();
 </script>
