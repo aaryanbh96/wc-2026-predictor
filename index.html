@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Cup 2026 Predictor — learns as it goes</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
+    --ink:#e8ecf2; --mut:#8b97a8; --dim:#5d6878;
+    --accent:#4ade80; --accentq:#34d399;
+    --a:#7c6df2; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461;
+    --radius:12px; --radius-sm:8px;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
+  header{margin-bottom:28px;}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+  h1{font-size:30px;line-height:1.15;margin:0 0 8px;font-weight:650;letter-spacing:-.02em;}
+  .sub{color:var(--mut);font-size:15px;max-width:64ch;margin:0;}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:26px 0;}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;}
+  .stat .lab{font-size:12px;color:var(--mut);font-family:var(--mono);letter-spacing:.05em;}
+  .stat .val{font-size:25px;font-weight:650;margin-top:2px;letter-spacing:-.01em;}
+  .stat .val small{font-size:13px;color:var(--dim);font-weight:400;}
+  .stat.hl{border-color:rgba(74,222,128,.35);}
+
+  nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;border-bottom:1px solid var(--line);}
+  .tab{background:none;border:none;color:var(--mut);font-size:14px;font-family:var(--sans);padding:9px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;position:relative;}
+  .tab:hover{color:var(--ink);}
+  .tab.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:550;}
+  .tab .badge{display:inline-block;min-width:17px;height:17px;line-height:17px;text-align:center;font-size:10px;font-family:var(--mono);background:var(--warn);color:#231603;border-radius:9px;margin-left:5px;padding:0 4px;}
+
+  .panel{display:none;}
+  .panel.on{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  .row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;}
+  .field{flex:1;min-width:130px;}
+  .field.sm{flex:0 0 64px;min-width:64px;}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:5px;font-family:var(--mono);letter-spacing:.04em;}
+  select,input{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:var(--radius-sm);padding:9px 10px;font-size:14px;font-family:var(--sans);height:38px;}
+  select:focus,input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(74,222,128,.12);}
+  input[type=number]{text-align:center;}
+  button.act{background:var(--accent);color:#06210f;border:none;border-radius:var(--radius-sm);padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer;height:38px;font-family:var(--sans);}
+  button.act:hover{filter:brightness(1.08);}
+  button.act.alt{background:var(--a);color:#fff;}
+  button.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;cursor:pointer;font-family:var(--sans);}
+  button.ghost:hover{border-color:var(--accent);}
+  button.mini{background:var(--accent);color:#06210f;border:none;border-radius:6px;padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);}
+  button.mini.gray{background:var(--panel2);color:var(--mut);border:1px solid var(--line);}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;}
+  .barrow{margin-bottom:10px;}
+  .barrow .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;}
+  .barrow .top b{font-weight:650;}
+  .track{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden;}
+  .fill{height:100%;border-radius:6px;transition:width .4s ease;}
+  .note{font-size:13px;color:var(--mut);margin-top:12px;}
+  .note b{color:var(--ink);font-weight:600;}
+
+  .rk{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid var(--line);}
+  .rk .n{width:24px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--dim);}
+  .rk .nm{width:150px;font-size:14px;}
+  .rk .conf{font-family:var(--mono);font-size:10px;color:var(--dim);width:30px;}
+  .rk .t{flex:1;height:8px;background:var(--panel2);border-radius:5px;overflow:hidden;}
+  .rk .t .f{height:100%;background:linear-gradient(90deg,var(--a),var(--accentq));}
+  .rk .rt{width:46px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:600;}
+
+  .grpgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;}
+  .grp{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;}
+  .grp h3{margin:0 0 8px;font-size:13px;font-family:var(--mono);color:var(--accent);letter-spacing:.08em;}
+  .grp table{width:100%;border-collapse:collapse;font-size:13px;}
+  .grp th{font-weight:400;color:var(--dim);font-size:10px;font-family:var(--mono);text-align:right;padding:2px 4px;}
+  .grp th:first-child{text-align:left;}
+  .grp td{padding:3px 4px;text-align:right;font-family:var(--mono);}
+  .grp td:first-child{text-align:left;font-family:var(--sans);}
+  .grp tr.qual td{color:var(--accent);}
+  .grp .pts{font-weight:650;color:var(--ink);}
+
+  .pred{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;}
+  .pred .hd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .pred .match{font-size:15px;font-weight:600;}
+  .pred .when{font-family:var(--mono);font-size:11px;color:var(--dim);}
+  .pred .call{font-size:13px;color:var(--mut);margin-top:4px;}
+  .pred .call b{color:var(--ink);}
+  .pred .verdict{font-family:var(--mono);font-size:12px;padding:2px 9px;border-radius:6px;}
+  .pred .verdict.hit{background:rgba(74,222,128,.12);color:var(--accent);}
+  .pred .verdict.miss{background:rgba(239,100,97,.12);color:var(--bad);}
+  .pred .verdict.pending{background:rgba(244,162,59,.12);color:var(--warn);}
+  .pred .settle{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+  .pred .settle input{width:54px;height:32px;}
+  .pred .settle .lbl{font-size:12px;color:var(--mut);font-family:var(--mono);}
+
+  .log{font-family:var(--mono);font-size:12px;color:var(--mut);max-height:260px;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;}
+  .log div{padding:3px 0;border-bottom:1px solid var(--line);}
+  .log .up{color:var(--warn);}
+
+  .prose{font-size:14.5px;color:var(--mut);line-height:1.75;}
+  .prose p{margin:0 0 14px;}
+  .prose b{color:var(--ink);font-weight:600;}
+  .prose code{font-family:var(--mono);font-size:12.5px;background:var(--panel2);padding:1px 6px;border-radius:4px;color:var(--accentq);}
+  .danger{color:var(--bad);}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  .hint{font-size:12px;color:var(--dim);margin-top:6px;}
+  .empty{color:var(--dim);font-size:14px;text-align:center;padding:30px 0;}
+  .editrow{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .editrow span{flex:1;}
+  .editrow .x{color:var(--bad);cursor:pointer;font-family:var(--mono);}
+  .sechead{font-size:12px;font-family:var(--mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin:4px 0 12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Elo + online learning · pre-match ledger · 48 teams</div>
+    <h1>World Cup 2026 Predictor</h1>
+    <p class="sub">Predicts each match beforehand, locks the call into a ledger, then grades and learns from it once the result lands. The headline accuracy reflects genuine ahead-of-time predictions — not hindsight.</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat hl"><div class="lab">pre-match hit rate</div><div class="val" id="s-prehit">—</div></div>
+    <div class="stat hl"><div class="lab">pre-match brier <small>↓</small></div><div class="val" id="s-prebrier">—</div></div>
+    <div class="stat"><div class="lab">graded calls</div><div class="val" id="s-graded">0</div></div>
+    <div class="stat"><div class="lab">games learned</div><div class="val" id="s-games">0</div></div>
+    <div class="stat"><div class="lab">teams</div><div class="val" id="s-teams">48</div></div>
+  </div>
+
+  <div id="syncbar" style="display:none;margin:-8px 0 18px;font-family:var(--mono);font-size:12px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);"></div>
+
+  <nav>
+    <button class="tab on" data-t="predict">Predict</button>
+    <button class="tab" data-t="ledger">Predictions <span class="badge" id="pend-badge" style="display:none;">0</span></button>
+    <button class="tab" data-t="result">Log result</button>
+    <button class="tab" data-t="ratings">Ratings</button>
+    <button class="tab" data-t="groups">Groups</button>
+    <button class="tab" data-t="teams">Teams</button>
+    <button class="tab" data-t="how">How it works</button>
+  </nav>
+
+  <section class="panel on" id="p-predict">
+    <div class="row">
+      <div class="field"><label>team a</label><select id="pa"></select></div>
+      <div class="field"><label>team b</label><select id="pb"></select></div>
+      <div class="field sm" style="flex:0 0 100px;"><label>venue</label>
+        <select id="pn"><option value="1">neutral</option><option value="0">a at home</option></select></div>
+      <button class="act" id="go-predict">Predict</button>
+    </div>
+    <div id="predict-out"></div>
+  </section>
+
+  <section class="panel" id="p-ledger">
+    <div class="sechead">Pending — locked, awaiting result</div>
+    <div id="pending-list"></div>
+    <div class="sechead" style="margin-top:24px;">Graded — pre-match calls scored against reality</div>
+    <div id="graded-list"></div>
+  </section>
+
+  <section class="panel" id="p-result">
+    <p class="prose" style="margin-bottom:14px;">Enter a finished score. If a locked prediction exists for this match, it gets graded first, then the model learns. No prediction on file? It still learns — it just won't count toward pre-match accuracy.</p>
+    <div class="row">
+      <div class="field"><label>home / team a</label><select id="ra"></select></div>
+      <div class="field sm"><label>gf</label><input id="ga" type="number" min="0" value="0"></div>
+      <div class="field sm"><label>gf</label><input id="gb" type="number" min="0" value="0"></div>
+      <div class="field"><label>away / team b</label><select id="rb"></select></div>
+    </div>
+    <div class="row">
+      <div class="field sm" style="flex:0 0 110px;"><label>venue</label>
+        <select id="rn"><option value="1">neutral</option><option value="0">a at home</option></select></div>
+      <div class="field sm" style="flex:0 0 130px;"><label>stage weight</label>
+        <select id="rw"><option value="1">group ×1</option><option value="1.25">R32/R16 ×1.25</option><option value="1.5">QF+ ×1.5</option></select></div>
+      <button class="act" id="go-result">Submit &amp; learn</button>
+    </div>
+    <div id="result-out"></div>
+    <div class="toolbar"><button class="ghost" id="sync-now">Sync now</button><button class="ghost" id="show-log">Update history</button></div>
+    <div id="logbox" style="margin-top:12px;display:none;"></div>
+  </section>
+
+  <section class="panel" id="p-ratings"><div id="ratings-list"></div></section>
+
+  <section class="panel" id="p-groups">
+    <p class="prose" style="margin-bottom:14px;">Standings from logged results. Top 2 of each group (green) advance automatically; the 8 best third-place teams also go through, so these aren't final.</p>
+    <div class="grpgrid" id="groups-grid"></div>
+  </section>
+
+  <section class="panel" id="p-teams">
+    <p class="prose" style="margin-bottom:14px;">The field is the real 48 teams. Add, remove, or rename teams and tune starting ratings if needed.</p>
+    <div class="row">
+      <div class="field"><label>team name</label><input id="nt-name" placeholder="e.g. Bolivia"></div>
+      <div class="field sm" style="flex:0 0 70px;"><label>group</label>
+        <select id="nt-grp"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option><option>K</option><option>L</option></select></div>
+      <div class="field sm" style="flex:0 0 90px;"><label>rating</label><input id="nt-rate" type="number" value="1800"></div>
+      <button class="act" id="add-team">Add</button>
+    </div>
+    <div id="teams-list" style="margin-top:14px;"></div>
+    <div class="toolbar">
+      <button class="ghost" id="reset-all">Reset to seed</button>
+      <button class="ghost" id="export">Export data (JSON)</button>
+    </div>
+    <div class="hint">Reset restores the 48-team field, re-applies round-1 results, and clears the ledger.</div>
+  </section>
+
+  <section class="panel" id="p-how">
+    <div class="prose">
+      <p><b>The rating model (the “ML” core).</b> Every team carries a strength number. To predict, the model feeds the rating gap through a logistic curve — <code>P(A wins) = 1 / (1 + 10^((Rb − Ra)/400))</code> — the same math as chess Elo. A draw probability is carved out, larger when teams are even. Neutral venue gives no home bump; otherwise team A gets <code>+60</code>.</p>
+      <p><b>The pre-match ledger.</b> When you lock a prediction, the app stamps it with the probabilities and the time, and parks it as <b>pending</b>. Nothing about the result is known yet. When the score lands, that locked call is graded — was the favorite right, and what was its Brier score — and only those graded, ahead-of-time calls feed the <b>pre-match hit rate</b> and <b>pre-match Brier</b> at the top. That's the number that actually tells you if the model predicts well.</p>
+      <p><b>The learning loop (the “RL” part).</b> After grading, the model shifts both ratings toward the truth: <code>Δ = K · margin · (actual − expected)</code>. Upsets move ratings hard; expected results barely nudge them. A <b>4–0</b> teaches more than a <b>1–0</b>; knockouts can weigh heavier.</p>
+      <p><b>Pre-loaded.</b> Ships trained on the real round-1 group results, so ratings already reflect what's happened. Those seed results are learned-from but not counted as pre-match calls — you hadn't predicted them in advance.</p>
+      <p><b>Honest limits.</b> It only sees ratings — not injuries, rotation, rest, or tactics — so it won't beat a Vegas book. It's a transparent learner you can watch reason and hold accountable.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const KEY="wc2026_predictor_v3";
+  const K_BASE=30, HOME_ADV=60;
+
+  const SEED=[
+    ["Mexico","A",1906],["Korea Republic","A",1856],["Czechia","A",1760],["South Africa","A",1745],
+    ["Canada","B",1816],["Switzerland","B",1886],["Bosnia and Herzegovina","B",1770],["Qatar","B",1742],
+    ["Brazil","C",2040],["Morocco","C",1932],["Scotland","C",1775],["Haiti","C",1660],
+    ["USA","D",1912],["Paraguay","D",1782],["Australia","D",1842],["Türkiye","D",1790],
+    ["Germany","E",1980],["Ecuador","E",1862],["Côte d'Ivoire","E",1798],["Curaçao","E",1680],
+    ["Netherlands","F",2000],["Japan","F",1902],["Sweden","F",1800],["Tunisia","F",1778],
+    ["Egypt","G",1820],["Belgium","G",1985],["IR Iran","G",1768],["New Zealand","G",1660],
+    ["Spain","H",2070],["Uruguay","H",1948],["Cabo Verde","H",1700],["Saudi Arabia","H",1772],
+    ["France","I",2085],["Norway","I",1794],["Senegal","I",1892],["Iraq","I",1710],
+    ["Argentina","J",2110],["Austria","J",1850],["Algeria","J",1764],["Jordan","J",1700],
+    ["Colombia","K",1938],["Congo DR","K",1730],["Portugal","K",2015],["Uzbekistan","K",1716],
+    ["England","L",2045],["Ghana","L",1802],["Panama","L",1722],["Croatia","L",1952]
+  ];
+  const SEED_RESULTS=[
+    ["Canada",6,0,"Qatar"],["Mexico",1,0,"Korea Republic"],["USA",2,0,"Australia"],
+    ["Algeria",0,3,"Argentina"],["Argentina",2,0,"Austria"],["Belgium",0,0,"IR Iran"],
+    ["Bosnia and Herzegovina",1,4,"Switzerland"],["Brazil",3,0,"Haiti"],["Cabo Verde",2,2,"Uruguay"],
+    ["Colombia",3,1,"Uzbekistan"],["Congo DR",1,1,"Portugal"],["Côte d'Ivoire",1,2,"Germany"],
+    ["Croatia",2,4,"England"],["Curaçao",0,0,"Ecuador"],["Czechia",1,1,"South Africa"],
+    ["Egypt",3,1,"New Zealand"],["France",3,1,"Senegal"],["Ghana",1,0,"Panama"],
+    ["Iraq",1,4,"Norway"],["Japan",4,0,"Tunisia"],["Jordan",1,3,"Austria"],
+    ["Morocco",1,0,"Scotland"],["Netherlands",5,1,"Sweden"],["Paraguay",1,0,"Türkiye"],
+    ["Saudi Arabia",0,4,"Spain"]
+  ];
+
+  function freshTeams(){ const t={}; SEED.forEach(([n,g,r])=>{ t[n]={group:g,rating:r}; }); return t; }
+  function initStandings(){ const s={}; SEED.forEach(([n])=>{ s[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; }); return s; }
+  function freshState(){
+    const s={teams:freshTeams(),games:0,log:[],standings:initStandings(),
+      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[]};
+    SEED_RESULTS.forEach(([a,ga,gb,b])=>{
+      learn(s,a,ga,gb,b,true,1,true);
+      s.seedSigs.push(sigOf(a,ga,gb,b));
+    });
+    return s;
+  }
+
+  let state=load();
+  function load(){
+    try{ const raw=localStorage.getItem(KEY); if(raw){ const s=JSON.parse(raw);
+      s.standings=s.standings||initStandings(); s.predictions=s.predictions||[];
+      s.preHit=s.preHit||0; s.preGraded=s.preGraded||0; s.preBrierSum=s.preBrierSum||0;
+      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; return s; } }catch(e){}
+    return freshState();
+  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  const $=id=>document.getElementById(id);
+  const names=()=>Object.keys(state.teams).sort();
+  const rating=n=>state.teams[n].rating;
+  const pairKey=(a,b)=>[a,b].sort().join(' ⚔ ');
+  // orientation-independent match signature: each team bound to its own goals
+  function sigOf(a,ga,gb,b){
+    return [a+':'+ga, b+':'+gb].sort().join('|');
+  }
+  function expected(a,b,neutral){ const adj=neutral?0:HOME_ADV; return 1/(1+Math.pow(10,((rating(b)-(rating(a)+adj))/400))); }
+  function probs(a,b,neutral){
+    const eA=expected(a,b,neutral); const drawW=0.27*(1-Math.abs(eA-0.5)*1.4);
+    return {eA, pA:eA*(1-drawW), pB:(1-eA)*(1-drawW), pD:drawW};
+  }
+
+  // pure learning step (rating update + standings + log). Does NOT touch the pre-match ledger.
+  function learn(s,a,ga,gb,b,neutral,stageW,isSeed){
+    const eA=1/(1+Math.pow(10,((s.teams[b].rating-(s.teams[a].rating+(neutral?0:HOME_ADV)))/400)));
+    const sA=ga>gb?1:ga<gb?0:0.5;
+    const margin=Math.abs(ga-gb), mMult=margin<=1?1:margin===2?1.5:(11+margin)/8;
+    const K=K_BASE*mMult*stageW;
+    const before={a:s.teams[a].rating,b:s.teams[b].rating};
+    const delta=K*(sA-eA);
+    s.teams[a].rating+=delta; s.teams[b].rating-=delta;
+    s.games++;
+    if(s.standings){ const A=s.standings[a],B=s.standings[b]; if(A&&B){
+      A.p++;B.p++;A.gf+=ga;A.ga+=gb;B.gf+=gb;B.ga+=ga;
+      if(ga>gb){A.w++;B.l++;A.pts+=3;}else if(ga<gb){B.w++;A.l++;B.pts+=3;}else{A.d++;B.d++;A.pts++;B.pts++;}
+    }}
+    const decisive=sA!==0.5, favWon=(eA>=0.5&&sA===1)||(eA<0.5&&sA===0);
+    const upset=decisive&&!favWon&&Math.abs(eA-0.5)>0.12;
+    s.log.unshift({txt:`${a} ${ga}–${gb} ${b} · ${a} ${delta>=0?'+':''}${delta.toFixed(0)}${upset?' · UPSET':''}`,up:upset,seed:!!isSeed});
+    if(s.log.length>120) s.log.pop();
+    return {eA,delta,before,upset,sA};
+  }
+
+  // grade a locked pre-match prediction against a real result
+  function gradePrediction(pred, ga, gb){
+    const sA=ga>gb?1:ga<gb?0:0.5;
+    // hit = the side the model leaned (incl. draw if draw was top pick) matched outcome
+    const top=Math.max(pred.pA,pred.pB,pred.pD);
+    let pick = top===pred.pA?'A' : top===pred.pB?'B' : 'D';
+    const outcome = sA===1?'A':sA===0?'B':'D';
+    const hit = pick===outcome;
+    // brier over 3 outcomes
+    const oA=sA===1?1:0, oB=sA===0?1:0, oD=sA===0.5?1:0;
+    const brier=Math.pow(pred.pA-oA,2)+Math.pow(pred.pB-oB,2)+Math.pow(pred.pD-oD,2);
+    pred.result={ga,gb}; pred.hit=hit; pred.brier=brier; pred.gradedAt=Date.now();
+    state.preGraded++; if(hit) state.preHit++; state.preBrierSum+=brier;
+    return {hit,brier,pick,outcome};
+  }
+
+  function findPending(a,b){
+    const k=pairKey(a,b);
+    return state.predictions.find(p=>!p.result && pairKey(p.a,p.b)===k);
+  }
+
+  function fillSel(el,keep){ const cur=keep||el.value; el.innerHTML=names().map(n=>`<option ${n===cur?'selected':''}>${n}</option>`).join(''); }
+  function fillAll(){
+    fillSel($('pa'),$('pa').value||'Argentina'); fillSel($('pb'),$('pb').value||'Brazil');
+    fillSel($('ra'),$('ra').value||'Argentina'); fillSel($('rb'),$('rb').value||'Brazil');
+  }
+  function refreshStats(){
+    $('s-prehit').textContent=state.preGraded?Math.round(100*state.preHit/state.preGraded)+'%':'—';
+    $('s-prebrier').textContent=state.preGraded?(state.preBrierSum/state.preGraded).toFixed(3):'—';
+    $('s-graded').textContent=state.preGraded;
+    $('s-games').textContent=state.games;
+    $('s-teams').textContent=names().length;
+    const pend=state.predictions.filter(p=>!p.result).length;
+    const bd=$('pend-badge'); if(pend){ bd.style.display='inline-block'; bd.textContent=pend; } else bd.style.display='none';
+  }
+  function bar(label,pct,color,bold){
+    return `<div class="barrow"><div class="top"><span>${bold?'<b>'+label+'</b>':label}</span><span><b>${pct}%</b></span></div><div class="track"><div class="fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+  }
+
+  function doPredict(){
+    const a=$('pa').value,b=$('pb').value,neutral=$('pn').value==='1';
+    if(a===b){ $('predict-out').innerHTML='<p class="note">Pick two different teams.</p>'; return; }
+    const pr=probs(a,b,neutral);
+    const fav=pr.pA>=pr.pB?a:b, favP=Math.max(pr.pA,pr.pB);
+    const existing=findPending(a,b);
+    $('predict-out').innerHTML=`<div class="card">
+      ${bar(a,Math.round(pr.pA*100),'var(--a)',true)}
+      ${bar('Draw',Math.round(pr.pD*100),'var(--draw)')}
+      ${bar(b,Math.round(pr.pB*100),'var(--b)',true)}
+      <p class="note">Model favors <b>${fav}</b> at <b>${Math.round(favP*100)}%</b> to win in 90′ · ratings ${Math.round(rating(a))} vs ${Math.round(rating(b))}${neutral?' · neutral':' · '+a+' home'}</p>
+      <div class="toolbar">
+        ${existing?'<span class="note" style="margin:0;">A prediction for this match is already locked.</span>'
+          :`<button class="act alt" id="lock-pred">Lock this prediction</button>`}
+      </div></div>`;
+    if(!existing) $('lock-pred').onclick=()=>{
+      state.predictions.unshift({a,b,neutral,pA:pr.pA,pB:pr.pB,pD:pr.pD,
+        rA:Math.round(rating(a)),rB:Math.round(rating(b)),at:Date.now()});
+      save(); refreshStats(); renderLedger(); doPredict();
+    };
+  }
+
+  function doResult(){
+    const a=$('ra').value,b=$('rb').value,ga=+$('ga').value,gb=+$('gb').value;
+    const neutral=$('rn').value==='1',stageW=+$('rw').value;
+    if(a===b){ $('result-out').innerHTML='<p class="note">Pick two different teams.</p>'; return; }
+    if(ga<0||gb<0){ $('result-out').innerHTML='<p class="note">Scores can\'t be negative.</p>'; return; }
+    settleMatch(a,ga,gb,b,neutral,stageW);
+  }
+
+  // central entry point used by manual log AND (later) auto-update
+  function settleMatch(a,ga,gb,b,neutral,stageW){
+    const pend=findPending(a,b);
+    let gradeInfo=null;
+    if(pend){
+      // orient score to the prediction's a/b ordering
+      let pga=ga,pgb=gb;
+      if(pend.a!==a){ pga=gb; pgb=ga; }
+      gradeInfo=gradePrediction(pend,pga,pgb);
+    }
+    const res=learn(state,a,ga,gb,b,neutral,stageW,false);
+    save(); refreshStats(); renderRatings(); fillAll(); renderLog(); renderGroups(); renderLedger();
+    let html=`<div class="card">`;
+    if(gradeInfo){
+      html+=`<p class="note" style="margin-top:0;">Graded the locked call: <span class="${gradeInfo.hit?'':'danger'}">${gradeInfo.hit?'✓ correct':'✗ missed'}</span> · brier ${gradeInfo.brier.toFixed(3)}</p>`;
+    } else {
+      html+=`<p class="note" style="margin-top:0;">No locked prediction for this match — learned from it, but it won't count toward pre-match accuracy.</p>`;
+    }
+    html+=`<p class="note">${a}: ${Math.round(res.before.a)} → <b>${Math.round(rating(a))}</b> (${res.delta>=0?'+':''}${res.delta.toFixed(0)}) &nbsp;·&nbsp; ${b}: ${Math.round(res.before.b)} → <b>${Math.round(rating(b))}</b> (${-res.delta>=0?'+':''}${(-res.delta).toFixed(0)})${res.upset?' <span class="danger">· upset</span>':''}</p></div>`;
+    $('result-out').innerHTML=html;
+  }
+
+  function renderLedger(){
+    const pend=state.predictions.filter(p=>!p.result);
+    const graded=state.predictions.filter(p=>p.result).sort((x,y)=>y.gradedAt-x.gradedAt);
+    $('pending-list').innerHTML = pend.length? pend.map((p,idx)=>{
+      const fav=p.pA>=p.pB?p.a:p.b, favP=Math.round(Math.max(p.pA,p.pB)*100);
+      const gi=state.predictions.indexOf(p);
+      return `<div class="pred">
+        <div class="hd"><span class="match">${p.a} v ${p.b}</span>
+          <span class="verdict pending">pending</span></div>
+        <div class="call">Favors <b>${fav}</b> ${favP}% · ${p.a} ${Math.round(p.pA*100)}% / draw ${Math.round(p.pD*100)}% / ${p.b} ${Math.round(p.pB*100)}% · locked ${new Date(p.at).toLocaleString()}</div>
+        <div class="settle">
+          <span class="lbl">${p.a}</span><input type="number" min="0" value="0" id="sg-a-${gi}">
+          <input type="number" min="0" value="0" id="sg-b-${gi}"><span class="lbl">${p.b}</span>
+          <button class="mini" data-settle="${gi}">Settle &amp; learn</button>
+          <button class="mini gray" data-drop="${gi}">Discard</button>
+        </div></div>`;
+    }).join('') : '<div class="empty">No pending predictions. Lock one from the Predict tab.</div>';
+
+    pend.forEach(p=>{ const gi=state.predictions.indexOf(p); });
+    $('pending-list').querySelectorAll('[data-settle]').forEach(btn=>{
+      btn.onclick=()=>{ const gi=+btn.dataset.settle; const p=state.predictions[gi];
+        const ga=+$('sg-a-'+gi).value, gb=+$('sg-b-'+gi).value;
+        if(ga<0||gb<0) return;
+        settleMatch(p.a,ga,gb,p.b,p.neutral,1);
+      };
+    });
+    $('pending-list').querySelectorAll('[data-drop]').forEach(btn=>{
+      btn.onclick=()=>{ const gi=+btn.dataset.drop; state.predictions.splice(gi,1); save(); refreshStats(); renderLedger(); };
+    });
+
+    $('graded-list').innerHTML = graded.length? graded.map(p=>{
+      const fav=p.pA>=p.pB?p.a:p.b, favP=Math.round(Math.max(p.pA,p.pB)*100);
+      return `<div class="pred">
+        <div class="hd"><span class="match">${p.a} ${p.result.ga}–${p.result.gb} ${p.b}</span>
+          <span class="verdict ${p.hit?'hit':'miss'}">${p.hit?'✓ correct':'✗ missed'} · brier ${p.brier.toFixed(3)}</span></div>
+        <div class="call">Pre-match call: favored <b>${fav}</b> ${favP}% · ${p.a} ${Math.round(p.pA*100)}% / draw ${Math.round(p.pD*100)}% / ${p.b} ${Math.round(p.pB*100)}%</div>
+      </div>`;
+    }).join('') : '<div class="empty">No graded calls yet. Settle a pending prediction to see it scored here.</div>';
+  }
+
+  function renderRatings(){
+    const sorted=names().sort((x,y)=>rating(y)-rating(x));
+    const max=rating(sorted[0]),min=rating(sorted[sorted.length-1]);
+    $('ratings-list').innerHTML=sorted.map((n,i)=>{
+      const w=Math.round(100*(rating(n)-min+25)/(max-min+25));
+      return `<div class="rk"><span class="n">${i+1}</span><span class="nm">${n}</span><span class="conf">${state.teams[n].group}</span><span class="t"><span class="f" style="width:${w}%"></span></span><span class="rt">${Math.round(rating(n))}</span></div>`;
+    }).join('');
+  }
+  function renderGroups(){
+    const groups={}; names().forEach(n=>{ const g=state.teams[n].group; (groups[g]=groups[g]||[]).push(n); });
+    $('groups-grid').innerHTML=Object.keys(groups).sort().map(g=>{
+      const rows=groups[g].map(n=>({n,...(state.standings[n]||{p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0})}))
+        .sort((x,y)=>y.pts-x.pts||(y.gf-y.ga)-(x.gf-x.ga)||y.gf-x.gf||x.n.localeCompare(y.n));
+      const body=rows.map((r,i)=>`<tr class="${i<2?'qual':''}"><td>${r.n}</td><td>${r.p}</td><td>${r.w}-${r.d}-${r.l}</td><td>${r.gf-r.ga>=0?'+':''}${r.gf-r.ga}</td><td class="pts">${r.pts}</td></tr>`).join('');
+      return `<div class="grp"><h3>Group ${g}</h3><table><tr><th>team</th><th>p</th><th>w-d-l</th><th>gd</th><th>pts</th></tr>${body}</table></div>`;
+    }).join('');
+  }
+  function renderLog(){
+    if(!state.log.length){ $('logbox').innerHTML='<div class="log">No results yet.</div>'; return; }
+    $('logbox').innerHTML='<div class="log">'+state.log.map(e=>`<div class="${e.up?'up':''}">${e.seed?'· ':''}${e.txt}</div>`).join('')+'</div>';
+  }
+  function renderTeams(){
+    $('teams-list').innerHTML=names().map(n=>
+      `<div class="editrow"><span>${n}</span><span style="flex:0 0 50px;color:var(--dim);font-family:var(--mono);font-size:11px;">Grp ${state.teams[n].group}</span><span style="flex:0 0 50px;text-align:right;font-family:var(--mono);">${Math.round(rating(n))}</span><span class="x" data-rm="${n}" title="remove">✕</span></div>`).join('');
+    $('teams-list').querySelectorAll('[data-rm]').forEach(el=>{
+      el.onclick=()=>{ delete state.teams[el.dataset.rm]; delete state.standings[el.dataset.rm]; save(); renderTeams(); renderRatings(); fillAll(); refreshStats(); renderGroups(); };
+    });
+  }
+
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+      document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+      t.classList.add('on'); $('p-'+t.dataset.t).classList.add('on');
+      const v=t.dataset.t;
+      if(v==='ratings')renderRatings(); if(v==='groups')renderGroups();
+      if(v==='teams')renderTeams(); if(v==='ledger')renderLedger();
+    };
+  });
+  $('go-predict').onclick=doPredict;
+  $('go-result').onclick=doResult;
+  $('show-log').onclick=()=>{ const b=$('logbox'); b.style.display=b.style.display==='none'?'block':'none'; renderLog(); };
+  $('sync-now').onclick=()=>fetchResults(true);
+  $('add-team').onclick=()=>{
+    const nm=$('nt-name').value.trim(); if(!nm) return;
+    if(state.teams[nm]){ alert('That team already exists.'); return; }
+    state.teams[nm]={group:$('nt-grp').value,rating:+$('nt-rate').value||1800};
+    state.standings[nm]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0};
+    $('nt-name').value=''; save(); renderTeams(); renderRatings(); fillAll(); refreshStats(); renderGroups();
+  };
+  $('reset-all').onclick=()=>{ if(confirm('Reset to seed, re-apply round-1, and clear the ledger?')){ state=freshState(); save(); refreshStats(); renderRatings(); renderTeams(); fillAll(); renderLog(); renderGroups(); renderLedger(); $('predict-out').innerHTML=''; $('result-out').innerHTML=''; } };
+  $('export').onclick=()=>{ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='wc2026_predictor.json'; a.click(); URL.revokeObjectURL(url); };
+
+  // ---- auto-update: read results.json written hourly by the GitHub Action ----
+  function syncBar(msg, kind){
+    const el=$('syncbar'); el.style.display='block';
+    el.style.color = kind==='err'?'var(--bad)':kind==='ok'?'var(--accent)':'var(--mut)';
+    el.textContent=msg;
+  }
+  async function fetchResults(manual){
+    try{
+      syncBar('Checking for new results…','');
+      const r=await fetch('results.json?t='+Date.now(), {cache:'no-store'});
+      if(!r.ok){ syncBar(manual?'No results.json found yet (the Action writes it hourly).':'','muted'); return; }
+      const data=await r.json();
+      const ms=(data.matches||[]);
+      let applied=0, skipped=0, unmatched=[];
+      for(const m of ms){
+        const id='fd:'+m.id;
+        if(state.syncedIds.includes(id)) continue;       // already settled this exact feed match
+        if(!state.teams[m.home] || !state.teams[m.away]){ unmatched.push(`${m.home}/${m.away}`); continue; }
+        // Skip matches already learned from the seed (same pair + same score), so
+        // round-1 results baked into the seed aren't double-counted from the feed.
+        const sig = sigOf(m.home,m.hg,m.ag,m.away);
+        if(state.seedSigs && state.seedSigs.includes(sig)){ state.syncedIds.push(id); skipped++; continue; }
+        // World Cup games are at neutral venues; group stage weight.
+        settleMatch(m.home, m.hg, m.ag, m.away, true, 1);
+        state.syncedIds.push(id); applied++;
+      }
+      save();
+      const when = data.updated ? new Date(data.updated).toLocaleString() : 'unknown';
+      let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · feed updated ${when}`
+                       : `Up to date · feed updated ${when}`;
+      if(unmatched.length) msg += ` · ${unmatched.length} unmatched (name mismatch)`;
+      syncBar(msg, applied?'ok':'muted');
+    }catch(e){
+      syncBar(manual?'Sync failed — check that results.json is reachable.':'','err');
+    }
+  }
+
+  fillAll(); refreshStats(); renderRatings();
+  fetchResults(false);   // auto-sync on page load
+})();
+</script>
+</body>
+</html>
