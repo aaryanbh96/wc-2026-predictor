@@ -9,7 +9,7 @@
     --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
     --ink:#e8ecf2; --mut:#8b97a8; --dim:#5d6878;
     --accent:#4ade80; --accentq:#34d399;
-    --a:#7c6df2; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461;
+    --a:#7c6df2; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
     --radius:12px; --radius-sm:8px;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -113,6 +113,30 @@
   .editrow .x{color:var(--bad);cursor:pointer;font-family:var(--mono);}
   .sechead{font-size:12px;font-family:var(--mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin:4px 0 12px;}
 
+  /* champion hero — the headline answer for anyone glancing at the page */
+  .champ{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--line);
+    background:radial-gradient(120% 140% at 0% 0%, rgba(214,178,94,.16), transparent 55%),
+               linear-gradient(180deg,#13182040,#0e1116);
+    padding:26px 28px;margin:24px 0 8px;}
+  /* faint pitch stripes — the signature, drawn from football's own world */
+  .champ::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 38px, transparent 38px 76px);}
+  .champ .eyebrow{position:relative;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .champ .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold);}
+  .champ .name{position:relative;font-size:clamp(34px,7vw,56px);font-weight:750;letter-spacing:-.03em;
+    line-height:1;margin:0;background:linear-gradient(92deg,#fff 30%,var(--gold));-webkit-background-clip:text;
+    background-clip:text;color:transparent;}
+  .champ .line{position:relative;display:flex;gap:26px;flex-wrap:wrap;margin-top:16px;align-items:flex-end;}
+  .champ .odds{position:relative;}
+  .champ .odds .big{font-size:30px;font-weight:700;color:var(--gold);line-height:1;}
+  .champ .odds .cap{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-top:5px;}
+  .champ .chase{position:relative;flex:1;min-width:200px;}
+  .champ .chase .cap{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:7px;}
+  .champ .chase .pill{display:inline-flex;align-items:baseline;gap:6px;background:var(--panel2);
+    border:1px solid var(--line);border-radius:20px;padding:4px 11px;margin:0 6px 6px 0;font-size:13px;}
+  .champ .chase .pill b{color:var(--ink);font-weight:600;} .champ .chase .pill span{font-family:var(--mono);font-size:11px;color:var(--gold);}
+
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
   .fc th{font-family:var(--mono);font-size:10px;color:var(--dim);font-weight:400;text-transform:uppercase;letter-spacing:.05em;padding:6px 6px;text-align:right;border-bottom:1px solid var(--line);}
   .fc th:nth-child(2){text-align:left;}
@@ -157,8 +181,9 @@
   </nav>
 
   <section class="panel on" id="p-forecast">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;">
-      <div class="sechead" style="margin:0;">Championship forecast — <span id="fc-nsim">20,000</span> simulations</div>
+    <div id="champ-hero"></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;margin-top:22px;">
+      <div class="sechead" style="margin:0;">Full forecast — <span id="fc-nsim">20,000</span> simulations</div>
       <button class="ghost" id="rerun-sim">Re-run simulation</button>
     </div>
     <p class="hint" id="fc-meta" style="margin:0 0 14px;">Each run plays the rest of the tournament forward from current ratings.</p>
@@ -576,6 +601,16 @@
     const pct=(v)=> (100*v/fc.nsim);
     const fmt=(v)=>{ const p=pct(v); return p<0.1&&p>0?'<0.1':p.toFixed(1); };
     const maxWin=pct(fc.tally[ranked[0]].win)||1;
+    // champion hero — the single biggest answer
+    const champ=ranked[0], cp=pct(fc.tally[champ].win);
+    const chasers=ranked.slice(1,4).map(t=>`<span class="pill"><b>${t}</b><span>${fmt(fc.tally[t].win)}%</span></span>`).join('');
+    $('champ-hero').innerHTML=`<div class="champ">
+      <div class="eyebrow"><span class="dot"></span>Predicted champion</div>
+      <h2 class="name">${champ}</h2>
+      <div class="line">
+        <div class="odds"><div class="big">${fmt(fc.tally[champ].win)}%</div><div class="cap">to lift the trophy</div></div>
+        <div class="chase"><div class="cap">Closest challengers</div>${chasers}</div>
+      </div></div>`;
     const rows=ranked.map((t,i)=>{
       const r=fc.tally[t], wp=pct(r.win);
       const w=Math.max(2,Math.round(100*wp/maxWin));
