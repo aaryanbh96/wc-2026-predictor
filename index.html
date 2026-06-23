@@ -173,6 +173,12 @@
   .ufix .verdict{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;}
   .ufix .verdict.hit{background:rgba(74,222,128,.12);color:var(--accent);}
   .ufix .verdict.miss{background:rgba(239,100,97,.12);color:var(--bad);}
+  .live-card{background:linear-gradient(180deg,rgba(239,100,97,.06),var(--panel));border:1px solid rgba(239,100,97,.3);border-radius:12px;padding:13px 16px;margin-bottom:10px;}
+  .live-card .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .live-card .teams{font-size:15px;font-weight:600;}
+  .live-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--bad);text-transform:uppercase;letter-spacing:.1em;}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--bad);animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
   .ufix-v{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;}
   .ufix-v.hit{background:rgba(74,222,128,.12);color:var(--accent);}
   .ufix-v.miss{background:rgba(239,100,97,.12);color:var(--bad);}
@@ -236,6 +242,7 @@
   </nav>
 
   <section class="panel on" id="p-forecast">
+    <div id="live-block"></div>
     <div id="champ-hero"></div>
     <div id="upcoming-block" style="margin-top:22px;"></div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;margin-top:22px;">
@@ -389,7 +396,7 @@
   function initStandings(){ const s={}; SEED.forEach(([n])=>{ s[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; }); return s; }
   function freshState(){
     const s={teams:freshTeams(),games:0,log:[],standings:initStandings(),
-      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[], frozenMatches:[], daily:[]};
+      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[], frozenMatches:[], daily:[], live:[]};
     SEED_RESULTS.forEach(([a,ga,gb,b])=>{
       learn(s,a,ga,gb,b,true,1,true);
       s.seedSigs.push(sigOf(a,ga,gb,b));
@@ -402,7 +409,7 @@
     try{ const raw=localStorage.getItem(KEY); if(raw){ const s=JSON.parse(raw);
       s.standings=s.standings||initStandings(); s.predictions=s.predictions||[];
       s.preHit=s.preHit||0; s.preGraded=s.preGraded||0; s.preBrierSum=s.preBrierSum||0;
-      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; s.frozenMatches=s.frozenMatches||[]; s.daily=s.daily||[]; return s; } }catch(e){}
+      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; s.frozenMatches=s.frozenMatches||[]; s.daily=s.daily||[]; s.live=s.live||[]; return s; } }catch(e){}
     return freshState();
   }
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
@@ -906,6 +913,27 @@
     block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Upcoming matches</div><div class="upc-acc">${accLine}</div></div>${cards}`;
   }
 
+  // ---- live now: matches in progress, pinned with the model's pre-match call ----
+  function renderLive(){
+    const block=$('live-block'); if(!block) return;
+    const lv=(state.live||[]).filter(m=>state.teams[m.home]&&state.teams[m.away]);
+    if(!lv.length){ block.innerHTML=''; return; }
+    const cards=lv.map(m=>{
+      // prefer the server-frozen pre-match prediction; fall back to current
+      const p = m.predicted || (()=>{ const pr=probs(m.home,m.away,true); return {pA:pr.pA,pD:pr.pD,pB:pr.pB}; })();
+      const pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
+      const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
+      return `<div class="live-card">
+        <div class="top"><span class="teams">${m.home} v ${m.away}</span>
+          <span class="live-badge"><span class="live-dot"></span>Live now</span></div>
+        <div class="pbar" style="margin-top:10px;"><i style="width:${pA}%;background:var(--a)"></i><i style="width:${pD}%;background:var(--draw)"></i><i style="width:${pB}%;background:var(--b)"></i></div>
+        <div class="plab"><span><b>${m.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${m.away}</b> ${pB}%</span></div>
+        <div class="plab" style="margin-top:4px;"><span class="ko">Model's pre-match call: favored ${fav} ${favP}%</span></div>
+      </div>`;
+    }).join('');
+    block.innerHTML=`<div class="sechead" style="margin:0 0 10px;color:var(--bad);">● Live now</div>${cards}`;
+  }
+
   // ---- daily champion records: locked timeline of who was favored each day ----
   function renderDaily(){
     const list=$('daily-list'); if(!list) return;
@@ -1033,9 +1061,10 @@
       state.upcoming = data.upcoming || [];
       state.frozenMatches = data.matches || [];   // server-frozen predictions + results (shared, canonical)
       state.daily = data.daily || [];              // daily champion snapshots (shared, locked)
+      state.live = data.live || [];                // in-progress matches (shared)
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
-      renderUpcoming(); renderTrackRecord(); renderDaily();
+      renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive();
       const checkedNow = ptDateTime(Date.now());      // live: when the page just checked
       let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · checked ${checkedNow}`
                        : `Live · checked ${checkedNow}`;
@@ -1089,7 +1118,7 @@
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
   renderForecast();
-  autoLockUpcoming(); renderUpcoming(); renderTrackRecord(); renderDaily();
+  autoLockUpcoming(); renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive();
   fetchResults(false);   // auto-sync on page load
 })();
 </script>
