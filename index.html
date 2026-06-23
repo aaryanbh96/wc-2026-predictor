@@ -3,7 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Cup 2026 Predictor — learns as it goes</title>
+<title>World Cup 2026 Predictor — who's winning, updated live</title>
+<meta name="description" content="A live World Cup 2026 forecast: simulates the whole tournament thousands of times to predict the champion, updates automatically after every match, and grades its own pre-match calls. Built by Aryan Bhardwaj.">
+<link rel="canonical" href="https://wc2026.rearyan.com/">
+<!-- Open Graph (Facebook, iMessage, WhatsApp, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wc2026.rearyan.com/">
+<meta property="og:title" content="World Cup 2026 Predictor — who's winning, updated live">
+<meta property="og:description" content="Simulates the whole tournament thousands of times to forecast the champion. Auto-updates after every match and grades its own predictions.">
+<meta property="og:image" content="https://wc2026.rearyan.com/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="WC 2026 Predictor">
+<!-- Twitter/X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="World Cup 2026 Predictor — who's winning, updated live">
+<meta name="twitter:description" content="Simulates the whole tournament thousands of times to forecast the champion. Auto-updates after every match.">
+<meta name="twitter:image" content="https://wc2026.rearyan.com/preview.png">
 <style>
   :root{
     --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
@@ -160,6 +176,8 @@
   .ufix-v.hit{background:rgba(74,222,128,.12);color:var(--accent);}
   .ufix-v.miss{background:rgba(239,100,97,.12);color:var(--bad);}
   .ufix-v.pend{background:rgba(244,162,59,.12);color:var(--warn);}
+  .ufix .chase .pill{display:inline-flex;align-items:baseline;gap:5px;background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin:0 6px 6px 0;font-size:12px;}
+  .ufix .chase .pill b{color:var(--ink);font-weight:600;} .ufix .chase .pill span{font-family:var(--mono);font-size:11px;color:var(--gold);}
   .fc th{font-family:var(--mono);font-size:10px;color:var(--dim);font-weight:400;text-transform:uppercase;letter-spacing:.05em;padding:6px 6px;text-align:right;border-bottom:1px solid var(--line);}
   .fc th:nth-child(2){text-align:left;}
   .fc td{padding:7px 6px;text-align:right;font-family:var(--mono);border-bottom:1px solid var(--line);}
@@ -191,7 +209,10 @@
 
   <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 18px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
     <span id="syncbar" style="color:var(--mut);">Loading latest results…</span>
-    <button class="ghost" id="refresh-main" style="padding:5px 13px;">Refresh results</button>
+    <div style="display:flex;gap:8px;">
+      <button class="ghost" id="share-btn" style="padding:5px 13px;">Share</button>
+      <button class="ghost" id="refresh-main" style="padding:5px 13px;">Refresh results</button>
+    </div>
   </div>
 
   <nav>
@@ -200,6 +221,7 @@
     <button class="tab" data-t="ledger">Predictions <span class="badge" id="pend-badge" style="display:none;">0</span></button>
     <button class="tab" data-t="result">Log result</button>
     <button class="tab" data-t="record">Track record</button>
+    <button class="tab" data-t="daily">Daily records</button>
     <button class="tab" data-t="ratings">Ratings</button>
     <button class="tab" data-t="groups">Groups</button>
     <button class="tab" data-t="teams">Teams</button>
@@ -256,6 +278,11 @@
   </section>
 
   <section class="panel" id="p-ratings"><div id="ratings-list"></div></section>
+
+  <section class="panel" id="p-daily">
+    <p class="prose" style="margin-bottom:14px;">At the end of each day's matches, the model locks in who it favored to win the World Cup — a timeline of how the prediction shifted across the tournament. Each entry is frozen in the shared file, so it's the same for everyone.</p>
+    <div id="daily-list"></div>
+  </section>
 
   <section class="panel" id="p-record">
     <p class="prose" style="margin-bottom:14px;">Every prediction here was frozen by the model <b>before kickoff</b> and saved to the shared results file — so this record is identical for everyone and can't be edited after the fact. It's the model's public scorecard.</p>
@@ -338,7 +365,7 @@
   function initStandings(){ const s={}; SEED.forEach(([n])=>{ s[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; }); return s; }
   function freshState(){
     const s={teams:freshTeams(),games:0,log:[],standings:initStandings(),
-      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[], frozenMatches:[]};
+      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[], frozenMatches:[], daily:[]};
     SEED_RESULTS.forEach(([a,ga,gb,b])=>{
       learn(s,a,ga,gb,b,true,1,true);
       s.seedSigs.push(sigOf(a,ga,gb,b));
@@ -351,12 +378,17 @@
     try{ const raw=localStorage.getItem(KEY); if(raw){ const s=JSON.parse(raw);
       s.standings=s.standings||initStandings(); s.predictions=s.predictions||[];
       s.preHit=s.preHit||0; s.preGraded=s.preGraded||0; s.preBrierSum=s.preBrierSum||0;
-      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; s.frozenMatches=s.frozenMatches||[]; return s; } }catch(e){}
+      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; s.frozenMatches=s.frozenMatches||[]; s.daily=s.daily||[]; return s; } }catch(e){}
     return freshState();
   }
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
 
   const $=id=>document.getElementById(id);
+  // all user-facing times shown in Pacific Time for consistency
+  const PT='America/Los_Angeles';
+  function ptDateTime(d){ return new Date(d).toLocaleString('en-US',{timeZone:PT,month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' PT'; }
+  function ptDate(d){ return new Date(d).toLocaleDateString('en-US',{timeZone:PT,month:'short',day:'numeric'}); }
+  function ptDayKey(d){ return new Date(d).toLocaleDateString('en-CA',{timeZone:PT}); } // YYYY-MM-DD in PT
   const names=()=>Object.keys(state.teams).sort();
   const rating=n=>state.teams[n].rating;
   // ---- recent-form model: opponent-adjusted, recency-weighted momentum ----
@@ -600,6 +632,7 @@
       const v=t.dataset.t;
       if(v==='forecast')renderForecast();
       if(v==='record')renderTrackRecord();
+      if(v==='daily')renderDaily();
       if(v==='ratings')renderRatings(); if(v==='groups')renderGroups();
       if(v==='teams')renderTeams(); if(v==='ledger')renderLedger();
     };
@@ -609,6 +642,19 @@
   $('show-log').onclick=()=>{ const b=$('logbox'); b.style.display=b.style.display==='none'?'block':'none'; renderLog(); };
   $('sync-now').onclick=()=>fetchResults(true);
   $('refresh-main').onclick=()=>fetchResults(true);
+  $('share-btn').onclick=async()=>{
+    const fc=state.forecast;
+    let champ='', odds='';
+    if(fc){ const ranked=names().sort((a,b)=>fc.tally[b].win-fc.tally[a].win);
+      champ=ranked[0]; odds=(100*fc.tally[champ].win/fc.nsim).toFixed(1)+'%'; }
+    const text = champ? `${champ} are my model's pick to win the World Cup (${odds}). See the live forecast:`
+                      : `Live World Cup 2026 forecast — see who's predicted to win:`;
+    const url='https://wc2026.rearyan.com/';
+    try{
+      if(navigator.share){ await navigator.share({title:'World Cup 2026 Predictor', text, url}); }
+      else { await navigator.clipboard.writeText(text+' '+url); syncBar('Link copied to clipboard','ok'); }
+    }catch(e){ /* user cancelled share — ignore */ }
+  };
   $('rerun-sim').onclick=()=>{
     $('forecast-out').innerHTML='<div class="empty">Running simulation…</div>';
     setTimeout(()=>{ runForecast(); renderForecast(); },30);
@@ -709,7 +755,7 @@
       <tr><th></th><th>team</th><th>win</th><th>final</th><th>semi</th><th>quarter</th><th>last 16</th></tr>
       ${rows}</table>`;
     $('fc-nsim').textContent=fc.nsim.toLocaleString();
-    $('fc-meta').textContent=`Last simulated ${new Date(fc.at).toLocaleString()} · ${fc.nsim.toLocaleString()} runs from current ratings. Third-place qualifiers approximated by rating; treat as an estimate, not the official bracket.`;
+    $('fc-meta').textContent=`Last simulated ${ptDateTime(fc.at)} · ${fc.nsim.toLocaleString()} runs from current ratings. Third-place qualifiers approximated by rating; treat as an estimate, not the official bracket.`;
   }
 
   // ---- upcoming fixtures & auto-lock ----
@@ -755,11 +801,9 @@
     const hits=auto.filter(p=>p.hit).length;
     const accLine = auto.length? `Model's record on its own calls: <b>${hits}/${auto.length}</b> correct` : 'The model locks each call 24h before kickoff, then grades itself.';
     const fmtKO=(utc)=>{
-      const d=new Date(utc), now=new Date();
-      const sameDay=d.toDateString()===now.toDateString();
-      const tmrw=new Date(now.getTime()+86400000).toDateString()===d.toDateString();
-      const day = sameDay?'Today' : tmrw?'Tomorrow' : d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
-      return `${day} · ${d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
+      const todayPT=ptDayKey(Date.now()), tmrwPT=ptDayKey(Date.now()+86400000), koPT=ptDayKey(utc);
+      const day = koPT===todayPT?'Today' : koPT===tmrwPT?'Tomorrow' : new Date(utc).toLocaleDateString('en-US',{timeZone:PT,weekday:'short',month:'short',day:'numeric'});
+      return `${day} · ${new Date(utc).toLocaleTimeString('en-US',{timeZone:PT,hour:'2-digit',minute:'2-digit'})} PT`;
     };
     const cards=day.map(f=>{
       const pr=probs(f.home,f.away,true);
@@ -778,6 +822,23 @@
       </div>`;
     }).join('');
     block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Upcoming matches</div><div class="upc-acc">${accLine}</div></div>${cards}`;
+  }
+
+  // ---- daily champion records: locked timeline of who was favored each day ----
+  function renderDaily(){
+    const list=$('daily-list'); if(!list) return;
+    const d=(state.daily||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    if(!d.length){ list.innerHTML='<div class="empty">No daily records yet. After a day\'s matches finish, the model\'s champion pick for that day locks in here.</div>'; return; }
+    list.innerHTML=d.map(day=>{
+      const champ=day.top&&day.top[0];
+      const chasers=(day.top||[]).slice(1,4).map(t=>`<span class="pill"><b>${t.team}</b> <span>${(t.win*100).toFixed(1)}%</span></span>`).join('');
+      const label=new Date(day.date+'T12:00:00Z').toLocaleDateString('en-US',{timeZone:PT,weekday:'short',month:'short',day:'numeric'});
+      return `<div class="ufix">
+        <div class="top"><span class="teams">${champ?champ.team:'—'} <span style="color:var(--gold);font-family:var(--mono);font-size:13px;">${champ?(champ.win*100).toFixed(1)+'%':''}</span></span>
+          <span class="ko">${label} · ${day.games_played||0} games in</span></div>
+        <div class="chase" style="margin-top:8px;">${chasers}</div>
+      </div>`;
+    }).join('');
   }
 
   // ---- track record: server-frozen, pre-match predictions shared by everyone ----
@@ -843,10 +904,11 @@
       // store upcoming fixtures, auto-lock any within 24h, refresh the main page
       state.upcoming = data.upcoming || [];
       state.frozenMatches = data.matches || [];   // server-frozen predictions + results (shared, canonical)
+      state.daily = data.daily || [];              // daily champion snapshots (shared, locked)
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
-      renderUpcoming(); renderTrackRecord();
-      const when = data.updated ? new Date(data.updated).toLocaleString() : 'unknown';
+      renderUpcoming(); renderTrackRecord(); renderDaily();
+      const when = data.updated ? ptDateTime(data.updated) : 'unknown';
       let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · feed updated ${when}`
                        : `Up to date · feed updated ${when}`;
       if(lockedNow>0) msg += ` · locked ${lockedNow} upcoming`;
@@ -860,7 +922,7 @@
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
   renderForecast();
-  autoLockUpcoming(); renderUpcoming(); renderTrackRecord();
+  autoLockUpcoming(); renderUpcoming(); renderTrackRecord(); renderDaily();
   fetchResults(false);   // auto-sync on page load
 })();
 </script>
