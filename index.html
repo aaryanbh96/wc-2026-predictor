@@ -322,9 +322,9 @@
   const names=()=>Object.keys(state.teams).sort();
   const rating=n=>state.teams[n].rating;
   // ---- recent-form model: opponent-adjusted, recency-weighted momentum ----
-  // moderate calibration: last up-to-5 games, newest 3 weighted heavier,
-  // expected results contribute ~nothing, surprises against strong teams count most.
-  const FORM_CAP=110, FORM_SCALE=3.2;
+  // moderate calibration with asymmetric goal-difference weighting:
+  // heavy losses bite harder than wins reward, and a thrashing stings even when "expected".
+  const FORM_CAP=140, FORM_SCALE=4.2;
   function rawExpect(a,b){ return 1/(1+Math.pow(10,((rating(b)-rating(a))/400))); } // base-rating only
   function formNudge(team){
     const t=state.teams[team]; if(!t||!t.hist||!t.hist.length) return 0;
@@ -337,13 +337,20 @@
       const sA=g.gf>g.ga?1:g.gf<g.ga?0:0.5;
       const surprise=sA-eA;
       const inf=1-Math.pow(2*Math.abs(eA-0.5),1.5);      // coin-flips inform, blowouts don't
-      const margin=Math.min(3,Math.abs(g.gf-g.ga));
-      const gdMult=1+0.12*margin*(((surprise>=0)===(g.gf>=g.ga))?1:-1);
-      num+=w*surprise*gdMult*inf; den+=w;
+      const margin=Math.abs(g.gf-g.ga);
+      let contrib;
+      if(g.gf>g.ga){            // win: mild margin bonus, damped by how expected it was
+        contrib=surprise*(1+0.10*Math.min(3,margin))*inf;
+      }else if(g.gf<g.ga){      // loss: steeper margin penalty; a thrashing stings even if expected
+        const base=surprise*(1+0.30*Math.min(4,margin));
+        contrib=base*(0.55*inf+0.45);
+      }else{                    // draw: goal-difference neutral
+        contrib=surprise*inf;
+      }
+      num+=w*contrib; den+=w;
     });
     const f=den?num/den:0;
-    // ramp by how many games inform the run: one game can't max the cap, a sustained run can
-    const sampleScale=Math.min(1, n/3);   // 1 game ~0.33, 2 ~0.67, 3+ full weight
+    const sampleScale=Math.min(1, n/3);   // one game can't max the cap; a sustained run can
     return Math.max(-FORM_CAP,Math.min(FORM_CAP,f*FORM_CAP*FORM_SCALE*sampleScale));
   }
   // effective rating = base + bounded form nudge; used for ALL forward predictions
