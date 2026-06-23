@@ -28,7 +28,8 @@ from datetime import datetime, timezone
 TOKEN = os.environ.get("FOOTBALL_DATA_TOKEN", "").strip()
 # football-data.org competition code for the FIFA World Cup
 COMP = "WC"
-URL = f"https://api.football-data.org/v4/competitions/{COMP}/matches?status=FINISHED"
+# No status filter: we want finished results AND upcoming fixtures in one call.
+URL = f"https://api.football-data.org/v4/competitions/{COMP}/matches"
 OUT = "results.json"
 
 # Normalize football-data.org names -> the names used in the predictor page.
@@ -40,6 +41,7 @@ NAME_MAP = {
     "Turkey": "Türkiye",
     "Ivory Coast": "Côte d'Ivoire",
     "Cape Verde": "Cabo Verde",
+    "Cape Verde Islands": "Cabo Verde",
     "DR Congo": "Congo DR",
     "Curacao": "Curaçao",
     "Bosnia": "Bosnia and Herzegovina",
@@ -47,7 +49,6 @@ NAME_MAP = {
     "Czech Republic": "Czechia",
     "United States": "USA",
     "USMNT": "USA",
-    "Cape Verde Islands": "Cabo Verde",
 }
 
 # The 48 valid team names in the predictor, for a sanity warning.
@@ -87,49 +88,64 @@ def fetch():
 
 def main():
     data = fetch()
-    matches = []
+    matches = []        # finished, with scores
+    upcoming = []       # scheduled/timed, no scores yet
     unmatched = set()
     for m in data.get("matches", []):
-        if m.get("status") != "FINISHED":
-            continue
+        status = m.get("status")
         home = norm((m.get("homeTeam") or {}).get("name"))
         away = norm((m.get("awayTeam") or {}).get("name"))
-        ft = (m.get("score") or {}).get("fullTime") or {}
-        hg, ag = ft.get("home"), ft.get("away")
-        if hg is None or ag is None:
+        # Skip fixtures whose teams aren't set yet (e.g. "Winner Group A" placeholders).
+        if not home or not away:
             continue
-        if home not in VALID:
-            unmatched.add(home)
-        if away not in VALID:
-            unmatched.add(away)
-        matches.append({
-            "id": m.get("id"),
-            "utc": m.get("utcDate"),
-            "home": home, "away": away,
-            "hg": int(hg), "ag": int(ag),
-        })
+        if status == "FINISHED":
+            ft = (m.get("score") or {}).get("fullTime") or {}
+            hg, ag = ft.get("home"), ft.get("away")
+            if hg is None or ag is None:
+                continue
+            if home not in VALID:
+                unmatched.add(home)
+            if away not in VALID:
+                unmatched.add(away)
+            matches.append({
+                "id": m.get("id"),
+                "utc": m.get("utcDate"),
+                "home": home, "away": away,
+                "hg": int(hg), "ag": int(ag),
+            })
+        elif status in ("SCHEDULED", "TIMED"):
+            # Only include real team-vs-team fixtures the page knows about.
+            if home in VALID and away in VALID:
+                upcoming.append({
+                    "id": m.get("id"),
+                    "utc": m.get("utcDate"),
+                    "home": home, "away": away,
+                })
 
     matches.sort(key=lambda x: x.get("utc") or "")
+    upcoming.sort(key=lambda x: x.get("utc") or "")
     out = {
         "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "matches": matches,
+        "upcoming": upcoming,
     }
 
-    # Only rewrite if the match data actually changed (ignore the timestamp),
-    # so the workflow's git-diff check doesn't commit noise every hour.
-    old_matches = None
+    # Only rewrite if the substantive data changed (ignore the timestamp), so the
+    # workflow's git-diff check doesn't commit noise every hour.
+    old = None
     if os.path.exists(OUT):
         try:
-            old_matches = json.load(open(OUT)).get("matches")
+            prev = json.load(open(OUT))
+            old = (prev.get("matches"), prev.get("upcoming"))
         except Exception:
-            old_matches = None
-    if old_matches == matches:
-        print(f"No change: {len(matches)} finished matches.")
+            old = None
+    if old == (matches, upcoming):
+        print(f"No change: {len(matches)} finished, {len(upcoming)} upcoming.")
         return
 
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
-    print(f"Wrote {len(matches)} finished matches to {OUT}.")
+    print(f"Wrote {len(matches)} finished + {len(upcoming)} upcoming matches to {OUT}.")
     if unmatched:
         print("WARNING: unmatched team names (add to NAME_MAP): "
               + ", ".join(sorted(unmatched)), file=sys.stderr)
