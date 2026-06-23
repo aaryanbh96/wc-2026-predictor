@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23T02:26:31Z",
+  "updated": "2026-06-23T05:50:33Z",
   "matches": [
     {
       "id": 537327,
@@ -452,20 +452,23 @@
         "pB": 0.3234
       },
       "hit": true
-    }
-  ],
-  "upcoming": [
+    },
     {
       "id": 537400,
       "utc": "2026-06-23T03:00:00Z",
       "home": "Jordan",
       "away": "Algeria",
+      "hg": 1,
+      "ag": 2,
       "predicted": {
         "pA": 0.2664,
         "pD": 0.2082,
         "pB": 0.5255
-      }
-    },
+      },
+      "hit": true
+    }
+  ],
+  "upcoming": [
     {
       "id": 537405,
       "utc": "2026-06-23T17:00:00Z",
@@ -773,6 +776,34 @@
         "pD": 0.1992,
         "pB": 0.5505
       }
+    }
+  ],
+  "daily": [
+    {
+      "date": "2026-06-22",
+      "games_played": 44,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1946
+        },
+        {
+          "team": "France",
+          "win": 0.147
+        },
+        {
+          "team": "England",
+          "win": 0.1332
+        },
+        {
+          "team": "USA",
+          "win": 0.0743
+        },
+        {
+          "team": "Spain",
+          "win": 0.0653
+        }
+      ]
     }
   ]
 }
