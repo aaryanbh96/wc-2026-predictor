@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23T19:15:17Z",
+  "updated": "2026-06-23T20:15:19Z",
   "matches": [
     {
       "id": 537327,
@@ -484,17 +484,6 @@
   ],
   "upcoming": [
     {
-      "id": 537411,
-      "utc": "2026-06-23T20:00:00Z",
-      "home": "England",
-      "away": "Ghana",
-      "predicted": {
-        "pA": 0.6782,
-        "pD": 0.1555,
-        "pB": 0.1664
-      }
-    },
-    {
       "id": 537412,
       "utc": "2026-06-23T23:00:00Z",
       "home": "Panama",
@@ -815,35 +804,35 @@
       "top": [
         {
           "team": "Argentina",
-          "win": 0.1866
+          "win": 0.189
         },
         {
           "team": "France",
-          "win": 0.1527
+          "win": 0.1474
         },
         {
           "team": "England",
-          "win": 0.1352
+          "win": 0.1366
         },
         {
           "team": "USA",
-          "win": 0.0752
+          "win": 0.0726
         },
         {
           "team": "Spain",
-          "win": 0.0617
+          "win": 0.0654
         },
         {
           "team": "Germany",
-          "win": 0.0602
+          "win": 0.0555
         },
         {
           "team": "Mexico",
-          "win": 0.0493
+          "win": 0.0524
         },
         {
-          "team": "Brazil",
-          "win": 0.0423
+          "team": "Netherlands",
+          "win": 0.0435
         }
       ]
     }
