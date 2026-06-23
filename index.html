@@ -257,6 +257,7 @@
       <p><b>The rating model (the “ML” core).</b> Every team carries a strength number. To predict, the model feeds the rating gap through a logistic curve — <code>P(A wins) = 1 / (1 + 10^((Rb − Ra)/400))</code> — the same math as chess Elo. A draw probability is carved out, larger when teams are even. Neutral venue gives no home bump; otherwise team A gets <code>+60</code>.</p>
       <p><b>The pre-match ledger.</b> When you lock a prediction, the app stamps it with the probabilities and the time, and parks it as <b>pending</b>. Nothing about the result is known yet. When the score lands, that locked call is graded — was the favorite right, and what was its Brier score — and only those graded, ahead-of-time calls feed the <b>pre-match hit rate</b> and <b>pre-match Brier</b> at the top. That's the number that actually tells you if the model predicts well.</p>
       <p><b>The learning loop (the “RL” part).</b> After grading, the model shifts both ratings toward the truth: <code>Δ = K · margin · (actual − expected)</code>. Upsets move ratings hard; expected results barely nudge them. A <b>4–0</b> teaches more than a <b>1–0</b>; knockouts can weigh heavier.</p>
+      <p><b>Recent form (momentum).</b> On top of the base rating, the model tracks each team's last few games and adds a bounded form nudge. Crucially it's opponent-adjusted: drawing Spain and Uruguay says far more than beating a minnow, because only <i>surprising</i> results build form — an expected win adds almost nothing. The newest three games weigh heaviest, it caps at five, and goal difference modulates it. A single game can't max it out; sustained form can. That's why a team on a real run against strong opposition can be favored over a higher-rated side that's been flat.</p>
       <p><b>Pre-loaded.</b> Ships trained on the real round-1 group results, so ratings already reflect what's happened. Those seed results are learned-from but not counted as pre-match calls — you hadn't predicted them in advance.</p>
       <p><b>Honest limits.</b> It only sees ratings — not injuries, rotation, rest, or tactics — so it won't beat a Vegas book. It's a transparent learner you can watch reason and hold accountable.</p>
     </div>
@@ -320,12 +321,39 @@
   const $=id=>document.getElementById(id);
   const names=()=>Object.keys(state.teams).sort();
   const rating=n=>state.teams[n].rating;
+  // ---- recent-form model: opponent-adjusted, recency-weighted momentum ----
+  // moderate calibration: last up-to-5 games, newest 3 weighted heavier,
+  // expected results contribute ~nothing, surprises against strong teams count most.
+  const FORM_CAP=110, FORM_SCALE=3.2;
+  function rawExpect(a,b){ return 1/(1+Math.pow(10,((rating(b)-rating(a))/400))); } // base-rating only
+  function formNudge(team){
+    const t=state.teams[team]; if(!t||!t.hist||!t.hist.length) return 0;
+    const games=t.hist.slice(-5); const n=games.length;
+    let num=0,den=0;
+    games.forEach((g,i)=>{
+      if(!state.teams[g.opp]) return;
+      const fromEnd=n-1-i, w=fromEnd>=3?1.0:(2.2-0.4*fromEnd);
+      const eA=rawExpect(team,g.opp);
+      const sA=g.gf>g.ga?1:g.gf<g.ga?0:0.5;
+      const surprise=sA-eA;
+      const inf=1-Math.pow(2*Math.abs(eA-0.5),1.5);      // coin-flips inform, blowouts don't
+      const margin=Math.min(3,Math.abs(g.gf-g.ga));
+      const gdMult=1+0.12*margin*(((surprise>=0)===(g.gf>=g.ga))?1:-1);
+      num+=w*surprise*gdMult*inf; den+=w;
+    });
+    const f=den?num/den:0;
+    // ramp by how many games inform the run: one game can't max the cap, a sustained run can
+    const sampleScale=Math.min(1, n/3);   // 1 game ~0.33, 2 ~0.67, 3+ full weight
+    return Math.max(-FORM_CAP,Math.min(FORM_CAP,f*FORM_CAP*FORM_SCALE*sampleScale));
+  }
+  // effective rating = base + bounded form nudge; used for ALL forward predictions
+  const effRating=n=>state.teams[n].rating+formNudge(n);
   const pairKey=(a,b)=>[a,b].sort().join(' ⚔ ');
   // orientation-independent match signature: each team bound to its own goals
   function sigOf(a,ga,gb,b){
     return [a+':'+ga, b+':'+gb].sort().join('|');
   }
-  function expected(a,b,neutral){ const adj=neutral?0:HOME_ADV; return 1/(1+Math.pow(10,((rating(b)-(rating(a)+adj))/400))); }
+  function expected(a,b,neutral){ const adj=neutral?0:HOME_ADV; return 1/(1+Math.pow(10,((effRating(b)-(effRating(a)+adj))/400))); }
   function probs(a,b,neutral){
     const eA=expected(a,b,neutral); const drawW=0.27*(1-Math.abs(eA-0.5)*1.4);
     return {eA, pA:eA*(1-drawW), pB:(1-eA)*(1-drawW), pD:drawW};
@@ -347,6 +375,9 @@
     }}
     const decisive=sA!==0.5, favWon=(eA>=0.5&&sA===1)||(eA<0.5&&sA===0);
     const upset=decisive&&!favWon&&Math.abs(eA-0.5)>0.12;
+    // record recent-match history for the form model (most recent pushed to end)
+    if(s.teams[a]){ (s.teams[a].hist=s.teams[a].hist||[]).push({opp:b,gf:ga,ga:gb}); if(s.teams[a].hist.length>8)s.teams[a].hist.shift(); }
+    if(s.teams[b]){ (s.teams[b].hist=s.teams[b].hist||[]).push({opp:a,gf:gb,ga:ga}); if(s.teams[b].hist.length>8)s.teams[b].hist.shift(); }
     s.log.unshift({txt:`${a} ${ga}–${gb} ${b} · ${a} ${delta>=0?'+':''}${delta.toFixed(0)}${upset?' · UPSET':''}`,up:upset,seed:!!isSeed});
     if(s.log.length>120) s.log.pop();
     return {eA,delta,before,upset,sA};
@@ -396,12 +427,14 @@
     if(a===b){ $('predict-out').innerHTML='<p class="note">Pick two different teams.</p>'; return; }
     const pr=probs(a,b,neutral);
     const fav=pr.pA>=pr.pB?a:b, favP=Math.max(pr.pA,pr.pB);
+    const fnA=formNudge(a), fnB=formNudge(b);
+    const formNote=(Math.abs(fnA)>=8||Math.abs(fnB)>=8)?` · form ${a} ${fnA>=0?'+':''}${Math.round(fnA)}, ${b} ${fnB>=0?'+':''}${Math.round(fnB)}`:'';
     const existing=findPending(a,b);
     $('predict-out').innerHTML=`<div class="card">
       ${bar(a,Math.round(pr.pA*100),'var(--a)',true)}
       ${bar('Draw',Math.round(pr.pD*100),'var(--draw)')}
       ${bar(b,Math.round(pr.pB*100),'var(--b)',true)}
-      <p class="note">Model favors <b>${fav}</b> at <b>${Math.round(favP*100)}%</b> to win in 90′ · ratings ${Math.round(rating(a))} vs ${Math.round(rating(b))}${neutral?' · neutral':' · '+a+' home'}</p>
+      <p class="note">Model favors <b>${fav}</b> at <b>${Math.round(favP*100)}%</b> to win in 90′ · ratings ${Math.round(rating(a))} vs ${Math.round(rating(b))}${neutral?' · neutral':' · '+a+' home'}${formNote}</p>
       <div class="toolbar">
         ${existing?'<span class="note" style="margin:0;">A prediction for this match is already locked.</span>'
           :`<button class="act alt" id="lock-pred">Lock this prediction</button>`}
@@ -489,7 +522,8 @@
     const max=rating(sorted[0]),min=rating(sorted[sorted.length-1]);
     $('ratings-list').innerHTML=sorted.map((n,i)=>{
       const w=Math.round(100*(rating(n)-min+25)/(max-min+25));
-      return `<div class="rk"><span class="n">${i+1}</span><span class="nm">${n}</span><span class="conf">${state.teams[n].group}</span><span class="t"><span class="f" style="width:${w}%"></span></span><span class="rt">${Math.round(rating(n))}</span></div>`;
+      const fn=formNudge(n), fs=Math.abs(fn)<5?'':(fn>0?`<span style="color:var(--accent);font-size:11px;margin-left:6px;">▲${Math.round(fn)}</span>`:`<span style="color:var(--bad);font-size:11px;margin-left:6px;">▼${Math.round(-fn)}</span>`);
+      return `<div class="rk"><span class="n">${i+1}</span><span class="nm">${n}${fs}</span><span class="conf">${state.teams[n].group}</span><span class="t"><span class="f" style="width:${w}%"></span></span><span class="rt">${Math.round(rating(n))}</span></div>`;
     }).join('');
   }
   function renderGroups(){
@@ -544,26 +578,26 @@
 
   // ---- Monte Carlo: simulate the rest of the tournament to forecast the winner ----
   const NSIM=20000;
-  function pWinKO(a,b){ // knockout win prob (draws resolved), neutral venue
-    return 1/(1+Math.pow(10,((rating(b)-rating(a))/400)));
-  }
+  let EFF={};  // cached effective ratings for the current sim run (base + form)
+  function pWinKO(a,b){ return 1/(1+Math.pow(10,((EFF[b]-EFF[a])/400))); }
   function simGroup(teams){
     const pts={},gd={};
     teams.forEach(t=>{pts[t]=0;gd[t]=0;});
     for(let i=0;i<teams.length;i++) for(let j=i+1;j<teams.length;j++){
       const a=teams[i],b=teams[j];
-      const eA=1/(1+Math.pow(10,((rating(b)-rating(a))/400)));
+      const eA=1/(1+Math.pow(10,((EFF[b]-EFF[a])/400)));
       const drawW=0.27*(1-Math.abs(eA-0.5)*1.4);
       const r=Math.random();
       if(r<drawW){pts[a]++;pts[b]++;}
       else if(r<drawW+eA*(1-drawW)){pts[a]+=3;gd[a]++;gd[b]--;}
       else{pts[b]+=3;gd[b]++;gd[a]--;}
     }
-    return teams.slice().sort((x,y)=> pts[y]-pts[x] || gd[y]-gd[x] || rating(y)-rating(x));
+    return teams.slice().sort((x,y)=> pts[y]-pts[x] || gd[y]-gd[x] || EFF[y]-EFF[x]);
   }
   function runForecast(nsim){
     nsim=nsim||NSIM;
     const all=names();
+    EFF={}; all.forEach(n=> EFF[n]=effRating(n));   // compute form-adjusted ratings once
     const groups={}; all.forEach(n=>{ (groups[state.teams[n].group]=groups[state.teams[n].group]||[]).push(n); });
     const gkeys=Object.keys(groups).sort();
     const tally={}; all.forEach(t=> tally[t]={r16:0,qf:0,sf:0,final:0,win:0});
@@ -575,7 +609,7 @@
         firsts.push(o[0]); seconds.push(o[1]); if(o[2]!==undefined) thirds.push(o[2]);
       }
       // best 8 third-place teams — approximated by rating (proxy for points)
-      thirds.sort((a,b)=>rating(b)-rating(a));
+      thirds.sort((a,b)=>EFF[b]-EFF[a]);
       const qual=firsts.concat(seconds, thirds.slice(0,8));
       // shuffle into a single-elim bracket
       for(let i=qual.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [qual[i],qual[j]]=[qual[j],qual[i]]; }
