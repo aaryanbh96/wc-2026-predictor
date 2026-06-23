@@ -735,14 +735,16 @@
     if(locked) save();
     return locked;
   }
-  // the "next matchday" = the earliest upcoming calendar day that has fixtures
+  // the upcoming list = the next N fixtures by kickoff, regardless of calendar day.
+  // finished matches naturally drop off (they leave state.upcoming on the next sync).
+  const UPCOMING_SHOWN=5;
   function nextMatchday(){
     if(!state.upcoming||!state.upcoming.length) return [];
-    const future=state.upcoming.filter(f=>state.teams[f.home]&&state.teams[f.away]&&Date.parse(f.utc)>Date.now()-3*60*60*1000)
-      .sort((a,b)=>Date.parse(a.utc)-Date.parse(b.utc));
-    if(!future.length) return [];
-    const day0=new Date(future[0].utc).toDateString();
-    return future.filter(f=>new Date(f.utc).toDateString()===day0);
+    const now=Date.now();
+    return state.upcoming
+      .filter(f=>state.teams[f.home]&&state.teams[f.away]&&Date.parse(f.utc)>now-2.5*60*60*1000)
+      .sort((a,b)=>Date.parse(a.utc)-Date.parse(b.utc))
+      .slice(0,UPCOMING_SHOWN);
   }
   function renderUpcoming(){
     const block=$('upcoming-block'); if(!block) return;
@@ -752,7 +754,13 @@
     const auto=state.predictions.filter(p=>p.auto&&p.result);
     const hits=auto.filter(p=>p.hit).length;
     const accLine = auto.length? `Model's record on its own calls: <b>${hits}/${auto.length}</b> correct` : 'The model locks each call 24h before kickoff, then grades itself.';
-    const label=new Date(day[0].utc).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+    const fmtKO=(utc)=>{
+      const d=new Date(utc), now=new Date();
+      const sameDay=d.toDateString()===now.toDateString();
+      const tmrw=new Date(now.getTime()+86400000).toDateString()===d.toDateString();
+      const day = sameDay?'Today' : tmrw?'Tomorrow' : d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+      return `${day} · ${d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
+    };
     const cards=day.map(f=>{
       const pr=probs(f.home,f.away,true);
       const pend=findPending(f.home,f.away);
@@ -760,15 +768,16 @@
       const fav=pr.pA>=pr.pB?f.home:f.away, favP=Math.round(Math.max(pr.pA,pr.pB)*100);
       const flag = pend? '<span class="lockflag">call locked</span>'
                  : within? '<span class="lockflag live">locking…</span>'
-                 : `<span class="ko">${new Date(f.utc).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>`;
+                 : `<span class="ko">${fmtKO(f.utc)}</span>`;
+      const koLine = (pend||within)? `<span class="ko" style="margin-left:8px;">${fmtKO(f.utc)}</span>` : '';
       const pA=Math.round(pr.pA*100),pD=Math.round(pr.pD*100),pB=Math.round(pr.pB*100);
       return `<div class="ufix">
-        <div class="top"><span class="teams">${f.home} v ${f.away}</span>${flag}</div>
+        <div class="top"><span class="teams">${f.home} v ${f.away}${koLine}</span>${flag}</div>
         <div class="pbar"><i style="width:${pA}%;background:var(--a)"></i><i style="width:${pD}%;background:var(--draw)"></i><i style="width:${pB}%;background:var(--b)"></i></div>
         <div class="plab"><span><b>${f.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${f.away}</b> ${pB}%</span></div>
       </div>`;
     }).join('');
-    block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Next matchday · ${label}</div><div class="upc-acc">${accLine}</div></div>${cards}`;
+    block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Upcoming matches</div><div class="upc-acc">${accLine}</div></div>${cards}`;
   }
 
   // ---- track record: server-frozen, pre-match predictions shared by everyone ----
