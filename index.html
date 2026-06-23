@@ -138,6 +138,24 @@
   .champ .chase .pill b{color:var(--ink);font-weight:600;} .champ .chase .pill span{font-family:var(--mono);font-size:11px;color:var(--gold);}
 
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
+
+  /* upcoming fixtures with the model's locked-in calls */
+  .upc-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+  .upc-acc{font-family:var(--mono);font-size:12px;color:var(--mut);}
+  .upc-acc b{color:var(--accent);}
+  .ufix{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin-bottom:10px;}
+  .ufix .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .ufix .teams{font-size:15px;font-weight:600;}
+  .ufix .ko{font-family:var(--mono);font-size:11px;color:var(--dim);}
+  .ufix .lockflag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(124,109,242,.14);color:#a99bff;}
+  .ufix .lockflag.live{background:rgba(244,162,59,.14);color:var(--warn);}
+  .ufix .pbar{display:flex;height:8px;border-radius:5px;overflow:hidden;margin-top:10px;background:var(--panel2);}
+  .ufix .pbar i{height:100%;display:block;}
+  .ufix .plab{display:flex;justify-content:space-between;font-size:11px;font-family:var(--mono);color:var(--mut);margin-top:6px;}
+  .ufix .plab b{color:var(--ink);font-weight:600;}
+  .ufix .verdict{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;}
+  .ufix .verdict.hit{background:rgba(74,222,128,.12);color:var(--accent);}
+  .ufix .verdict.miss{background:rgba(239,100,97,.12);color:var(--bad);}
   .fc th{font-family:var(--mono);font-size:10px;color:var(--dim);font-weight:400;text-transform:uppercase;letter-spacing:.05em;padding:6px 6px;text-align:right;border-bottom:1px solid var(--line);}
   .fc th:nth-child(2){text-align:left;}
   .fc td{padding:7px 6px;text-align:right;font-family:var(--mono);border-bottom:1px solid var(--line);}
@@ -167,7 +185,10 @@
     <div class="stat"><div class="lab">teams</div><div class="val" id="s-teams">48</div></div>
   </div>
 
-  <div id="syncbar" style="display:none;margin:-8px 0 18px;font-family:var(--mono);font-size:12px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);"></div>
+  <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 18px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
+    <span id="syncbar" style="color:var(--mut);">Loading latest results…</span>
+    <button class="ghost" id="refresh-main" style="padding:5px 13px;">Refresh results</button>
+  </div>
 
   <nav>
     <button class="tab on" data-t="forecast">Forecast</button>
@@ -182,6 +203,7 @@
 
   <section class="panel on" id="p-forecast">
     <div id="champ-hero"></div>
+    <div id="upcoming-block" style="margin-top:22px;"></div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;margin-top:22px;">
       <div class="sechead" style="margin:0;">Full forecast — <span id="fc-nsim">20,000</span> simulations</div>
       <button class="ghost" id="rerun-sim">Re-run simulation</button>
@@ -262,6 +284,11 @@
       <p><b>Honest limits.</b> It only sees ratings — not injuries, rotation, rest, or tactics — so it won't beat a Vegas book. It's a transparent learner you can watch reason and hold accountable.</p>
     </div>
   </section>
+
+  <footer style="margin-top:48px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim);">
+    <span>Made by <span style="color:var(--ink);">Aryan Bhardwaj</span></span>
+    <a id="site-link" href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>
+  </footer>
 </div>
 
 <script>
@@ -300,7 +327,7 @@
   function initStandings(){ const s={}; SEED.forEach(([n])=>{ s[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; }); return s; }
   function freshState(){
     const s={teams:freshTeams(),games:0,log:[],standings:initStandings(),
-      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null};
+      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[]};
     SEED_RESULTS.forEach(([a,ga,gb,b])=>{
       learn(s,a,ga,gb,b,true,1,true);
       s.seedSigs.push(sigOf(a,ga,gb,b));
@@ -313,7 +340,7 @@
     try{ const raw=localStorage.getItem(KEY); if(raw){ const s=JSON.parse(raw);
       s.standings=s.standings||initStandings(); s.predictions=s.predictions||[];
       s.preHit=s.preHit||0; s.preGraded=s.preGraded||0; s.preBrierSum=s.preBrierSum||0;
-      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; return s; } }catch(e){}
+      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; return s; } }catch(e){}
     return freshState();
   }
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
@@ -473,7 +500,7 @@
     }
     const res=learn(state,a,ga,gb,b,neutral,stageW,false);
     save(); refreshStats(); renderRatings(); fillAll(); renderLog(); renderGroups(); renderLedger();
-    runForecast(); renderForecast();
+    runForecast(); renderForecast(); renderUpcoming();
     let html=`<div class="card">`;
     if(gradeInfo){
       html+=`<p class="note" style="margin-top:0;">Graded the locked call: <span class="${gradeInfo.hit?'':'danger'}">${gradeInfo.hit?'✓ correct':'✗ missed'}</span> · brier ${gradeInfo.brier.toFixed(3)}</p>`;
@@ -569,6 +596,7 @@
   $('go-result').onclick=doResult;
   $('show-log').onclick=()=>{ const b=$('logbox'); b.style.display=b.style.display==='none'?'block':'none'; renderLog(); };
   $('sync-now').onclick=()=>fetchResults(true);
+  $('refresh-main').onclick=()=>fetchResults(true);
   $('rerun-sim').onclick=()=>{
     $('forecast-out').innerHTML='<div class="empty">Running simulation…</div>';
     setTimeout(()=>{ runForecast(); renderForecast(); },30);
@@ -672,9 +700,68 @@
     $('fc-meta').textContent=`Last simulated ${new Date(fc.at).toLocaleString()} · ${fc.nsim.toLocaleString()} runs from current ratings. Third-place qualifiers approximated by rating; treat as an estimate, not the official bracket.`;
   }
 
+  // ---- upcoming fixtures & auto-lock ----
+  const LOCK_WINDOW_MS = 24*60*60*1000;   // lock the model's call when kickoff is within 24h
+  // auto-lock predictions for fixtures kicking off within the window and not yet played
+  function autoLockUpcoming(){
+    if(!state.upcoming) return 0;
+    const now=Date.now(); let locked=0;
+    for(const f of state.upcoming){
+      if(!state.teams[f.home]||!state.teams[f.away]) continue;
+      const ko=Date.parse(f.utc); if(isNaN(ko)) continue;
+      if(ko - now > LOCK_WINDOW_MS) continue;     // too early — wait until 24h out
+      if(ko < now - 6*60*60*1000) continue;        // long past, skip (result handles it)
+      if(findPending(f.home,f.away)) continue;     // already locked
+      // don't lock if we've already settled this exact pairing
+      const already=state.predictions.find(p=>p.result && pairKey(p.a,p.b)===pairKey(f.home,f.away));
+      if(already) continue;
+      const pr=probs(f.home,f.away,true);          // neutral venue
+      state.predictions.unshift({a:f.home,b:f.away,neutral:true,pA:pr.pA,pB:pr.pB,pD:pr.pD,
+        rA:Math.round(rating(f.home)),rB:Math.round(rating(f.away)),at:Date.now(),auto:true,ko:f.utc});
+      locked++;
+    }
+    if(locked) save();
+    return locked;
+  }
+  // the "next matchday" = the earliest upcoming calendar day that has fixtures
+  function nextMatchday(){
+    if(!state.upcoming||!state.upcoming.length) return [];
+    const future=state.upcoming.filter(f=>state.teams[f.home]&&state.teams[f.away]&&Date.parse(f.utc)>Date.now()-3*60*60*1000)
+      .sort((a,b)=>Date.parse(a.utc)-Date.parse(b.utc));
+    if(!future.length) return [];
+    const day0=new Date(future[0].utc).toDateString();
+    return future.filter(f=>new Date(f.utc).toDateString()===day0);
+  }
+  function renderUpcoming(){
+    const block=$('upcoming-block'); if(!block) return;
+    const day=nextMatchday();
+    if(!day.length){ block.innerHTML=''; return; }
+    // accountability: tally graded auto-locked calls
+    const auto=state.predictions.filter(p=>p.auto&&p.result);
+    const hits=auto.filter(p=>p.hit).length;
+    const accLine = auto.length? `Model's record on its own calls: <b>${hits}/${auto.length}</b> correct` : 'The model locks each call 24h before kickoff, then grades itself.';
+    const label=new Date(day[0].utc).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+    const cards=day.map(f=>{
+      const pr=probs(f.home,f.away,true);
+      const pend=findPending(f.home,f.away);
+      const ko=Date.parse(f.utc), within=ko-Date.now()<=LOCK_WINDOW_MS;
+      const fav=pr.pA>=pr.pB?f.home:f.away, favP=Math.round(Math.max(pr.pA,pr.pB)*100);
+      const flag = pend? '<span class="lockflag">call locked</span>'
+                 : within? '<span class="lockflag live">locking…</span>'
+                 : `<span class="ko">${new Date(f.utc).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>`;
+      const pA=Math.round(pr.pA*100),pD=Math.round(pr.pD*100),pB=Math.round(pr.pB*100);
+      return `<div class="ufix">
+        <div class="top"><span class="teams">${f.home} v ${f.away}</span>${flag}</div>
+        <div class="pbar"><i style="width:${pA}%;background:var(--a)"></i><i style="width:${pD}%;background:var(--draw)"></i><i style="width:${pB}%;background:var(--b)"></i></div>
+        <div class="plab"><span><b>${f.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${f.away}</b> ${pB}%</span></div>
+      </div>`;
+    }).join('');
+    block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Next matchday · ${label}</div><div class="upc-acc">${accLine}</div></div>${cards}`;
+  }
+
   // ---- auto-update: read results.json written hourly by the GitHub Action ----
   function syncBar(msg, kind){
-    const el=$('syncbar'); el.style.display='block';
+    const el=$('syncbar'); if(!el) return;
     el.style.color = kind==='err'?'var(--bad)':kind==='ok'?'var(--accent)':'var(--mut)';
     el.textContent=msg;
   }
@@ -699,12 +786,17 @@
         state.syncedIds.push(id); applied++;
       }
       save();
-      if(applied>0){ runForecast(); renderForecast(); }
+      // store upcoming fixtures, auto-lock any within 24h, refresh the main page
+      state.upcoming = data.upcoming || [];
+      const lockedNow = autoLockUpcoming();
+      if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
+      renderUpcoming();
       const when = data.updated ? new Date(data.updated).toLocaleString() : 'unknown';
       let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · feed updated ${when}`
                        : `Up to date · feed updated ${when}`;
+      if(lockedNow>0) msg += ` · locked ${lockedNow} upcoming`;
       if(unmatched.length) msg += ` · ${unmatched.length} unmatched (name mismatch)`;
-      syncBar(msg, applied?'ok':'muted');
+      syncBar(msg, (applied||lockedNow)?'ok':'muted');
     }catch(e){
       syncBar(manual?'Sync failed — check that results.json is reachable.':'','err');
     }
@@ -713,6 +805,7 @@
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
   renderForecast();
+  autoLockUpcoming(); renderUpcoming();
   fetchResults(false);   // auto-sync on page load
 })();
 </script>
