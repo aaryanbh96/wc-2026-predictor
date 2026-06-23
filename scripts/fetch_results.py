@@ -25,6 +25,8 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone
 
+from model import Model
+
 TOKEN = os.environ.get("FOOTBALL_DATA_TOKEN", "").strip()
 # football-data.org competition code for the FIFA World Cup
 COMP = "WC"
@@ -124,6 +126,52 @@ def main():
 
     matches.sort(key=lambda x: x.get("utc") or "")
     upcoming.sort(key=lambda x: x.get("utc") or "")
+
+    # ---- freeze pre-match predictions using the ported model ----
+    # Load any predictions already frozen in the previous results.json so a match
+    # keeps the call the model made while it was still upcoming (no hindsight).
+    prev_pred = {}
+    if os.path.exists(OUT):
+        try:
+            prev = json.load(open(OUT))
+            for mm in (prev.get("matches", []) + prev.get("upcoming", [])):
+                if mm.get("predicted") and mm.get("id") is not None:
+                    prev_pred[mm["id"]] = mm["predicted"]
+        except Exception:
+            prev_pred = {}
+
+    model = Model()
+    # Replay finished matches in date order. For each, the honest pre-match prediction
+    # is the one computed from ratings BEFORE this match is learned.
+    for mm in matches:
+        if mm["home"] in model.rating and mm["away"] in model.rating:
+            # prefer a prediction frozen earlier (while the match was upcoming)
+            if mm["id"] in prev_pred:
+                mm["predicted"] = prev_pred[mm["id"]]
+            elif not model.is_seed(mm["home"], mm["hg"], mm["ag"], mm["away"]):
+                p = model.predict(mm["home"], mm["away"], neutral=True)
+                if p:
+                    mm["predicted"] = {"pA": round(p[0], 4), "pD": round(p[1], 4), "pB": round(p[2], 4)}
+            # learn it (skip seed dups so the page's seed isn't double-counted)
+            if not model.is_seed(mm["home"], mm["hg"], mm["ag"], mm["away"]):
+                model.learn(mm["home"], mm["hg"], mm["ag"], mm["away"], neutral=True)
+        # grade the frozen prediction if present
+        if mm.get("predicted"):
+            pr = mm["predicted"]
+            top = max(pr["pA"], pr["pB"], pr["pD"])
+            pick = "A" if top == pr["pA"] else ("B" if top == pr["pB"] else "D")
+            outcome = "A" if mm["hg"] > mm["ag"] else ("B" if mm["hg"] < mm["ag"] else "D")
+            mm["hit"] = (pick == outcome)
+
+    # Freeze predictions for upcoming fixtures at current (post-finished) ratings.
+    for mm in upcoming:
+        if mm["id"] in prev_pred:
+            mm["predicted"] = prev_pred[mm["id"]]
+        elif mm["home"] in model.rating and mm["away"] in model.rating:
+            p = model.predict(mm["home"], mm["away"], neutral=True)
+            if p:
+                mm["predicted"] = {"pA": round(p[0], 4), "pD": round(p[1], 4), "pB": round(p[2], 4)}
+
     out = {
         "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "matches": matches,
