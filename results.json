@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23T05:50:33Z",
+  "updated": "2026-06-23T17:15:25Z",
   "matches": [
     {
       "id": 537327,
@@ -470,17 +470,6 @@
   ],
   "upcoming": [
     {
-      "id": 537405,
-      "utc": "2026-06-23T17:00:00Z",
-      "home": "Portugal",
-      "away": "Uzbekistan",
-      "predicted": {
-        "pA": 0.7442,
-        "pD": 0.1341,
-        "pB": 0.1217
-      }
-    },
-    {
       "id": 537411,
       "utc": "2026-06-23T20:00:00Z",
       "home": "England",
@@ -802,6 +791,32 @@
         {
           "team": "Spain",
           "win": 0.0653
+        }
+      ]
+    },
+    {
+      "date": "2026-06-23",
+      "games_played": 44,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.189
+        },
+        {
+          "team": "France",
+          "win": 0.15
+        },
+        {
+          "team": "England",
+          "win": 0.1364
+        },
+        {
+          "team": "USA",
+          "win": 0.0726
+        },
+        {
+          "team": "Spain",
+          "win": 0.0654
         }
       ]
     }
