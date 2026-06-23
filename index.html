@@ -20,6 +20,7 @@
 <meta name="twitter:title" content="World Cup 2026 Predictor — who's winning, updated live">
 <meta name="twitter:description" content="Simulates the whole tournament thousands of times to forecast the champion. Auto-updates after every match.">
 <meta name="twitter:image" content="https://wc2026.rearyan.com/preview.png">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "660b176ea970475dbe5ca47a45b2832e"}'></script><!-- End Cloudflare Web Analytics -->
 <style>
   :root{
     --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
@@ -194,7 +195,12 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="kicker">Elo + online learning · pre-match ledger · 48 teams</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+      <div class="kicker">Elo + online learning · pre-match ledger · 48 teams</div>
+      <div id="pt-clock" style="font-family:var(--mono);font-size:12px;color:var(--mut);text-align:right;white-space:nowrap;">
+        <span id="pt-date" style="color:var(--ink);"></span><br><span id="pt-time" style="color:var(--accent);"></span>
+      </div>
+    </div>
     <h1>World Cup 2026 Predictor</h1>
     <p class="sub">Forecasts who wins the World Cup by simulating the whole remaining tournament thousands of times from current team ratings. Updates automatically as real results come in. Per-match prediction and a self-grading ledger live in the tabs below.</p>
   </header>
@@ -918,6 +924,15 @@
       syncBar(manual?'Sync failed — check that results.json is reachable.':'','err');
     }
   }
+
+  // live PT clock in the header
+  function tickClock(){
+    const dEl=$('pt-date'), tEl=$('pt-time'); if(!dEl||!tEl) return;
+    const now=new Date();
+    dEl.textContent=now.toLocaleDateString('en-US',{timeZone:PT,weekday:'long',month:'long',day:'numeric'});
+    tEl.textContent=now.toLocaleTimeString('en-US',{timeZone:PT,hour:'2-digit',minute:'2-digit',second:'2-digit'})+' PT';
+  }
+  tickClock(); setInterval(tickClock,1000);
 
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
