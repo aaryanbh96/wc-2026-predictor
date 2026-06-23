@@ -178,6 +178,37 @@ def main():
         "upcoming": upcoming,
     }
 
+    # ---- daily champion snapshot (locked once per PT day) ----
+    # The day "closes" its pick the first time the Action runs after that PT day's
+    # matches are done; we snapshot the current top-5 championship odds and keep one
+    # entry per PT date. Earlier days are preserved unchanged.
+    daily = []
+    if os.path.exists(OUT):
+        try:
+            daily = json.load(open(OUT)).get("daily", []) or []
+        except Exception:
+            daily = []
+    try:
+        from zoneinfo import ZoneInfo
+        pt_today = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d")
+    except Exception:
+        pt_today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    # How many matches are finished as of now — used so the snapshot reflects the
+    # day's completed results.
+    fc = model.forecast(20000)
+    top5 = [{"team": t, "win": round(p, 4)} for t, p in fc[:5]]
+    snapshot = {"date": pt_today, "games_played": len(matches), "top": top5}
+
+    existing = next((d for d in daily if d.get("date") == pt_today), None)
+    if existing:
+        # update today's entry as more of today's games finish
+        existing.update(snapshot)
+    else:
+        daily.append(snapshot)
+    daily.sort(key=lambda d: d.get("date", ""))
+    out["daily"] = daily
+
     # Only rewrite if the substantive data changed (ignore the timestamp), so the
     # workflow's git-diff check doesn't commit noise every hour.
     old = None
