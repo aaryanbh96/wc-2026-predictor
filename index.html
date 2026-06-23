@@ -230,7 +230,7 @@
   <nav>
     <button class="tab on" data-t="forecast">Forecast</button>
     <button class="tab" data-t="predict">Predict match</button>
-    <button class="tab" data-t="ledger">Predictions <span class="badge" id="pend-badge" style="display:none;">0</span></button>
+    <button class="tab" data-t="ledger">My scratchpad <span class="badge" id="pend-badge" style="display:none;">0</span></button>
     <button class="tab" data-t="result">Log result</button>
     <button class="tab" data-t="record">Track record</button>
     <button class="tab" data-t="daily">Daily records</button>
@@ -238,7 +238,8 @@
     <button class="tab" data-t="ratings">Ratings</button>
     <button class="tab" data-t="groups">Groups</button>
     <button class="tab" data-t="teams">Teams</button>
-    <button class="tab" data-t="how">How it works</button>
+    <button class="tab" data-t="how">Help</button>
+    <button class="tab" data-t="about">About</button>
   </nav>
 
   <section class="panel on" id="p-forecast">
@@ -265,6 +266,7 @@
   </section>
 
   <section class="panel" id="p-ledger">
+    <p class="prose" style="margin-bottom:14px;">This is your <b>personal scratchpad</b> — predictions you lock and grade are saved only in your browser, just for you. For the model's <b>public, shared</b> track record (identical for everyone, frozen server-side), see the <b>Track record</b> tab.</p>
     <div class="sechead">Pending — locked, awaiting result</div>
     <div id="pending-list"></div>
     <div class="sechead" style="margin-top:24px;">Graded — pre-match calls scored against reality</div>
@@ -345,12 +347,34 @@
 
   <section class="panel" id="p-how">
     <div class="prose">
-      <p><b>The rating model (the “ML” core).</b> Every team carries a strength number. To predict, the model feeds the rating gap through a logistic curve — <code>P(A wins) = 1 / (1 + 10^((Rb − Ra)/400))</code> — the same math as chess Elo. A draw probability is carved out, larger when teams are even. Neutral venue gives no home bump; otherwise team A gets <code>+60</code>.</p>
-      <p><b>The pre-match ledger.</b> When you lock a prediction, the app stamps it with the probabilities and the time, and parks it as <b>pending</b>. Nothing about the result is known yet. When the score lands, that locked call is graded — was the favorite right, and what was its Brier score — and only those graded, ahead-of-time calls feed the <b>pre-match hit rate</b> and <b>pre-match Brier</b> at the top. That's the number that actually tells you if the model predicts well.</p>
-      <p><b>The learning loop (the “RL” part).</b> After grading, the model shifts both ratings toward the truth: <code>Δ = K · margin · (actual − expected)</code>. Upsets move ratings hard; expected results barely nudge them. A <b>4–0</b> teaches more than a <b>1–0</b>; knockouts can weigh heavier.</p>
-      <p><b>Recent form (momentum).</b> On top of the base rating, the model tracks each team's last few games and adds a bounded form nudge. Crucially it's opponent-adjusted: drawing Spain and Uruguay says far more than beating a minnow, because only <i>surprising</i> results build form — an expected win adds almost nothing. The newest three games weigh heaviest, it caps at five, and goal difference modulates it. A single game can't max it out; sustained form can. That's why a team on a real run against strong opposition can be favored over a higher-rated side that's been flat.</p>
-      <p><b>Pre-loaded.</b> Ships trained on the real round-1 group results, so ratings already reflect what's happened. Those seed results are learned-from but not counted as pre-match calls — you hadn't predicted them in advance.</p>
+      <p style="font-size:16px;color:var(--ink);"><b>What this is</b></p>
+      <p>A live forecast for the 2026 World Cup. It rates every team, simulates the whole tournament thousands of times to predict the champion, learns from each real result, and grades its own predictions — all updating automatically. Here's a tour.</p>
+
+      <p style="font-size:15px;color:var(--ink);margin-top:22px;"><b>What each tab does</b></p>
+      <p><b>Forecast</b> — the home page. The big name at the top is the model's current pick to win the World Cup, with its odds. Below: any live matches, the next matches with predictions, and the full table of every team's chances to reach each round.</p>
+      <p><b>Predict match</b> — pick any two teams and see the model's head-to-head call. Your sandbox for one-off curiosity.</p>
+      <p><b>My scratchpad</b> — lock predictions and grade them yourself. This is <i>private to your browser</i> — just for you. For the public record, see Track record.</p>
+      <p><b>Track record</b> — the model's <i>public, shared</i> scorecard. Every prediction here was frozen before kickoff and saved server-side, so it's identical for everyone and can't be edited after the fact. The honest test of whether the model is any good.</p>
+      <p><b>Daily records</b> — a timeline of who the model favored to win the Cup each day, plus a chart of how the title odds shifted as results came in.</p>
+      <p><b>Shock the model</b> — a what-if sandbox. Drag a team's rating up or down (simulate an injury, a hot streak) and watch the title odds re-compute. Private to you; never affects the real forecast.</p>
+      <p><b>Ratings</b> — every team's current strength, with a ▲/▼ marker showing recent form. <b>Groups</b> — live group standings. <b>Teams</b> — edit the field if needed.</p>
+
+      <p style="font-size:15px;color:var(--ink);margin-top:22px;"><b>How the model works</b></p>
+      <p><b>The rating model.</b> Every team carries a strength number. To predict, the model feeds the rating gap through a logistic curve — <code>P(A wins) = 1 / (1 + 10^((Rb − Ra)/400))</code> — the same math as chess Elo.</p>
+      <p><b>The learning loop.</b> After each result the model shifts both ratings toward the truth: <code>Δ = K · margin · (actual − expected)</code>. Upsets move ratings hard; expected results barely nudge them. A <b>4–0</b> teaches more than a <b>1–0</b>.</p>
+      <p><b>Recent form (momentum).</b> On top of the base rating, the model tracks each team's last few games — opponent-adjusted, so drawing Spain and Uruguay says far more than beating a minnow. Only <i>surprising</i> results build form. Newest three games weigh heaviest, capped at five.</p>
+      <p><b>The forecast.</b> From current ratings, it plays the rest of the tournament forward 20,000 times and counts how often each team wins — that's where the championship odds come from.</p>
       <p><b>Honest limits.</b> It only sees ratings — not injuries, rotation, rest, or tactics — so it won't beat a Vegas book. It's a transparent learner you can watch reason and hold accountable.</p>
+    </div>
+  </section>
+
+  <section class="panel" id="p-about">
+    <div class="prose" style="max-width:60ch;">
+      <p style="font-size:16px;color:var(--ink);"><b>About</b></p>
+      <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> 🇩🇪 is my team.</p>
+      <p>I made this because the 2026 World Cup looked genuinely hard to call, and I wanted a model that predicts each match, learns from what actually happens, and keeps itself honest about how well it's doing — all updating on its own as the tournament unfolds.</p>
+      <p>It's an Elo-style rating model with momentum, a Monte Carlo tournament simulation, and an automated pipeline that fetches results and re-grades the model's own pre-match calls. Built as a static site with a small serverless backend — no big infrastructure, just a thing that runs itself.</p>
+      <p>More of my work lives at <a href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>.</p>
     </div>
   </section>
 
@@ -1002,7 +1026,7 @@
     const sum=$('record-summary'), list=$('record-list'); if(!sum||!list) return;
     const fm=(state.frozenMatches||[]).filter(m=>m.predicted);
     if(!fm.length){ sum.innerHTML=''; list.innerHTML='<div class="empty">No graded predictions yet. Once matches with frozen calls finish, they show here.</div>'; return; }
-    const graded=fm.filter(m=>typeof m.hit==='boolean');
+    const graded=fm.filter(m=>typeof m.hit==='boolean' && !m.backfilled);
     const hits=graded.filter(m=>m.hit).length;
     let brierSum=0,bn=0;
     graded.forEach(m=>{ const p=m.predicted; const oA=m.hg>m.ag?1:0,oB=m.hg<m.ag?1:0,oD=m.hg===m.ag?1:0;
@@ -1013,15 +1037,16 @@
       <div class="stat hl"><div class="lab">pre-match hit rate</div><div class="val">${graded.length?acc+'%':'—'}</div></div>
       <div class="stat hl"><div class="lab">brier <small>↓</small></div><div class="val">${brier}</div></div>
       <div class="stat"><div class="lab">calls graded</div><div class="val">${graded.length}</div></div>
-    </div>`;
+    </div><p class="hint" style="margin:8px 0 0;">Stats count only genuine pre-kickoff calls. Games marked <span style="color:var(--dim);">backfilled</span> finished before a live prediction was locked — shown for history, not scored.</p>`;
     const rows=fm.slice().sort((a,b)=>(b.utc||'').localeCompare(a.utc||'')).map(m=>{
       const p=m.predicted, pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
       const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
       const done=typeof m.hit==='boolean';
-      const verdict=done?(m.hit?'<span class="ufix-v hit">✓ correct</span>':'<span class="ufix-v miss">✗ missed</span>'):'<span class="ufix-v pend">pending</span>';
+      const verdict=m.backfilled?'<span class="ufix-v" style="background:var(--panel2);color:var(--dim);">backfilled</span>'
+        :done?(m.hit?'<span class="ufix-v hit">✓ correct</span>':'<span class="ufix-v miss">✗ missed</span>'):'<span class="ufix-v pend">pending</span>';
       const score=(m.hg!=null&&m.ag!=null)?`${m.hg}–${m.ag}`:'—';
-      const when=m.utc?new Date(m.utc).toLocaleDateString(undefined,{month:'short',day:'numeric'}):'';
-      return `<div class="ufix">
+      const when=m.utc?new Date(m.utc).toLocaleDateString('en-US',{timeZone:PT,month:'short',day:'numeric'}):'';
+      return `<div class="ufix"${m.backfilled?' style="opacity:.6;"':''}>
         <div class="top"><span class="teams">${m.home} ${score} ${m.away}</span>${verdict}</div>
         <div class="plab" style="margin-top:8px;"><span>predicted: favored <b>${fav}</b> ${favP}%</span><span class="ko">${when}</span></div>
         <div class="plab"><span>${m.home} ${pA}% · draw ${pD}% · ${m.away} ${pB}%</span></div>
