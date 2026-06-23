@@ -92,6 +92,7 @@ def main():
     data = fetch()
     matches = []        # finished, with scores
     upcoming = []       # scheduled/timed, no scores yet
+    live = []           # in-progress (kicked off, not finished)
     unmatched = set()
     for m in data.get("matches", []):
         status = m.get("status")
@@ -115,6 +116,13 @@ def main():
                 "home": home, "away": away,
                 "hg": int(hg), "ag": int(ag),
             })
+        elif status in ("IN_PLAY", "PAUSED", "SUSPENDED"):
+            if home in VALID and away in VALID:
+                live.append({
+                    "id": m.get("id"),
+                    "utc": m.get("utcDate"),
+                    "home": home, "away": away,
+                })
         elif status in ("SCHEDULED", "TIMED"):
             # Only include real team-vs-team fixtures the page knows about.
             if home in VALID and away in VALID:
@@ -126,6 +134,7 @@ def main():
 
     matches.sort(key=lambda x: x.get("utc") or "")
     upcoming.sort(key=lambda x: x.get("utc") or "")
+    live.sort(key=lambda x: x.get("utc") or "")
 
     # ---- freeze pre-match predictions using the ported model ----
     # Load any predictions already frozen in the previous results.json so a match
@@ -172,10 +181,21 @@ def main():
             if p:
                 mm["predicted"] = {"pA": round(p[0], 4), "pD": round(p[1], 4), "pB": round(p[2], 4)}
 
+    # Freeze predictions for live (in-progress) matches too. Prefer the prediction
+    # frozen while the match was still upcoming, so the call is genuinely pre-match.
+    for mm in live:
+        if mm["id"] in prev_pred:
+            mm["predicted"] = prev_pred[mm["id"]]
+        elif mm["home"] in model.rating and mm["away"] in model.rating:
+            p = model.predict(mm["home"], mm["away"], neutral=True)
+            if p:
+                mm["predicted"] = {"pA": round(p[0], 4), "pD": round(p[1], 4), "pB": round(p[2], 4)}
+
     out = {
         "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "matches": matches,
         "upcoming": upcoming,
+        "live": live,
     }
 
     # ---- daily champion snapshot (locked once per PT day) ----
@@ -215,11 +235,11 @@ def main():
     if os.path.exists(OUT):
         try:
             prev = json.load(open(OUT))
-            old = (prev.get("matches"), prev.get("upcoming"))
+            old = (prev.get("matches"), prev.get("upcoming"), prev.get("live"))
         except Exception:
             old = None
-    if old == (matches, upcoming):
-        print(f"No change: {len(matches)} finished, {len(upcoming)} upcoming.")
+    if old == (matches, upcoming, live):
+        print(f"No change: {len(matches)} finished, {len(live)} live, {len(upcoming)} upcoming.")
         return
 
     with open(OUT, "w", encoding="utf-8") as f:
