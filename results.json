@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-22T23:37:11Z",
+  "updated": "2026-06-23T01:48:42Z",
   "matches": [
     {
       "id": 537327,
@@ -7,7 +7,13 @@
       "home": "Mexico",
       "away": "South Africa",
       "hg": 2,
-      "ag": 0
+      "ag": 0,
+      "predicted": {
+        "pA": 0.6798,
+        "pD": 0.1549,
+        "pB": 0.1653
+      },
+      "hit": true
     },
     {
       "id": 537328,
@@ -15,7 +21,13 @@
       "home": "Korea Republic",
       "away": "Czechia",
       "hg": 2,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.3671,
+        "pD": 0.2692,
+        "pB": 0.3638
+      },
+      "hit": true
     },
     {
       "id": 537333,
@@ -23,7 +35,13 @@
       "home": "Canada",
       "away": "Bosnia and Herzegovina",
       "hg": 1,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.6839,
+        "pD": 0.1536,
+        "pB": 0.1625
+      },
+      "hit": false
     },
     {
       "id": 537345,
@@ -31,7 +49,13 @@
       "home": "USA",
       "away": "Paraguay",
       "hg": 4,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.5052,
+        "pD": 0.2155,
+        "pB": 0.2792
+      },
+      "hit": true
     },
     {
       "id": 537334,
@@ -39,7 +63,13 @@
       "home": "Qatar",
       "away": "Switzerland",
       "hg": 1,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.0923,
+        "pD": 0.1207,
+        "pB": 0.787
+      },
+      "hit": false
     },
     {
       "id": 537339,
@@ -47,7 +77,13 @@
       "home": "Brazil",
       "away": "Morocco",
       "hg": 1,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.4624,
+        "pD": 0.2316,
+        "pB": 0.3061
+      },
+      "hit": false
     },
     {
       "id": 537340,
@@ -55,7 +91,13 @@
       "home": "Haiti",
       "away": "Scotland",
       "hg": 0,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.3002,
+        "pD": 0.228,
+        "pB": 0.4718
+      },
+      "hit": true
     },
     {
       "id": 537346,
@@ -63,7 +105,13 @@
       "home": "Australia",
       "away": "Türkiye",
       "hg": 2,
-      "ag": 0
+      "ag": 0,
+      "predicted": {
+        "pA": 0.4766,
+        "pD": 0.2262,
+        "pB": 0.2972
+      },
+      "hit": true
     },
     {
       "id": 537351,
@@ -71,7 +119,13 @@
       "home": "Germany",
       "away": "Curaçao",
       "hg": 7,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.7343,
+        "pD": 0.1373,
+        "pB": 0.1284
+      },
+      "hit": true
     },
     {
       "id": 537357,
@@ -79,7 +133,13 @@
       "home": "Netherlands",
       "away": "Japan",
       "hg": 2,
-      "ag": 2
+      "ag": 2,
+      "predicted": {
+        "pA": 0.4628,
+        "pD": 0.2314,
+        "pB": 0.3058
+      },
+      "hit": false
     },
     {
       "id": 537352,
@@ -87,7 +147,13 @@
       "home": "Côte d'Ivoire",
       "away": "Ecuador",
       "hg": 1,
-      "ag": 0
+      "ag": 0,
+      "predicted": {
+        "pA": 0.299,
+        "pD": 0.2273,
+        "pB": 0.4737
+      },
+      "hit": false
     },
     {
       "id": 537358,
@@ -95,7 +161,13 @@
       "home": "Sweden",
       "away": "Tunisia",
       "hg": 5,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.4412,
+        "pD": 0.2397,
+        "pB": 0.3191
+      },
+      "hit": true
     },
     {
       "id": 537369,
@@ -103,7 +175,13 @@
       "home": "Spain",
       "away": "Cabo Verde",
       "hg": 0,
-      "ag": 0
+      "ag": 0,
+      "predicted": {
+        "pA": 0.7727,
+        "pD": 0.1251,
+        "pB": 0.1021
+      },
+      "hit": false
     },
     {
       "id": 537363,
@@ -111,7 +189,13 @@
       "home": "Belgium",
       "away": "Egypt",
       "hg": 1,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.4634,
+        "pD": 0.2312,
+        "pB": 0.3054
+      },
+      "hit": false
     },
     {
       "id": 537370,
@@ -119,7 +203,13 @@
       "home": "Saudi Arabia",
       "away": "Uruguay",
       "hg": 1,
-      "ag": 1
+      "ag": 1,
+      "predicted": {
+        "pA": 0.2094,
+        "pD": 0.1772,
+        "pB": 0.6135
+      },
+      "hit": false
     },
     {
       "id": 537364,
@@ -127,7 +217,13 @@
       "home": "IR Iran",
       "away": "New Zealand",
       "hg": 2,
-      "ag": 2
+      "ag": 2,
+      "predicted": {
+        "pA": 0.6563,
+        "pD": 0.1627,
+        "pB": 0.181
+      },
+      "hit": false
     },
     {
       "id": 537391,
@@ -328,6 +424,341 @@
       "away": "Austria",
       "hg": 2,
       "ag": 0
+    },
+    {
+      "id": 537393,
+      "utc": "2026-06-22T21:00:00Z",
+      "home": "France",
+      "away": "Iraq",
+      "hg": 3,
+      "ag": 0,
+      "predicted": {
+        "pA": 0.8661,
+        "pD": 0.0966,
+        "pB": 0.0373
+      },
+      "hit": true
+    }
+  ],
+  "upcoming": [
+    {
+      "id": 537400,
+      "utc": "2026-06-23T03:00:00Z",
+      "home": "Jordan",
+      "away": "Algeria",
+      "predicted": {
+        "pA": 0.2664,
+        "pD": 0.2082,
+        "pB": 0.5255
+      }
+    },
+    {
+      "id": 537405,
+      "utc": "2026-06-23T17:00:00Z",
+      "home": "Portugal",
+      "away": "Uzbekistan",
+      "predicted": {
+        "pA": 0.7442,
+        "pD": 0.1341,
+        "pB": 0.1217
+      }
+    },
+    {
+      "id": 537411,
+      "utc": "2026-06-23T20:00:00Z",
+      "home": "England",
+      "away": "Ghana",
+      "predicted": {
+        "pA": 0.6782,
+        "pD": 0.1555,
+        "pB": 0.1664
+      }
+    },
+    {
+      "id": 537412,
+      "utc": "2026-06-23T23:00:00Z",
+      "home": "Panama",
+      "away": "Croatia",
+      "predicted": {
+        "pA": 0.1859,
+        "pD": 0.1652,
+        "pB": 0.649
+      }
+    },
+    {
+      "id": 537406,
+      "utc": "2026-06-24T02:00:00Z",
+      "home": "Colombia",
+      "away": "Congo DR",
+      "predicted": {
+        "pA": 0.6317,
+        "pD": 0.171,
+        "pB": 0.1973
+      }
+    },
+    {
+      "id": 537337,
+      "utc": "2026-06-24T19:00:00Z",
+      "home": "Switzerland",
+      "away": "Canada",
+      "predicted": {
+        "pA": 0.4137,
+        "pD": 0.2504,
+        "pB": 0.3359
+      }
+    },
+    {
+      "id": 537338,
+      "utc": "2026-06-24T19:00:00Z",
+      "home": "Bosnia and Herzegovina",
+      "away": "Qatar",
+      "predicted": {
+        "pA": 0.4326,
+        "pD": 0.243,
+        "pB": 0.3244
+      }
+    },
+    {
+      "id": 537344,
+      "utc": "2026-06-24T22:00:00Z",
+      "home": "Morocco",
+      "away": "Haiti",
+      "predicted": {
+        "pA": 0.8348,
+        "pD": 0.106,
+        "pB": 0.0592
+      }
+    },
+    {
+      "id": 537343,
+      "utc": "2026-06-24T22:00:00Z",
+      "home": "Scotland",
+      "away": "Brazil",
+      "predicted": {
+        "pA": 0.1703,
+        "pD": 0.1574,
+        "pB": 0.6723
+      }
+    },
+    {
+      "id": 537331,
+      "utc": "2026-06-25T01:00:00Z",
+      "home": "Czechia",
+      "away": "Mexico",
+      "predicted": {
+        "pA": 0.087,
+        "pD": 0.1183,
+        "pB": 0.7948
+      }
+    },
+    {
+      "id": 537332,
+      "utc": "2026-06-25T01:00:00Z",
+      "home": "South Africa",
+      "away": "Korea Republic",
+      "predicted": {
+        "pA": 0.2235,
+        "pD": 0.1846,
+        "pB": 0.5918
+      }
+    },
+    {
+      "id": 537355,
+      "utc": "2026-06-25T20:00:00Z",
+      "home": "Ecuador",
+      "away": "Germany",
+      "predicted": {
+        "pA": 0.1045,
+        "pD": 0.1262,
+        "pB": 0.7692
+      }
+    },
+    {
+      "id": 537356,
+      "utc": "2026-06-25T20:00:00Z",
+      "home": "Curaçao",
+      "away": "Côte d'Ivoire",
+      "predicted": {
+        "pA": 0.1802,
+        "pD": 0.1623,
+        "pB": 0.6574
+      }
+    },
+    {
+      "id": 537361,
+      "utc": "2026-06-25T23:00:00Z",
+      "home": "Tunisia",
+      "away": "Netherlands",
+      "predicted": {
+        "pA": 0.0696,
+        "pD": 0.1106,
+        "pB": 0.8198
+      }
+    },
+    {
+      "id": 537362,
+      "utc": "2026-06-25T23:00:00Z",
+      "home": "Japan",
+      "away": "Sweden",
+      "predicted": {
+        "pA": 0.5673,
+        "pD": 0.1932,
+        "pB": 0.2395
+      }
+    },
+    {
+      "id": 537349,
+      "utc": "2026-06-26T02:00:00Z",
+      "home": "Türkiye",
+      "away": "USA",
+      "predicted": {
+        "pA": 0.0624,
+        "pD": 0.1074,
+        "pB": 0.8302
+      }
+    },
+    {
+      "id": 537350,
+      "utc": "2026-06-26T02:00:00Z",
+      "home": "Paraguay",
+      "away": "Australia",
+      "predicted": {
+        "pA": 0.3133,
+        "pD": 0.236,
+        "pB": 0.4507
+      }
+    },
+    {
+      "id": 537395,
+      "utc": "2026-06-26T19:00:00Z",
+      "home": "Norway",
+      "away": "France",
+      "predicted": {
+        "pA": 0.1592,
+        "pD": 0.1519,
+        "pB": 0.6889
+      }
+    },
+    {
+      "id": 537396,
+      "utc": "2026-06-26T19:00:00Z",
+      "home": "Senegal",
+      "away": "Iraq",
+      "predicted": {
+        "pA": 0.6925,
+        "pD": 0.1508,
+        "pB": 0.1567
+      }
+    },
+    {
+      "id": 537373,
+      "utc": "2026-06-27T00:00:00Z",
+      "home": "Uruguay",
+      "away": "Spain",
+      "predicted": {
+        "pA": 0.2113,
+        "pD": 0.1782,
+        "pB": 0.6105
+      }
+    },
+    {
+      "id": 537374,
+      "utc": "2026-06-27T00:00:00Z",
+      "home": "Cabo Verde",
+      "away": "Saudi Arabia",
+      "predicted": {
+        "pA": 0.3841,
+        "pD": 0.2622,
+        "pB": 0.3537
+      }
+    },
+    {
+      "id": 537367,
+      "utc": "2026-06-27T03:00:00Z",
+      "home": "New Zealand",
+      "away": "Belgium",
+      "predicted": {
+        "pA": 0.1369,
+        "pD": 0.1413,
+        "pB": 0.7218
+      }
+    },
+    {
+      "id": 537368,
+      "utc": "2026-06-27T03:00:00Z",
+      "home": "Egypt",
+      "away": "IR Iran",
+      "predicted": {
+        "pA": 0.5465,
+        "pD": 0.2006,
+        "pB": 0.2529
+      }
+    },
+    {
+      "id": 537413,
+      "utc": "2026-06-27T21:00:00Z",
+      "home": "Panama",
+      "away": "England",
+      "predicted": {
+        "pA": 0.0491,
+        "pD": 0.1017,
+        "pB": 0.8492
+      }
+    },
+    {
+      "id": 537414,
+      "utc": "2026-06-27T21:00:00Z",
+      "home": "Croatia",
+      "away": "Ghana",
+      "predicted": {
+        "pA": 0.338,
+        "pD": 0.2517,
+        "pB": 0.4103
+      }
+    },
+    {
+      "id": 537407,
+      "utc": "2026-06-27T23:30:00Z",
+      "home": "Colombia",
+      "away": "Portugal",
+      "predicted": {
+        "pA": 0.3638,
+        "pD": 0.2692,
+        "pB": 0.367
+      }
+    },
+    {
+      "id": 537408,
+      "utc": "2026-06-27T23:30:00Z",
+      "home": "Congo DR",
+      "away": "Uzbekistan",
+      "predicted": {
+        "pA": 0.5159,
+        "pD": 0.2116,
+        "pB": 0.2724
+      }
+    },
+    {
+      "id": 537401,
+      "utc": "2026-06-28T02:00:00Z",
+      "home": "Jordan",
+      "away": "Argentina",
+      "predicted": {
+        "pA": 0.0389,
+        "pD": 0.0973,
+        "pB": 0.8639
+      }
+    },
+    {
+      "id": 537402,
+      "utc": "2026-06-28T02:00:00Z",
+      "home": "Algeria",
+      "away": "Austria",
+      "predicted": {
+        "pA": 0.2504,
+        "pD": 0.1992,
+        "pB": 0.5505
+      }
     }
   ]
 }
