@@ -330,7 +330,7 @@
   </section>
 
   <footer style="margin-top:48px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim);">
-    <span>Made by <span style="color:var(--ink);">Aryan Bhardwaj</span></span>
+    <span>Made by <span style="color:var(--ink);">Aryan Bhardwaj</span><span id="visitor-count" style="display:none;"> · <span style="color:var(--accent);" id="vc-num">—</span> visitors</span></span>
     <a id="site-link" href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>
   </footer>
 </div>
@@ -933,6 +933,27 @@
     tEl.textContent=now.toLocaleTimeString('en-US',{timeZone:PT,hour:'2-digit',minute:'2-digit',second:'2-digit'})+' PT';
   }
   tickClock(); setInterval(tickClock,1000);
+
+  // ---- public visitor counter (Cloudflare Worker + KV) ----
+  // Paste your deployed Worker URL here (e.g. https://wc2026-counter.<you>.workers.dev).
+  // Leave as '' to disable the public counter entirely (it just stays hidden).
+  const COUNTER_URL = '';
+  (async function visitorCount(){
+    if(!COUNTER_URL) return;
+    try{
+      // increment at most once per browser session; peek (no increment) on repeat loads
+      const counted = sessionStorage.getItem('wc_counted');
+      const url = COUNTER_URL + (counted ? '?peek=1' : '');
+      const r = await fetch(url, {cache:'no-store'});
+      if(!r.ok) return;
+      const d = await r.json();
+      if(typeof d.count === 'number'){
+        if(!counted) sessionStorage.setItem('wc_counted','1');
+        $('vc-num').textContent = d.count.toLocaleString();
+        $('visitor-count').style.display = 'inline';
+      }
+    }catch(e){ /* counter unreachable — leave it hidden */ }
+  })();
 
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
