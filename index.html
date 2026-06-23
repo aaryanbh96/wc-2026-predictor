@@ -156,6 +156,10 @@
   .ufix .verdict{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;}
   .ufix .verdict.hit{background:rgba(74,222,128,.12);color:var(--accent);}
   .ufix .verdict.miss{background:rgba(239,100,97,.12);color:var(--bad);}
+  .ufix-v{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;}
+  .ufix-v.hit{background:rgba(74,222,128,.12);color:var(--accent);}
+  .ufix-v.miss{background:rgba(239,100,97,.12);color:var(--bad);}
+  .ufix-v.pend{background:rgba(244,162,59,.12);color:var(--warn);}
   .fc th{font-family:var(--mono);font-size:10px;color:var(--dim);font-weight:400;text-transform:uppercase;letter-spacing:.05em;padding:6px 6px;text-align:right;border-bottom:1px solid var(--line);}
   .fc th:nth-child(2){text-align:left;}
   .fc td{padding:7px 6px;text-align:right;font-family:var(--mono);border-bottom:1px solid var(--line);}
@@ -195,6 +199,7 @@
     <button class="tab" data-t="predict">Predict match</button>
     <button class="tab" data-t="ledger">Predictions <span class="badge" id="pend-badge" style="display:none;">0</span></button>
     <button class="tab" data-t="result">Log result</button>
+    <button class="tab" data-t="record">Track record</button>
     <button class="tab" data-t="ratings">Ratings</button>
     <button class="tab" data-t="groups">Groups</button>
     <button class="tab" data-t="teams">Teams</button>
@@ -251,6 +256,12 @@
   </section>
 
   <section class="panel" id="p-ratings"><div id="ratings-list"></div></section>
+
+  <section class="panel" id="p-record">
+    <p class="prose" style="margin-bottom:14px;">Every prediction here was frozen by the model <b>before kickoff</b> and saved to the shared results file — so this record is identical for everyone and can't be edited after the fact. It's the model's public scorecard.</p>
+    <div id="record-summary"></div>
+    <div id="record-list" style="margin-top:14px;"></div>
+  </section>
 
   <section class="panel" id="p-groups">
     <p class="prose" style="margin-bottom:14px;">Standings from logged results. Top 2 of each group (green) advance automatically; the 8 best third-place teams also go through, so these aren't final.</p>
@@ -327,7 +338,7 @@
   function initStandings(){ const s={}; SEED.forEach(([n])=>{ s[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; }); return s; }
   function freshState(){
     const s={teams:freshTeams(),games:0,log:[],standings:initStandings(),
-      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[]};
+      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[], frozenMatches:[]};
     SEED_RESULTS.forEach(([a,ga,gb,b])=>{
       learn(s,a,ga,gb,b,true,1,true);
       s.seedSigs.push(sigOf(a,ga,gb,b));
@@ -340,7 +351,7 @@
     try{ const raw=localStorage.getItem(KEY); if(raw){ const s=JSON.parse(raw);
       s.standings=s.standings||initStandings(); s.predictions=s.predictions||[];
       s.preHit=s.preHit||0; s.preGraded=s.preGraded||0; s.preBrierSum=s.preBrierSum||0;
-      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; return s; } }catch(e){}
+      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; s.frozenMatches=s.frozenMatches||[]; return s; } }catch(e){}
     return freshState();
   }
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
@@ -588,6 +599,7 @@
       t.classList.add('on'); $('p-'+t.dataset.t).classList.add('on');
       const v=t.dataset.t;
       if(v==='forecast')renderForecast();
+      if(v==='record')renderTrackRecord();
       if(v==='ratings')renderRatings(); if(v==='groups')renderGroups();
       if(v==='teams')renderTeams(); if(v==='ledger')renderLedger();
     };
@@ -759,6 +771,39 @@
     block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Next matchday · ${label}</div><div class="upc-acc">${accLine}</div></div>${cards}`;
   }
 
+  // ---- track record: server-frozen, pre-match predictions shared by everyone ----
+  function renderTrackRecord(){
+    const sum=$('record-summary'), list=$('record-list'); if(!sum||!list) return;
+    const fm=(state.frozenMatches||[]).filter(m=>m.predicted);
+    if(!fm.length){ sum.innerHTML=''; list.innerHTML='<div class="empty">No graded predictions yet. Once matches with frozen calls finish, they show here.</div>'; return; }
+    const graded=fm.filter(m=>typeof m.hit==='boolean');
+    const hits=graded.filter(m=>m.hit).length;
+    let brierSum=0,bn=0;
+    graded.forEach(m=>{ const p=m.predicted; const oA=m.hg>m.ag?1:0,oB=m.hg<m.ag?1:0,oD=m.hg===m.ag?1:0;
+      brierSum+=Math.pow(p.pA-oA,2)+Math.pow(p.pB-oB,2)+Math.pow(p.pD-oD,2); bn++; });
+    const acc=graded.length?Math.round(100*hits/graded.length):0;
+    const brier=bn?(brierSum/bn).toFixed(3):'—';
+    sum.innerHTML=`<div class="stats" style="margin:0;">
+      <div class="stat hl"><div class="lab">pre-match hit rate</div><div class="val">${graded.length?acc+'%':'—'}</div></div>
+      <div class="stat hl"><div class="lab">brier <small>↓</small></div><div class="val">${brier}</div></div>
+      <div class="stat"><div class="lab">calls graded</div><div class="val">${graded.length}</div></div>
+    </div>`;
+    const rows=fm.slice().sort((a,b)=>(b.utc||'').localeCompare(a.utc||'')).map(m=>{
+      const p=m.predicted, pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
+      const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
+      const done=typeof m.hit==='boolean';
+      const verdict=done?(m.hit?'<span class="ufix-v hit">✓ correct</span>':'<span class="ufix-v miss">✗ missed</span>'):'<span class="ufix-v pend">pending</span>';
+      const score=(m.hg!=null&&m.ag!=null)?`${m.hg}–${m.ag}`:'—';
+      const when=m.utc?new Date(m.utc).toLocaleDateString(undefined,{month:'short',day:'numeric'}):'';
+      return `<div class="ufix">
+        <div class="top"><span class="teams">${m.home} ${score} ${m.away}</span>${verdict}</div>
+        <div class="plab" style="margin-top:8px;"><span>predicted: favored <b>${fav}</b> ${favP}%</span><span class="ko">${when}</span></div>
+        <div class="plab"><span>${m.home} ${pA}% · draw ${pD}% · ${m.away} ${pB}%</span></div>
+      </div>`;
+    }).join('');
+    list.innerHTML=rows;
+  }
+
   // ---- auto-update: read results.json written hourly by the GitHub Action ----
   function syncBar(msg, kind){
     const el=$('syncbar'); if(!el) return;
@@ -788,9 +833,10 @@
       save();
       // store upcoming fixtures, auto-lock any within 24h, refresh the main page
       state.upcoming = data.upcoming || [];
+      state.frozenMatches = data.matches || [];   // server-frozen predictions + results (shared, canonical)
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
-      renderUpcoming();
+      renderUpcoming(); renderTrackRecord();
       const when = data.updated ? new Date(data.updated).toLocaleString() : 'unknown';
       let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · feed updated ${when}`
                        : `Up to date · feed updated ${when}`;
@@ -805,7 +851,7 @@
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
   renderForecast();
-  autoLockUpcoming(); renderUpcoming();
+  autoLockUpcoming(); renderUpcoming(); renderTrackRecord();
   fetchResults(false);   // auto-sync on page load
 })();
 </script>
