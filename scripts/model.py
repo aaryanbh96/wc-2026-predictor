@@ -46,6 +46,7 @@ SEED_RESULTS = [
 class Model:
     def __init__(self):
         self.rating = {n: r for n, g, r in SEED}
+        self.group = {n: g for n, g, r in SEED}
         self.hist = {n: [] for n, g, r in SEED}
         self._seed_sigs = set()
         for a, ga, gb, b in SEED_RESULTS:
@@ -123,3 +124,56 @@ class Model:
             self.hist[a] = self.hist[a][-8:]
         if len(self.hist[b]) > 8:
             self.hist[b] = self.hist[b][-8:]
+
+    def forecast(self, nsim=20000):
+        """Monte Carlo: simulate the rest of the tournament. Returns list of
+        (team, win_prob) sorted desc — mirrors runForecast() in the page."""
+        import random
+        teams = list(self.rating.keys())
+        eff = {n: self.eff_rating(n) for n in teams}
+        groups = {}
+        for n in teams:
+            groups.setdefault(self.group.get(n, "?"), []).append(n)
+        gkeys = sorted(groups.keys())
+        wins = {n: 0 for n in teams}
+
+        def p_eff(a, b):
+            return 1 / (1 + 10 ** ((eff[b] - eff[a]) / 400))
+
+        for _ in range(nsim):
+            firsts, seconds, thirds = [], [], []
+            for g in gkeys:
+                ts = groups[g]
+                pts = {t: 0 for t in ts}
+                gd = {t: 0 for t in ts}
+                for i in range(len(ts)):
+                    for j in range(i + 1, len(ts)):
+                        a, b = ts[i], ts[j]
+                        eA = p_eff(a, b)
+                        drawW = 0.27 * (1 - abs(eA - 0.5) * 1.4)
+                        r = random.random()
+                        if r < drawW:
+                            pts[a] += 1; pts[b] += 1
+                        elif r < drawW + eA * (1 - drawW):
+                            pts[a] += 3; gd[a] += 1; gd[b] -= 1
+                        else:
+                            pts[b] += 3; gd[b] += 1; gd[a] -= 1
+                order = sorted(ts, key=lambda t: (pts[t], gd[t], eff[t]), reverse=True)
+                firsts.append(order[0]); seconds.append(order[1])
+                if len(order) > 2:
+                    thirds.append(order[2])
+            thirds.sort(key=lambda t: eff[t], reverse=True)
+            bracket = firsts + seconds + thirds[:8]
+            random.shuffle(bracket)
+            cur = bracket
+            while len(cur) > 1:
+                nxt = []
+                for k in range(0, len(cur) - 1, 2):
+                    a, b = cur[k], cur[k + 1]
+                    nxt.append(a if random.random() < p_eff(a, b) else b)
+                cur = nxt
+            if cur:
+                wins[cur[0]] += 1
+
+        ranked = sorted(teams, key=lambda t: wins[t], reverse=True)
+        return [(t, wins[t] / nsim) for t in ranked]
