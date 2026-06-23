@@ -25,7 +25,7 @@ jobs:
       - name: Fetch finished results
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
-        run: python scripts/fetch_results.py
+        run: python scripts/fetch_results_apifootball.py
 
       - name: Commit if changed
         run: |
