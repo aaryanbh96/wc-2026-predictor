@@ -228,6 +228,7 @@
     <button class="tab" data-t="result">Log result</button>
     <button class="tab" data-t="record">Track record</button>
     <button class="tab" data-t="daily">Daily records</button>
+    <button class="tab" data-t="shock">Shock the model</button>
     <button class="tab" data-t="ratings">Ratings</button>
     <button class="tab" data-t="groups">Groups</button>
     <button class="tab" data-t="teams">Teams</button>
@@ -285,8 +286,25 @@
 
   <section class="panel" id="p-ratings"><div id="ratings-list"></div></section>
 
+  <section class="panel" id="p-shock">
+    <p class="prose" style="margin-bottom:6px;">A sandbox: temporarily shock a team's rating — simulate a star injury, a red card, a hot streak — and watch the championship odds re-compute on 20,000 fresh simulations. This never touches the real model or anyone else's view; it's your private what-if.</p>
+    <div id="shock-banner" style="display:none;"></div>
+    <div class="row" style="margin-top:14px;">
+      <div class="field"><label>team</label><select id="shock-team"></select></div>
+      <div class="field" style="flex:2;min-width:220px;">
+        <label>rating shift: <span id="shock-val" style="color:var(--accent);">0</span></label>
+        <input type="range" id="shock-slider" min="-200" max="200" value="0" step="5" style="width:100%;padding:0;height:28px;">
+      </div>
+      <button class="act alt" id="shock-add">Apply shock</button>
+    </div>
+    <div id="shock-active"></div>
+    <div class="toolbar"><button class="ghost" id="shock-reset">Reset to live</button></div>
+    <div id="shock-out" style="margin-top:16px;"></div>
+  </section>
+
   <section class="panel" id="p-daily">
     <p class="prose" style="margin-bottom:14px;">At the end of each day's matches, the model locks in who it favored to win the World Cup — a timeline of how the prediction shifted across the tournament. Each entry is frozen in the shared file, so it's the same for everyone.</p>
+    <div id="equity-chart" style="margin-bottom:18px;"></div>
     <div id="daily-list"></div>
   </section>
 
@@ -600,6 +618,52 @@
     }).join('') : '<div class="empty">No graded calls yet. Settle a pending prediction to see it scored here.</div>';
   }
 
+  // ---- Shock the model: private sandbox, never persisted ----
+  let shocks={};  // team -> rating delta (transient, in-memory only)
+  function shockTeam(){ return $('shock-team').value; }
+  function renderShockControls(){
+    fillSel($('shock-team'), $('shock-team').value||'Argentina');
+    const keys=Object.keys(shocks);
+    if(!keys.length){ $('shock-active').innerHTML=''; $('shock-banner').style.display='none'; return; }
+    $('shock-banner').style.display='block';
+    $('shock-banner').innerHTML=`<div style="background:rgba(244,162,59,.1);border:1px solid rgba(244,162,59,.3);border-radius:10px;padding:9px 13px;font-family:var(--mono);font-size:12px;color:var(--warn);margin-bottom:4px;">⚡ Sandbox active — ${keys.length} shock${keys.length>1?'s':''} applied. This is your private what-if; the live forecast is unchanged.</div>`;
+    $('shock-active').innerHTML='<div style="margin-top:10px;">'+keys.map(t=>
+      `<span class="pill" style="margin:0 6px 6px 0;">${t} ${shocks[t]>0?'+':''}${shocks[t]} <span data-unshock="${t}" style="cursor:pointer;color:var(--bad);margin-left:4px;">✕</span></span>`
+    ).join('')+'</div>';
+    $('shock-active').querySelectorAll('[data-unshock]').forEach(el=>{
+      el.onclick=()=>{ delete shocks[el.dataset.unshock]; renderShockControls(); runShockSim(); };
+    });
+  }
+  function runShockSim(){
+    const out=$('shock-out');
+    if(!Object.keys(shocks).length){ out.innerHTML='<div class="empty">Apply a shock above to see how the title picture changes.</div>'; return; }
+    out.innerHTML='<div class="empty">Running 20,000 simulations on the shocked ratings…</div>';
+    setTimeout(()=>{
+      // baseline (live) tally — reuse current forecast if present, else compute
+      const base=(state.forecast&&state.forecast.tally)?state.forecast:computeForecast(NSIM);
+      const overrides={}; names().forEach(n=>{ overrides[n]=effRating(n)+(shocks[n]||0); });
+      const shocked=computeForecast(NSIM, overrides);
+      const all=names();
+      const pct=(tal,t)=>100*tal.tally[t].win/tal.nsim;
+      const ranked=all.slice().sort((a,b)=>shocked.tally[b].win-shocked.tally[a].win);
+      const rows=ranked.slice(0,10).map(t=>{
+        const b=pct(base,t), s=pct(shocked,t), d=s-b;
+        const dStr=Math.abs(d)<0.1?'~':`${d>0?'+':''}${d.toFixed(1)}`;
+        const dCol=d>0.2?'var(--accent)':d<-0.2?'var(--bad)':'var(--dim)';
+        const sh=shocks[t]?` <span style="color:var(--warn);font-family:var(--mono);font-size:10px;">shocked ${shocks[t]>0?'+':''}${shocks[t]}</span>`:'';
+        return `<div class="rk"><span class="nm" style="width:150px;">${t}${sh}</span>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--dim);width:54px;text-align:right;">${b.toFixed(1)}%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--dim);width:20px;text-align:center;">→</span>
+          <span style="font-family:var(--mono);font-size:13px;font-weight:600;width:54px;text-align:right;">${s.toFixed(1)}%</span>
+          <span style="font-family:var(--mono);font-size:12px;color:${dCol};width:54px;text-align:right;">${dStr}</span></div>`;
+      }).join('');
+      out.innerHTML=`<div class="card">
+        <div style="display:flex;justify-content:flex-end;gap:8px;font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:8px;">
+          <span style="width:150px;"></span><span style="width:54px;text-align:right;">live</span><span style="width:20px;"></span><span style="width:54px;text-align:right;">shocked</span><span style="width:54px;text-align:right;">Δ</span></div>
+        ${rows}</div>`;
+    },30);
+  }
+
   function renderRatings(){
     const sorted=names().sort((x,y)=>rating(y)-rating(x));
     const max=rating(sorted[0]),min=rating(sorted[sorted.length-1]);
@@ -639,6 +703,7 @@
       if(v==='forecast')renderForecast();
       if(v==='record')renderTrackRecord();
       if(v==='daily')renderDaily();
+      if(v==='shock'){ renderShockControls(); runShockSim(); }
       if(v==='ratings')renderRatings(); if(v==='groups')renderGroups();
       if(v==='teams')renderTeams(); if(v==='ledger')renderLedger();
     };
@@ -661,6 +726,15 @@
       else { await navigator.clipboard.writeText(text+' '+url); syncBar('Link copied to clipboard','ok'); }
     }catch(e){ /* user cancelled share — ignore */ }
   };
+  // shock sandbox controls
+  $('shock-slider').oninput=()=>{ $('shock-val').textContent=($('shock-slider').value>0?'+':'')+$('shock-slider').value; };
+  $('shock-add').onclick=()=>{
+    const t=shockTeam(), v=parseInt($('shock-slider').value,10);
+    if(!t||v===0){ return; }
+    shocks[t]=v; $('shock-slider').value=0; $('shock-val').textContent='0';
+    renderShockControls(); runShockSim();
+  };
+  $('shock-reset').onclick=()=>{ shocks={}; $('shock-slider').value=0; $('shock-val').textContent='0'; renderShockControls(); runShockSim(); };
   $('rerun-sim').onclick=()=>{
     $('forecast-out').innerHTML='<div class="empty">Running simulation…</div>';
     setTimeout(()=>{ runForecast(); renderForecast(); },30);
@@ -693,10 +767,10 @@
     }
     return teams.slice().sort((x,y)=> pts[y]-pts[x] || gd[y]-gd[x] || EFF[y]-EFF[x]);
   }
-  function runForecast(nsim){
+  function computeForecast(nsim, overrides){
     nsim=nsim||NSIM;
     const all=names();
-    EFF={}; all.forEach(n=> EFF[n]=effRating(n));   // compute form-adjusted ratings once
+    EFF={}; all.forEach(n=> EFF[n]= (overrides&&overrides[n]!=null)? overrides[n] : effRating(n));
     const groups={}; all.forEach(n=>{ (groups[state.teams[n].group]=groups[state.teams[n].group]||[]).push(n); });
     const gkeys=Object.keys(groups).sort();
     const tally={}; all.forEach(t=> tally[t]={r16:0,qf:0,sf:0,final:0,win:0});
@@ -707,10 +781,8 @@
         const o=simGroup(groups[g]);
         firsts.push(o[0]); seconds.push(o[1]); if(o[2]!==undefined) thirds.push(o[2]);
       }
-      // best 8 third-place teams — approximated by rating (proxy for points)
       thirds.sort((a,b)=>EFF[b]-EFF[a]);
       const qual=firsts.concat(seconds, thirds.slice(0,8));
-      // shuffle into a single-elim bracket
       for(let i=qual.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [qual[i],qual[j]]=[qual[j],qual[i]]; }
       let cur=qual;
       for(const stage of stages){
@@ -723,7 +795,11 @@
         cur=nxt;
       }
     }
-    state.forecast={tally, nsim, at:Date.now()};
+    return {tally, nsim};
+  }
+  function runForecast(nsim){
+    const r=computeForecast(nsim);
+    state.forecast={tally:r.tally, nsim:r.nsim, at:Date.now()};
     save();
   }
   function renderForecast(){
@@ -834,7 +910,8 @@
   function renderDaily(){
     const list=$('daily-list'); if(!list) return;
     const d=(state.daily||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-    if(!d.length){ list.innerHTML='<div class="empty">No daily records yet. After a day\'s matches finish, the model\'s champion pick for that day locks in here.</div>'; return; }
+    if(!d.length){ $('equity-chart').innerHTML=''; list.innerHTML='<div class="empty">No daily records yet. After a day\'s matches finish, the model\'s champion pick for that day locks in here.</div>'; return; }
+    renderEquityChart(d.slice().reverse());  // chronological for the chart
     list.innerHTML=d.map(day=>{
       const champ=day.top&&day.top[0];
       const chasers=(day.top||[]).slice(1,4).map(t=>`<span class="pill"><b>${t.team}</b> <span>${(t.win*100).toFixed(1)}%</span></span>`).join('');
@@ -845,6 +922,51 @@
         <div class="chase" style="margin-top:8px;">${chasers}</div>
       </div>`;
     }).join('');
+  }
+
+  // Championship Equity Trajectory — each top team's win-prob across days
+  function renderEquityChart(days){
+    const box=$('equity-chart'); if(!box) return;
+    // teams to plot: union of each day's top-8, ranked by their latest value, capped at 8
+    const latest=days[days.length-1].top||[];
+    const order=latest.map(t=>t.team).slice(0,8);
+    // ensure we have a value per team per day (0 if absent that day)
+    const valOf=(day,team)=>{ const e=(day.top||[]).find(x=>x.team===team); return e?e.win:0; };
+    if(days.length<2){
+      box.innerHTML=`<div class="hint" style="margin-bottom:14px;">The trajectory chart appears once there are at least two days of records — right now there's ${days.length}. Check back after the next matchday.</div>`;
+      return;
+    }
+    const W=680,H=300,padL=38,padR=96,padT=16,padB=28;
+    const maxV=Math.max(0.05,...days.flatMap(dd=>order.map(t=>valOf(dd,t))));
+    const x=i=>padL+(W-padL-padR)*(days.length<=1?0:i/(days.length-1));
+    const y=v=>padT+(H-padT-padB)*(1-v/maxV);
+    const palette=['#d6b25e','#7c6df2','#34d399','#f4a23b','#ef6461','#5db0ff','#c77dff','#8b97a8'];
+    // gridlines
+    let grid='';
+    for(let g=0;g<=4;g++){ const gv=maxV*g/4, gy=y(gv);
+      grid+=`<line x1="${padL}" y1="${gy}" x2="${W-padR}" y2="${gy}" stroke="var(--line)" stroke-width="1"/>`;
+      grid+=`<text x="${padL-6}" y="${gy+3}" text-anchor="end" font-size="9" font-family="var(--mono)" fill="var(--dim)">${Math.round(gv*100)}%</text>`;
+    }
+    // x labels (dates)
+    let xlab='';
+    days.forEach((dd,i)=>{ if(days.length>6 && i%2!==0 && i!==days.length-1) return;
+      const lb=new Date(dd.date+'T12:00:00Z').toLocaleDateString('en-US',{timeZone:PT,month:'numeric',day:'numeric'});
+      xlab+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="9" font-family="var(--mono)" fill="var(--dim)">${lb}</text>`;
+    });
+    // lines + end labels
+    let lines='',dots='',labels='';
+    order.forEach((team,ti)=>{
+      const c=palette[ti%palette.length];
+      const pts=days.map((dd,i)=>`${x(i)},${y(valOf(dd,team))}`).join(' ');
+      lines+=`<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>`;
+      const lv=valOf(days[days.length-1],team);
+      dots+=`<circle cx="${x(days.length-1)}" cy="${y(lv)}" r="3" fill="${c}"/>`;
+      labels+=`<text x="${x(days.length-1)+7}" y="${y(lv)+3}" font-size="10" font-family="var(--sans)" fill="${c}">${team} ${Math.round(lv*100)}%</text>`;
+    });
+    box.innerHTML=`<div class="sechead" style="margin:0 0 10px;">Championship equity over time</div>
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;">
+        ${grid}${xlab}${lines}${dots}${labels}
+      </svg>`;
   }
 
   // ---- track record: server-frozen, pre-match predictions shared by everyone ----
