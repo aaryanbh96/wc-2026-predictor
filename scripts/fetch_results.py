@@ -197,7 +197,7 @@ def main():
     # How many matches are finished as of now — used so the snapshot reflects the
     # day's completed results.
     fc = model.forecast(20000)
-    top5 = [{"team": t, "win": round(p, 4)} for t, p in fc[:5]]
+    top5 = [{"team": t, "win": round(p, 4)} for t, p in fc[:8]]
     snapshot = {"date": pt_today, "games_played": len(matches), "top": top5}
 
     existing = next((d for d in daily if d.get("date") == pt_today), None)
