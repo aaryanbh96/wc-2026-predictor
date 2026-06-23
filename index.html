@@ -914,12 +914,21 @@
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
       renderUpcoming(); renderTrackRecord(); renderDaily();
-      const when = data.updated ? ptDateTime(data.updated) : 'unknown';
-      let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · feed updated ${when}`
-                       : `Up to date · feed updated ${when}`;
+      const checkedNow = ptDateTime(Date.now());      // live: when the page just checked
+      let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · checked ${checkedNow}`
+                       : `Live · checked ${checkedNow}`;
+      // surface the next kickoff — more reassuring than any "updated" timestamp
+      const nx=nextMatchday()[0];
+      if(nx){
+        const mins=Math.round((Date.parse(nx.utc)-Date.now())/60000);
+        if(mins>0){
+          const t = mins<60? `${mins} min` : `${Math.floor(mins/60)}h ${mins%60}m`;
+          msg += ` · next match in ${t}`;
+        }
+      }
       if(lockedNow>0) msg += ` · locked ${lockedNow} upcoming`;
       if(unmatched.length) msg += ` · ${unmatched.length} unmatched (name mismatch)`;
-      syncBar(msg, (applied||lockedNow)?'ok':'muted');
+      syncBar(msg, 'ok');
     }catch(e){
       syncBar(manual?'Sync failed — check that results.json is reachable.':'','err');
     }
