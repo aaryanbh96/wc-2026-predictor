@@ -427,9 +427,9 @@
   <section class="panel" id="p-about">
     <div class="prose" style="max-width:60ch;">
       <p style="font-size:16px;color:var(--ink);"><b>About</b></p>
-      <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> 🇩🇪 is my team.</p>
+      <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> <img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/de.svg" alt="Germany"> is my team.</p>
       <p>I made this because the 2026 World Cup looked genuinely hard to call, and I wanted a model that predicts each match, learns from what actually happens, and keeps itself honest about how well it's doing — all updating on its own as the tournament unfolds.</p>
-      <p>It's an Elo-style rating model with momentum, a Monte Carlo tournament simulation, and an automated pipeline that fetches results and re-grades the model's own pre-match calls. Built as a static site with a small serverless backend — no big infrastructure, just a thing that runs itself.</p>
+      <p>Under the hood: an Elo-style rating model with momentum, a Monte Carlo simulation that plays the rest of the tournament forward 20,000 times, and an automated pipeline that pulls live results, re-rates every team, and grades its own pre-match calls. Built with a real-time data feed, a scheduled pipeline, and a serverless backend.</p>
       <p>More of my work lives at <a href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>.</p>
     </div>
   </section>
