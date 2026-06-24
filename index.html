@@ -542,9 +542,15 @@
     fillSel($('ra'),$('ra').value||'Argentina'); fillSel($('rb'),$('rb').value||'Brazil');
   }
   function refreshStats(){
-    $('s-prehit').textContent=state.preGraded?Math.round(100*state.preHit/state.preGraded)+'%':'—';
-    $('s-prebrier').textContent=state.preGraded?(state.preBrierSum/state.preGraded).toFixed(3):'—';
-    $('s-graded').textContent=state.preGraded;
+    // top-of-page stats reflect the SHARED, server-frozen track record (genuine pre-match
+    // calls only — backfilled games excluded), so the prominent number is the honest one.
+    const fm=(state.frozenMatches||[]).filter(m=>m.predicted && typeof m.hit==='boolean' && !m.backfilled);
+    const n=fm.length, hits=fm.filter(m=>m.hit).length;
+    let bs=0; fm.forEach(m=>{ const p=m.predicted, oA=m.hg>m.ag?1:0,oB=m.hg<m.ag?1:0,oD=m.hg===m.ag?1:0;
+      bs+=Math.pow(p.pA-oA,2)+Math.pow(p.pB-oB,2)+Math.pow(p.pD-oD,2); });
+    $('s-prehit').textContent=n?Math.round(100*hits/n)+'%':'—';
+    $('s-prebrier').textContent=n?(bs/n).toFixed(3):'—';
+    $('s-graded').textContent=n;
     $('s-games').textContent=state.games;
     $('s-teams').textContent=names().length;
     const pend=state.predictions.filter(p=>!p.result).length;
@@ -1089,7 +1095,7 @@
       state.live = data.live || [];                // in-progress matches (shared)
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
-      renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive();
+      renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive(); refreshStats();
       const checkedNow = ptDateTime(Date.now());      // live: when the page just checked
       let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · checked ${checkedNow}`
                        : `Live · checked ${checkedNow}`;
@@ -1143,7 +1149,7 @@
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
   renderForecast();
-  autoLockUpcoming(); renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive();
+  autoLockUpcoming(); renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive(); refreshStats();
   fetchResults(false);   // auto-sync on page load
 })();
 </script>
