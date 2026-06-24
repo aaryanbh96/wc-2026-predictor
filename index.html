@@ -551,7 +551,7 @@
     $('s-prehit').textContent=n?Math.round(100*hits/n)+'%':'—';
     $('s-prebrier').textContent=n?(bs/n).toFixed(3):'—';
     $('s-graded').textContent=n;
-    $('s-games').textContent=state.games;
+    $('s-games').textContent=(state.frozenMatches&&state.frozenMatches.length)?state.frozenMatches.length:state.games;
     $('s-teams').textContent=names().length;
     const pend=state.predictions.filter(p=>!p.result).length;
     const bd=$('pend-badge'); if(pend){ bd.style.display='inline-block'; bd.textContent=pend; } else bd.style.display='none';
