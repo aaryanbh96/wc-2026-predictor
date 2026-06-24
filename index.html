@@ -1424,14 +1424,16 @@
         delete liveCleared[k];
         workerSeenLive=true;
       });
-      // Any match we're currently showing but that's ABSENT this poll: count the miss.
-      // One miss could be a transient blip (keep showing). Two consecutive misses means
-      // the match genuinely ended (it dropped out of live=all) -> remove it so it doesn't
-      // linger as "live" after full-time.
+      // Any match we're currently showing but ABSENT this poll: count the miss.
+      // Clearing is CONSERVATIVE: a real match never ends in a minute, but API-Football
+      // can briefly drop matches from live=all (transient gaps). So we require MANY
+      // consecutive misses (~5+ min of sustained absence) before treating a match as
+      // finished. A blip of 1-4 empty polls keeps the score on screen.
+      const MISS_LIMIT = 6;   // ~6 polls (≈3-6 min) of sustained absence = finished
       Object.keys(liveScores).forEach(k=>{
         if(!present.has(k)){
           liveMiss[k]=(liveMiss[k]||0)+1;
-          if(liveMiss[k]>=2){ delete liveScores[k]; delete liveMiss[k]; liveCleared[k]=1; }
+          if(liveMiss[k]>=MISS_LIMIT){ delete liveScores[k]; delete liveMiss[k]; liveCleared[k]=1; }
         }
       });
       renderLive();      // re-render live cards with fresh scores
