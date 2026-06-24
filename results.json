@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24T19:15:16Z",
+  "updated": "2026-06-24T21:00:21Z",
   "matches": [
     {
       "id": 1489369,
@@ -545,6 +545,36 @@
       },
       "backfilled": false,
       "hit": true
+    },
+    {
+      "id": 1489408,
+      "utc": "2026-06-24T19:00:00+00:00",
+      "home": "Switzerland",
+      "away": "Canada",
+      "hg": 2,
+      "ag": 1,
+      "predicted": {
+        "pA": 0.3696,
+        "pD": 0.2681,
+        "pB": 0.3623
+      },
+      "backfilled": false,
+      "hit": true
+    },
+    {
+      "id": 1539009,
+      "utc": "2026-06-24T19:00:00+00:00",
+      "home": "Bosnia and Herzegovina",
+      "away": "Qatar",
+      "hg": 3,
+      "ag": 1,
+      "predicted": {
+        "pA": 0.4326,
+        "pD": 0.243,
+        "pB": 0.3244
+      },
+      "backfilled": false,
+      "hit": true
     }
   ],
   "upcoming": [
@@ -791,30 +821,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1489408,
-      "utc": "2026-06-24T19:00:00+00:00",
-      "home": "Switzerland",
-      "away": "Canada",
-      "predicted": {
-        "pA": 0.3696,
-        "pD": 0.2681,
-        "pB": 0.3623
-      }
-    },
-    {
-      "id": 1539009,
-      "utc": "2026-06-24T19:00:00+00:00",
-      "home": "Bosnia and Herzegovina",
-      "away": "Qatar",
-      "predicted": {
-        "pA": 0.4326,
-        "pD": 0.243,
-        "pB": 0.3244
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -882,39 +889,39 @@
     },
     {
       "date": "2026-06-24",
-      "games_played": 48,
+      "games_played": 50,
       "top": [
         {
           "team": "Argentina",
-          "win": 0.1943
+          "win": 0.1868
         },
         {
           "team": "France",
-          "win": 0.1518
+          "win": 0.1489
         },
         {
           "team": "England",
-          "win": 0.0888
+          "win": 0.0851
         },
         {
           "team": "USA",
-          "win": 0.0766
+          "win": 0.0726
         },
         {
           "team": "Spain",
-          "win": 0.0693
+          "win": 0.067
         },
         {
           "team": "Germany",
-          "win": 0.0595
+          "win": 0.0605
         },
         {
           "team": "Mexico",
-          "win": 0.056
+          "win": 0.0545
         },
         {
           "team": "Brazil",
-          "win": 0.0441
+          "win": 0.0444
         }
       ]
     }
@@ -927,7 +934,7 @@
     "Canada": "qualified",
     "Switzerland": "qualified",
     "Bosnia and Herzegovina": "alive",
-    "Qatar": "alive",
+    "Qatar": "eliminated",
     "Brazil": "alive",
     "Morocco": "alive",
     "Scotland": "alive",
