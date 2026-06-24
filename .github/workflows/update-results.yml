@@ -25,7 +25,7 @@ jobs:
       - name: Fetch finished results
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
-        run: python scripts/fetch_results_apifootball.py
+        run: python scripts/inspect_knockout.py
 
       - name: Commit if changed
         run: |
