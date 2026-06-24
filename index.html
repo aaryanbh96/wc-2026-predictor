@@ -33,8 +33,8 @@
     --bg:#0e1116; --panel:rgba(38,46,60,.5); --panel2:rgba(48,58,76,.55); --line:rgba(255,255,255,.1);
     --ink:#f5f8fc; --mut:#b4c0d2; --dim:#7a8699;
     --display:'Bebas Neue', 'Arial Narrow', sans-serif;
-    --accent:#fb8b3c; --accentq:#e8761f;
-    --a:#fb8b3c; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
+    --accent:#22c55e; --accentq:#16a34a;
+    --a:#22c55e; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
     --radius:12px; --radius-sm:8px;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -57,15 +57,17 @@
   @media (min-width:1141px){ .wrap{border-radius:20px;margin:24px auto;} }
   @media (max-width:760px){
     .layout{grid-template-columns:1fr;gap:0;}
-    .sidebar{position:static;margin-bottom:18px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel);}
+    .sidebar{position:static;margin-bottom:18px;}
     .navtoggle{display:block;width:100%;background:none;border:none;color:var(--ink);font-family:var(--mono);
-      font-size:13px;text-align:left;cursor:pointer;padding:4px 0;letter-spacing:.06em;}
-    .navgroups{display:contents;}            /* let brand show; groups list toggles separately */
-    .navgroups .navsec, .navgroups .tab{display:none;}
-    .navgroups.open .navsec, .navgroups.open .tab{display:flex;}
+      font-size:13px;text-align:left;cursor:pointer;padding:8px 12px;letter-spacing:.06em;}
+    .navgroups{width:100%!important;padding:10px 14px;}
+    .navgroups .navsec, .navgroups .tab .tlabel, .navgroups .brand-clock{opacity:1!important;height:auto!important;}
+    .navgroups .navsec{display:none;}
+    .navgroups.open .navsec{display:block;}
+    .navgroups .tab{display:none;}
+    .navgroups.open .tab{display:flex;}
     .brand{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px;padding-bottom:12px;}
     .brand-flags{margin-bottom:0;}
-    .navsec{margin:14px 0 6px;}
   }
   header{margin-bottom:28px;}
   .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
@@ -83,30 +85,48 @@
   .stat.hl{border-color:rgba(74,222,128,.35);}
 
   /* two-column layout: left sidebar nav + main content */
-  .layout{display:grid;grid-template-columns:204px 1fr;gap:40px;align-items:start;}
-  .sidebar{position:sticky;top:28px;}
+  .layout{display:grid;grid-template-columns:64px 1fr;gap:32px;align-items:start;}
+  .sidebar{position:sticky;top:24px;z-index:30;}
   .content{min-width:0;max-width:100%;}
   .content table{max-width:100%;}
   .navtoggle{display:none;}
-  .navgroups{display:flex;flex-direction:column;}
-  /* sidebar brand block: cohost flags + live clock at the top */
-  .brand{margin-bottom:4px;padding-bottom:13px;border-bottom:1px solid var(--line);}
-  .brand-flags{display:flex;gap:6px;align-items:center;margin-bottom:9px;}
-  .brand-flags .fl{width:32px;height:23px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.3);}
-  .brand-clock{font-family:var(--mono);font-size:11px;line-height:1.5;}
+  /* icon rail: collapsed shows icons only; expands to labels on hover */
+  .navgroups{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);
+    border-radius:16px;padding:12px 10px;width:64px;overflow:hidden;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    transition:width .22s cubic-bezier(.4,0,.2,1);box-shadow:0 16px 40px -12px rgba(0,0,0,.5);}
+  .sidebar:hover .navgroups{width:212px;}
+  /* brand block */
+  .brand{margin-bottom:6px;padding-bottom:12px;border-bottom:1px solid var(--line);overflow:hidden;}
+  .brand-flags{display:flex;gap:5px;align-items:center;margin-bottom:9px;flex-wrap:nowrap;}
+  .brand-flags .fl{width:26px;height:19px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.3);flex-shrink:0;}
+  .brand-clock{font-family:var(--mono);font-size:11px;line-height:1.5;white-space:nowrap;
+    opacity:0;transition:opacity .18s;}
+  .sidebar:hover .brand-clock{opacity:1;}
   .brand-clock #pt-date{color:var(--ink);} .brand-clock #pt-time{color:var(--accent);}
-  .tab-top{margin-top:14px;font-weight:600;}
+  /* section labels: hidden when collapsed, fade in on expand */
   .navsec{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--mut);font-weight:600;margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line);}
-  .navfoot{display:flex;align-items:center;gap:4px;margin-top:18px;padding-top:13px;border-top:1px solid var(--line);}
-  .navfoot-sep{color:var(--dim);}
-  .tab-inline{padding:2px 4px;margin-left:0;border-left:none;font-size:15px;}
-  .tab-inline.on{border-left:none;color:var(--accent);}
-  .tab{background:none;border:none;color:#c8d2e0;font-size:16px;font-family:var(--sans);
-    text-align:left;padding:6px 2px;cursor:pointer;display:flex;align-items:center;gap:7px;
-    border-left:2px solid transparent;padding-left:12px;margin-left:-2px;transition:color .12s,border-color .12s;}
-  .tab:hover{color:var(--ink);}
-  .tab.on{color:var(--ink);border-left-color:var(--accent);font-weight:600;}
+    color:var(--mut);font-weight:600;margin:14px 0 5px;padding-left:9px;white-space:nowrap;
+    height:0;opacity:0;overflow:hidden;transition:opacity .18s, height .18s, margin .18s;}
+  .sidebar:hover .navsec{height:auto;opacity:1;margin:14px 0 5px;}
+  .navfoot{display:flex;align-items:center;gap:3px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);}
+  .navfoot-sep{color:var(--dim);opacity:0;transition:opacity .18s;}
+  .sidebar:hover .navfoot-sep{opacity:1;}
+  .navfoot{flex-direction:column;align-items:stretch;}
+  .sidebar:hover .navfoot{flex-direction:row;align-items:center;}
+  /* the tab buttons */
+  .tab{background:none;border:none;color:#c8d2e0;font-size:15px;font-family:var(--sans);
+    text-align:left;padding:9px 0;cursor:pointer;display:flex;align-items:center;gap:12px;
+    border-radius:9px;padding-left:10px;white-space:nowrap;transition:background .14s,color .14s;position:relative;}
+  .tab .ic{width:21px;height:21px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round;}
+  .tab .tlabel{opacity:0;transition:opacity .18s;}
+  .sidebar:hover .tab .tlabel{opacity:1;}
+  .tab:hover{color:var(--ink);background:rgba(255,255,255,.05);}
+  .tab.on{color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, transparent);font-weight:600;}
+  .tab-top{margin-top:6px;}
+  .tab-inline{font-size:15px;}
+  .tab-inline.on{color:var(--accent);}
   .tab .badge{display:inline-block;min-width:17px;height:17px;line-height:17px;text-align:center;font-size:10px;font-family:var(--mono);background:var(--warn);color:#231603;border-radius:9px;margin-left:5px;padding:0 4px;}
 
   .panel{display:none;}
@@ -192,15 +212,15 @@
 
   /* champion hero — the headline answer, tinted with the champion's own flag colour */
   .champ{position:relative;overflow:hidden;border-radius:18px;border:1px solid color-mix(in srgb, var(--champ, var(--gold)) 35%, var(--line));
-    background:linear-gradient(120deg,
-        color-mix(in srgb, var(--champ, var(--gold)) 38%, #11151c) 0%,
-        color-mix(in srgb, var(--champ, var(--gold)) 20%, #11151c) 42%,
-        color-mix(in srgb, var(--champ, var(--gold)) 26%, #11151c) 100%);
+    background:linear-gradient(100deg,
+        color-mix(in srgb, var(--champ, var(--gold)) 46%, #12161e) 0%,
+        color-mix(in srgb, var(--champ, var(--gold)) 32%, #12161e) 50%,
+        color-mix(in srgb, var(--champ, var(--gold)) 14%, #11141b) 100%);
     padding:40px 38px;margin:8px 0 8px;
     box-shadow:0 16px 50px -12px color-mix(in srgb, var(--champ, var(--gold)) 40%, transparent);}
-  /* soft glow bloom from the right so the card feels lit, not dark */
-  .champ::before{content:"";position:absolute;right:-10%;top:-30%;width:60%;height:160%;pointer-events:none;
-    background:radial-gradient(circle, color-mix(in srgb, var(--champ, var(--gold)) 45%, transparent), transparent 70%);}
+  /* soft glow bloom from the left so the card is brightest where the name reads */
+  .champ::before{content:"";position:absolute;left:-8%;top:-30%;width:55%;height:160%;pointer-events:none;
+    background:radial-gradient(circle, color-mix(in srgb, var(--champ, var(--gold)) 42%, transparent), transparent 70%);}
   /* faint pitch stripes — football's own world, kept subtle */
   .champ::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:1;
     background:repeating-linear-gradient(115deg, rgba(255,255,255,.06) 0 2px, transparent 2px 60px),
@@ -223,7 +243,7 @@
   .fl{display:inline-block;width:1.25em;height:.9em;object-fit:cover;border-radius:2px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
 
   /* Today's matches — a lively strip that makes the page feel alive on landing */
-  #today-block{margin:22px 0 8px;}
+  #today-block{margin:32px 0 16px;}
   .today-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
   .today-lab{font-family:var(--display);font-size:24px;letter-spacing:.03em;color:var(--ink);white-space:nowrap;}
   .tchips{display:flex;gap:10px;flex-wrap:wrap;flex:1;}
@@ -297,23 +317,23 @@
           <span id="pt-date"></span><br><span id="pt-time"></span>
         </div>
       </div>
-      <button class="tab on tab-top" data-t="forecast">Forecast</button>
+      <button class="tab on tab-top" data-t="forecast"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9l3-5 3 4 3-6 3 8"/><path d="M5 19h14M8 19v-3m4 3v-6m4 6v-2"/></svg><span class="tlabel">Forecast</span></button>
       <div class="navsec">Track &amp; history</div>
-      <button class="tab" data-t="record">Track record</button>
-      <button class="tab" data-t="daily">Daily records</button>
+      <button class="tab" data-t="record"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M8 16l3-4 3 2 4-6"/></svg><span class="tlabel">Track record</span></button>
+      <button class="tab" data-t="daily"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4m8-4v4"/></svg><span class="tlabel">Daily records</span></button>
       <div class="navsec">Predict</div>
-      <button class="tab" data-t="predict">Predict match</button>
-      <button class="tab" data-t="shock">Shock the model</button>
+      <button class="tab" data-t="predict"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span class="tlabel">Predict match</span></button>
+      <button class="tab" data-t="shock"><svg class="ic" viewBox="0 0 24 24"><path d="M13 3L4 14h6l-1 7 9-11h-6z"/></svg><span class="tlabel">Shock the model</span></button>
       <div class="navsec">My scratchpad</div>
-      <button class="tab" data-t="ledger">Scratchpad <span class="badge" id="pend-badge" style="display:none;">0</span></button>
+      <button class="tab" data-t="ledger"><svg class="ic" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg><span class="tlabel">Scratchpad</span> <span class="badge" id="pend-badge" style="display:none;">0</span></button>
       <div class="navsec">Reference</div>
-      <button class="tab" data-t="ratings">Ratings</button>
-      <button class="tab" data-t="groups">Groups</button>
-      <button class="tab" data-t="teams">Teams</button>
+      <button class="tab" data-t="ratings"><svg class="ic" viewBox="0 0 24 24"><path d="M5 20V10m7 10V4m7 16v-7"/></svg><span class="tlabel">Ratings</span></button>
+      <button class="tab" data-t="groups"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg><span class="tlabel">Groups</span></button>
+      <button class="tab" data-t="teams"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 6a3 3 0 0 1 0 6m5 8c0-2.5-2-4-4-4.5"/></svg><span class="tlabel">Teams</span></button>
       <div class="navfoot">
-        <button class="tab tab-inline" data-t="how">Help</button>
+        <button class="tab tab-inline" data-t="how"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4 1.5c0 1.5-2 2-2 3"/><circle cx="12" cy="16.5" r=".5" fill="currentColor"/></svg><span class="tlabel">Help</span></button>
         <span class="navfoot-sep">·</span>
-        <button class="tab tab-inline" data-t="about">About</button>
+        <button class="tab tab-inline" data-t="about"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.5" r=".5" fill="currentColor"/></svg><span class="tlabel">About</span></button>
       </div>
     </div>
   </nav>
@@ -328,7 +348,7 @@
 
   <header>
     <h1>World Cup 2026 Predictor</h1>
-    <p class="sub">Who wins the World Cup? This simulates the whole remaining tournament 20,000 times to find out — and updates itself after every match.</p>
+    <p class="sub">The model that calls the World Cup before it happens — simulating every remaining match 20,000 times, learning from each result, and grading its own predictions in the open.</p>
   </header>
 
   <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 4px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
