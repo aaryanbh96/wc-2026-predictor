@@ -103,11 +103,6 @@ Plus a small **Cloudflare Worker** powering the public visitor counter (KV-backe
 | `worker/visitor-counter.js` | Cloudflare Worker reference copy for the visitor counter. |
 | `assets/` | Favicon and background image. |
 
----
-
-## A note on honesty
-
-The thing this project cares about most is **not overclaiming**. The track record counts only genuine pre-match calls and excludes backfilled games. The qualification engine refuses to declare a team "out" until it's mathematically certain. The forecast labels itself an estimate, not a guarantee. It's a statistical model with online learning — not a crystal ball — and it says so.
 
 ---
 
