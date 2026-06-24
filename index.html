@@ -1317,41 +1317,44 @@
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
       renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
-      // HONEST freshness: base the claim on when the PIPELINE last wrote data
-      // (data.updated), not merely when the browser fetched. If the pipeline has
-      // gone stale, say so plainly rather than falsely claiming "Live".
+      // HONEST freshness, but context-aware. Old data is only a problem when we'd
+      // EXPECT fresh updates — i.e. a match is live, just finished, or kicks off soon.
+      // During quiet hours (no live match, next kickoff hours away) old data is normal
+      // and the bar should calmly say "up to date", not alarm with "reconnecting".
       const dataUpdated = data.updated ? Date.parse(data.updated) : null;
       const ageMin = dataUpdated ? Math.round((Date.now()-dataUpdated)/60000) : null;
       const liveActive = (data.live||[]).length>0 || Object.keys(liveScores||{}).length>0;
-      // "fresh" thresholds: during live matches we expect frequent updates (15 min),
-      // otherwise the regular cron cadence is fine (90 min).
-      const staleLimit = liveActive ? 15 : 90;
-      let msg;
+      // minutes until next kickoff (if any)
+      const nx=nextMatchday()[0];
+      const minsToNext = nx ? Math.round((Date.parse(nx.utc)-Date.now())/60000) : null;
+      // we're in an "active window" if a match is live, or one starts within 30 min,
+      // or one started within the last ~3 hours (could still be live/just finished)
+      const inActiveWindow = liveActive
+        || (minsToNext!=null && minsToNext>=-180 && minsToNext<=30);
+
+      let msg, barKind='ok';
       if(ageMin==null){
         msg = `Checked ${ptDateTime(Date.now())}`;
-      } else if(ageMin <= staleLimit){
-        const ago = ageMin<1? 'just now' : (ageMin<60? `${ageMin} min ago` : `${Math.floor(ageMin/60)}h ${ageMin%60}m ago`);
-        msg = applied? `Synced ${applied} new result${applied>1?'s':''} · updated ${ago}`
-                     : (liveActive? `Live · updated ${ago}` : `Up to date · ${ago}`);
-      } else {
-        // stale — be honest, don't claim live
+      } else if(liveActive){
+        msg = `Live · scores updating`;
+      } else if(inActiveWindow && ageMin>15){
+        // matches around now but data hasn't refreshed — genuinely worth flagging
         const ago = ageMin<60? `${ageMin} min ago` : `${Math.floor(ageMin/60)}h ${ageMin%60}m ago`;
-        msg = `Last updated ${ago} · reconnecting…`;
+        msg = `Last updated ${ago} · reconnecting…`; barKind='warn';
+      } else if(applied>0){
+        msg = `Synced ${applied} new result${applied>1?'s':''}`;
+      } else {
+        // quiet hours or recently fresh — calmly up to date
+        msg = `Up to date`;
       }
-      // surface the next kickoff when not stale
-      if(ageMin!=null && ageMin<=staleLimit){
-        const nx=nextMatchday()[0];
-        if(nx){
-          const mins=Math.round((Date.parse(nx.utc)-Date.now())/60000);
-          if(mins>0){
-            const t = mins<60? `${mins} min` : `${Math.floor(mins/60)}h ${mins%60}m`;
-            msg += ` · next match in ${t}`;
-          }
-        }
+      // helpful context: next kickoff
+      if(minsToNext!=null && minsToNext>0){
+        const t = minsToNext<60? `${minsToNext} min` : `${Math.floor(minsToNext/60)}h ${minsToNext%60}m`;
+        msg += ` · next match in ${t}`;
       }
       if(lockedNow>0) msg += ` · locked ${lockedNow} upcoming`;
       if(unmatched.length) msg += ` · ${unmatched.length} unmatched (name mismatch)`;
-      syncBar(msg, ageMin!=null && ageMin>staleLimit ? 'warn' : 'ok');
+      syncBar(msg, barKind);
     }catch(e){
       syncBar(manual?'Sync failed — check that results.json is reachable.':'','err');
     }
