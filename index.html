@@ -1396,18 +1396,26 @@
     if(!LIVE_URL) return;
     try{
       const r = await fetch(LIVE_URL, {cache:'no-store'});
-      if(!r.ok) return;
+      if(!r.ok) return;            // fetch failed — keep showing last known scores
       const d = await r.json();
-      const next={};
-      (d.live||[]).forEach(m=>{
-        // map feed names to our names where needed
+      const incoming = d.live||[];
+      // Only update when we actually got live data. If the worker briefly returns an
+      // empty list (between polls, transient), DON'T wipe the scores we're showing.
+      if(!incoming.length){
+        // a match we were tracking may have just ended; only clear those that are
+        // confirmed gone if the worker has a fresh timestamp AND empty list for a while.
+        // For now, keep last known scores so the display never blanks mid-match.
+        renderLive(); renderToday();
+        return;
+      }
+      // merge incoming scores into the sticky store (overwrite per match, keep others)
+      incoming.forEach(m=>{
         const home=NAME_FIX(m.home), away=NAME_FIX(m.away);
-        next[home+'|'+away]={hg:m.hg, ag:m.ag, minute:m.minute, status:m.status, home, away};
+        liveScores[home+'|'+away]={hg:m.hg, ag:m.ag, minute:m.minute, status:m.status, home, away};
       });
-      liveScores=next;
       renderLive();      // re-render live cards with fresh scores
       renderToday();     // today's strip shows live scores too
-    }catch(e){ /* worker unreachable — fall back to results.json live state */ }
+    }catch(e){ /* worker unreachable — keep last known scores, don't blank */ }
   }
   // light name normaliser mirroring the feed's spellings (front-end side)
   function NAME_FIX(n){
