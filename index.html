@@ -166,10 +166,10 @@
   .ufix .ko{font-family:var(--mono);font-size:11px;color:var(--dim);}
   .ufix .lockflag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(124,109,242,.14);color:#a99bff;}
   .ufix .lockflag.live{background:rgba(244,162,59,.14);color:var(--warn);}
-  .ufix .pbar{display:flex;height:8px;border-radius:5px;overflow:hidden;margin-top:10px;background:var(--panel2);}
-  .ufix .pbar i{height:100%;display:block;}
-  .ufix .plab{display:flex;justify-content:space-between;font-size:11px;font-family:var(--mono);color:var(--mut);margin-top:6px;}
-  .ufix .plab b{color:var(--ink);font-weight:600;}
+  .ufix .pbar, .live-card .pbar{display:flex;height:8px;border-radius:5px;overflow:hidden;margin-top:10px;background:var(--panel2);}
+  .ufix .pbar i, .live-card .pbar i{height:100%;display:block;}
+  .ufix .plab, .live-card .plab{display:flex;justify-content:space-between;gap:10px;font-size:11px;font-family:var(--mono);color:var(--mut);margin-top:6px;}
+  .ufix .plab b, .live-card .plab b{color:var(--ink);font-weight:600;}
   .ufix .verdict{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;}
   .ufix .verdict.hit{background:rgba(74,222,128,.12);color:var(--accent);}
   .ufix .verdict.miss{background:rgba(239,100,97,.12);color:var(--bad);}
@@ -351,9 +351,9 @@
   <section class="panel" id="p-about">
     <div class="prose" style="max-width:60ch;">
       <p style="font-size:16px;color:var(--ink);"><b>About</b></p>
-      <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> 🇩🇪 is the teamam rooting for.</p>
+      <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> 🇩🇪 is my team.</p>
       <p>I made this because the 2026 World Cup looked genuinely hard to call, and I wanted a model that predicts each match, learns from what actually happens, and keeps itself honest about how well it's doing — all updating on its own as the tournament unfolds.</p>
-      <p>It's an Elo-style rating model with momentum, a Monte Carlo simulation that plays out the tournament 20,000 times, and an automated pipeline that pulls live results, re-rates every team, and grades its own pre-match predictions — all updating on its own. Built with a real-time data feed, a scheduled pipeline, and a serverless backend.</p>
+      <p>It's an Elo-style rating model with momentum, a Monte Carlo tournament simulation, and an automated pipeline that fetches results and re-grades the model's own pre-match calls. Built as a static site with a small serverless backend — no big infrastructure, just a thing that runs itself.</p>
       <p>More of my work lives at <a href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>.</p>
     </div>
   </section>
