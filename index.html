@@ -27,7 +27,7 @@
 <style>
   :root{
     --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
-    --ink:#e8ecf2; --mut:#8b97a8; --dim:#5d6878;
+    --ink:#f5f8fc; --mut:#a4b0c2; --dim:#6b7689;
     --display:'Bebas Neue', 'Arial Narrow', sans-serif;
     --accent:#4ade80; --accentq:#34d399;
     --a:#7c6df2; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
@@ -36,8 +36,8 @@
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box;}
-  html{overflow-x:hidden;overscroll-behavior:none;}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;overscroll-behavior-y:none;max-width:100%;}
+  html{overscroll-behavior-x:none;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip;}
   .wrap{max-width:1140px;margin:0 auto;padding:32px 24px 80px;}
   @media (max-width:760px){
     .layout{grid-template-columns:1fr;gap:0;}
@@ -69,7 +69,7 @@
   /* two-column layout: left sidebar nav + main content */
   .layout{display:grid;grid-template-columns:204px 1fr;gap:40px;align-items:start;}
   .sidebar{position:sticky;top:28px;}
-  .content{min-width:0;max-width:100%;overflow-x:hidden;}
+  .content{min-width:0;max-width:100%;}
   .content table{max-width:100%;}
   .navtoggle{display:none;}
   .navgroups{display:flex;flex-direction:column;}
@@ -84,10 +84,10 @@
     color:var(--mut);font-weight:600;margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line);}
   .navfoot{display:flex;align-items:center;gap:4px;margin-top:18px;padding-top:13px;border-top:1px solid var(--line);}
   .navfoot-sep{color:var(--dim);}
-  .tab-inline{padding:2px 4px;margin-left:0;border-left:none;font-size:14px;}
+  .tab-inline{padding:2px 4px;margin-left:0;border-left:none;font-size:15px;}
   .tab-inline.on{border-left:none;color:var(--accent);}
-  .tab{background:none;border:none;color:var(--mut);font-size:14.5px;font-family:var(--sans);
-    text-align:left;padding:5px 2px;cursor:pointer;display:flex;align-items:center;gap:7px;
+  .tab{background:none;border:none;color:var(--mut);font-size:16px;font-family:var(--sans);
+    text-align:left;padding:6px 2px;cursor:pointer;display:flex;align-items:center;gap:7px;
     border-left:2px solid transparent;padding-left:12px;margin-left:-2px;transition:color .12s,border-color .12s;}
   .tab:hover{color:var(--ink);}
   .tab.on{color:var(--ink);border-left-color:var(--accent);font-weight:600;}
@@ -257,14 +257,14 @@
         </div>
       </div>
       <button class="tab on tab-top" data-t="forecast">Forecast</button>
+      <div class="navsec">Track &amp; history</div>
+      <button class="tab" data-t="record">Track record</button>
+      <button class="tab" data-t="daily">Daily records</button>
       <div class="navsec">Predict</div>
       <button class="tab" data-t="predict">Predict match</button>
       <button class="tab" data-t="shock">Shock the model</button>
       <div class="navsec">My scratchpad</div>
       <button class="tab" data-t="ledger">Scratchpad <span class="badge" id="pend-badge" style="display:none;">0</span></button>
-      <div class="navsec">Track &amp; history</div>
-      <button class="tab" data-t="record">Track record</button>
-      <button class="tab" data-t="daily">Daily records</button>
       <div class="navsec">Reference</div>
       <button class="tab" data-t="ratings">Ratings</button>
       <button class="tab" data-t="groups">Groups</button>
