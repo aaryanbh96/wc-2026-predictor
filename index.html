@@ -266,7 +266,8 @@
   </section>
 
   <section class="panel" id="p-ledger">
-    <p class="prose" style="margin-bottom:14px;">This is your <b>personal scratchpad</b> — predictions you lock and grade are saved only in your browser, just for you. For the model's <b>public, shared</b> track record (identical for everyone, frozen server-side), see the <b>Track record</b> tab.</p>
+    <p class="prose" style="margin-bottom:14px;">This is your <b>personal scratchpad</b> — predictions you lock and grade are saved only in your browser, just for you. You can even predict matchups that aren't real fixtures (Argentina v Brazil, say). For the model's <b>public, shared</b> track record (identical for everyone, frozen server-side), see the <b>Track record</b> tab.</p>
+    <div id="auto-cleanup" style="display:none;margin-bottom:12px;"></div>
     <div class="sechead">Pending — locked, awaiting result</div>
     <div id="pending-list"></div>
     <div class="sechead" style="margin-top:24px;">Graded — pre-match calls scored against reality</div>
@@ -618,6 +619,18 @@
   function renderLedger(){
     const pend=state.predictions.filter(p=>!p.result);
     const graded=state.predictions.filter(p=>p.result).sort((x,y)=>y.gradedAt-x.gradedAt);
+    // one-time cleanup: offer to clear previously auto-locked picks (kept manual ones)
+    const autoCount=state.predictions.filter(p=>p.auto).length;
+    const ac=$('auto-cleanup');
+    if(ac){
+      if(autoCount>0){
+        ac.style.display='block';
+        ac.innerHTML=`<div style="background:rgba(244,162,59,.08);border:1px solid rgba(244,162,59,.25);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:var(--mut);">${autoCount} pick${autoCount>1?'s were':' was'} auto-locked by an older version. The scratchpad is now just your manual picks.</span>
+          <button class="ghost" id="clear-auto" style="white-space:nowrap;">Clear auto-locked</button></div>`;
+        $('clear-auto').onclick=()=>{ state.predictions=state.predictions.filter(p=>!p.auto); save(); refreshStats(); renderLedger(); };
+      } else { ac.style.display='none'; ac.innerHTML=''; }
+    }
     $('pending-list').innerHTML = pend.length? pend.map((p,idx)=>{
       const fav=p.pA>=p.pB?p.a:p.b, favP=Math.round(Math.max(p.pA,p.pB)*100);
       const gi=state.predictions.indexOf(p);
@@ -881,24 +894,10 @@
   const LOCK_WINDOW_MS = 24*60*60*1000;   // lock the model's call when kickoff is within 24h
   // auto-lock predictions for fixtures kicking off within the window and not yet played
   function autoLockUpcoming(){
-    if(!state.upcoming) return 0;
-    const now=Date.now(); let locked=0;
-    for(const f of state.upcoming){
-      if(!state.teams[f.home]||!state.teams[f.away]) continue;
-      const ko=Date.parse(f.utc); if(isNaN(ko)) continue;
-      if(ko - now > LOCK_WINDOW_MS) continue;     // too early — wait until 24h out
-      if(ko < now - 6*60*60*1000) continue;        // long past, skip (result handles it)
-      if(findPending(f.home,f.away)) continue;     // already locked
-      // don't lock if we've already settled this exact pairing
-      const already=state.predictions.find(p=>p.result && pairKey(p.a,p.b)===pairKey(f.home,f.away));
-      if(already) continue;
-      const pr=probs(f.home,f.away,true);          // neutral venue
-      state.predictions.unshift({a:f.home,b:f.away,neutral:true,pA:pr.pA,pB:pr.pB,pD:pr.pD,
-        rA:Math.round(rating(f.home)),rB:Math.round(rating(f.away)),at:Date.now(),auto:true,ko:f.utc});
-      locked++;
-    }
-    if(locked) save();
-    return locked;
+    // Auto-locking is intentionally disabled: the scratchpad is now PURELY the user's own
+    // manual predictions (including hypotheticals like Argentina v Brazil). The model's real
+    // pre-match calls live in the shared Track record, so nothing is lost by not auto-locking.
+    return 0;
   }
   // the upcoming list = the next N fixtures by kickoff, regardless of calendar day.
   // finished matches naturally drop off (they leave state.upcoming on the next sync).
