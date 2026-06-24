@@ -41,7 +41,8 @@
   header{margin-bottom:28px;}
   .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
   h1{font-family:var(--display);font-size:46px;line-height:1;margin:0 0 10px;font-weight:400;letter-spacing:.02em;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-  h1 .hosts{font-size:24px;letter-spacing:.05em;}
+  h1 .hosts{display:inline-flex;gap:5px;align-items:center;}
+  h1 .hosts .fl{width:30px;height:21px;border-radius:3px;}
   .vs{color:var(--dim);font-weight:400;font-size:.82em;margin:0 2px;}
   .sub{color:var(--mut);font-size:15px;max-width:64ch;margin:0;}
 
@@ -152,7 +153,7 @@
   .champ .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--champ, var(--gold));box-shadow:0 0 12px var(--champ, var(--gold));}
   .champ .name{position:relative;font-family:var(--display);font-size:clamp(52px,11vw,104px);font-weight:400;
     letter-spacing:.01em;line-height:.92;margin:0;color:#fff;display:flex;align-items:center;gap:16px;}
-  .champ .name .cflag{font-size:.62em;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
+  .champ .name .fl{width:1.1em;height:.78em;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.4);vertical-align:0;}
   .champ .line{position:relative;display:flex;gap:30px;flex-wrap:wrap;margin-top:18px;align-items:flex-end;}
   .champ .odds{position:relative;}
   .champ .odds .big{font-family:var(--display);font-size:46px;font-weight:400;color:var(--champ, var(--gold));line-height:1;letter-spacing:.02em;}
@@ -162,7 +163,7 @@
   .champ .chase .pill{display:inline-flex;align-items:center;gap:7px;background:var(--panel2);
     border:1px solid var(--line);border-left:3px solid var(--tc,var(--line));border-radius:8px;padding:5px 12px;margin:0 7px 7px 0;font-size:13px;}
   .champ .chase .pill b{color:var(--ink);font-weight:600;} .champ .chase .pill span:last-child{font-family:var(--mono);font-size:11px;color:var(--mut);margin-left:2px;}
-  .fl{display:inline-block;font-size:1.05em;vertical-align:-1px;line-height:1;}
+  .fl{display:inline-block;width:1.25em;height:.9em;object-fit:cover;border-radius:2px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
 
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
   .fc tr.elim td{opacity:.4;}
@@ -218,7 +219,7 @@
         <span id="pt-date" style="color:var(--ink);"></span><br><span id="pt-time" style="color:var(--accent);"></span>
       </div>
     </div>
-    <h1>World Cup 2026 Predictor <span class="hosts">🇨🇦 🇺🇸 🇲🇽</span></h1>
+    <h1>World Cup 2026 Predictor <span class="hosts"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ca.svg" alt="Canada"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg" alt="USA"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/mx.svg" alt="Mexico"></span></h1>
     <p class="sub">Forecasts who wins the World Cup by simulating the whole remaining tournament thousands of times from current team ratings. Updates automatically as real results come in. Per-match prediction and a self-grading ledger live in the tabs below.</p>
   </header>
 
@@ -381,28 +382,31 @@
   const KEY="wc2026_predictor_v3";
   const K_BASE=30, HOME_ADV=60;
 
-  // flag emoji + primary accent colour per team (accent derived from real flag colours)
+  // ISO code + primary accent colour per team. Flags render as SVG images from a CDN so
+  // they look identical on every device (emoji flags don't render on Windows).
   const TEAM_META = {
-  "Mexico":["🇲🇽","#2faa55"],"Korea Republic":["🇰🇷","#3b6fd4"],"Czechia":["🇨🇿","#e0484a"],
-  "South Africa":["🇿🇦","#2faa55"],"Canada":["🇨🇦","#e0484a"],"Switzerland":["🇨🇭","#e0484a"],
-  "Bosnia and Herzegovina":["🇧🇦","#3b6fd4"],"Qatar":["🇶🇦","#7c2230"],"Brazil":["🇧🇷","#2faa55"],
-  "Morocco":["🇲🇦","#e0484a"],"Scotland":["🏴󠁧󠁢󠁳󠁣󠁴󠁿","#3b6fd4"],"Haiti":["🇭🇹","#3b6fd4"],"USA":["🇺🇸","#3b6fd4"],
-  "Paraguay":["🇵🇾","#e0484a"],"Australia":["🇦🇺","#3b6fd4"],"Türkiye":["🇹🇷","#e0484a"],
-  "Germany":["🇩🇪","#e0484a"],"Ecuador":["🇪🇨","#e6c34a"],"Côte d'Ivoire":["🇨🇮","#e98a3b"],
-  "Curaçao":["🇨🇼","#3b6fd4"],"Netherlands":["🇳🇱","#e0484a"],"Japan":["🇯🇵","#e0484a"],
-  "Sweden":["🇸🇪","#3b6fd4"],"Tunisia":["🇹🇳","#e0484a"],"Egypt":["🇪🇬","#e0484a"],
-  "Belgium":["🇧🇪","#e6c34a"],"IR Iran":["🇮🇷","#2faa55"],"New Zealand":["🇳🇿","#3b6fd4"],
-  "Spain":["🇪🇸","#e0484a"],"Uruguay":["🇺🇾","#3b6fd4"],"Cabo Verde":["🇨🇻","#3b6fd4"],
-  "Saudi Arabia":["🇸🇦","#2faa55"],"France":["🇫🇷","#3b6fd4"],"Norway":["🇳🇴","#e0484a"],
-  "Senegal":["🇸🇳","#2faa55"],"Iraq":["🇮🇶","#e0484a"],"Argentina":["🇦🇷","#6cb4e4"],
-  "Austria":["🇦🇹","#e0484a"],"Algeria":["🇩🇿","#2faa55"],"Jordan":["🇯🇴","#e0484a"],
-  "Colombia":["🇨🇴","#e6c34a"],"Congo DR":["🇨🇩","#3b6fd4"],"Portugal":["🇵🇹","#e0484a"],
-  "Uzbekistan":["🇺🇿","#3b6fd4"],"England":["🏴󠁧󠁢󠁥󠁮󠁧󠁿","#e0484a"],"Ghana":["🇬🇭","#e0484a"],
-  "Panama":["🇵🇦","#e0484a"],"Croatia":["🇭🇷","#e0484a"]
+  "Mexico":["mx","#2faa55"],"Korea Republic":["kr","#3b6fd4"],"Czechia":["cz","#e0484a"],
+  "South Africa":["za","#2faa55"],"Canada":["ca","#e0484a"],"Switzerland":["ch","#e0484a"],
+  "Bosnia and Herzegovina":["ba","#3b6fd4"],"Qatar":["qa","#7c2230"],"Brazil":["br","#2faa55"],
+  "Morocco":["ma","#e0484a"],"Scotland":["gb-sct","#3b6fd4"],"Haiti":["ht","#3b6fd4"],"USA":["us","#3b6fd4"],
+  "Paraguay":["py","#e0484a"],"Australia":["au","#3b6fd4"],"Türkiye":["tr","#e0484a"],
+  "Germany":["de","#e0484a"],"Ecuador":["ec","#e6c34a"],"Côte d'Ivoire":["ci","#e98a3b"],
+  "Curaçao":["cw","#3b6fd4"],"Netherlands":["nl","#e0484a"],"Japan":["jp","#e0484a"],
+  "Sweden":["se","#3b6fd4"],"Tunisia":["tn","#e0484a"],"Egypt":["eg","#e0484a"],
+  "Belgium":["be","#e6c34a"],"IR Iran":["ir","#2faa55"],"New Zealand":["nz","#3b6fd4"],
+  "Spain":["es","#e0484a"],"Uruguay":["uy","#3b6fd4"],"Cabo Verde":["cv","#3b6fd4"],
+  "Saudi Arabia":["sa","#2faa55"],"France":["fr","#3b6fd4"],"Norway":["no","#e0484a"],
+  "Senegal":["sn","#2faa55"],"Iraq":["iq","#e0484a"],"Argentina":["ar","#6cb4e4"],
+  "Austria":["at","#e0484a"],"Algeria":["dz","#2faa55"],"Jordan":["jo","#e0484a"],
+  "Colombia":["co","#e6c34a"],"Congo DR":["cd","#3b6fd4"],"Portugal":["pt","#e0484a"],
+  "Uzbekistan":["uz","#3b6fd4"],"England":["gb-eng","#e0484a"],"Ghana":["gh","#e0484a"],
+  "Panama":["pa","#e0484a"],"Croatia":["hr","#e0484a"]
   };
-  function flag(team){ return (TEAM_META[team]&&TEAM_META[team][0])||'🏳️'; }
+  const FLAG_CDN = "https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/";
+  function flagCode(team){ return (TEAM_META[team]&&TEAM_META[team][0])||''; }
+  function flag(team){ const c=flagCode(team); return c?`<img class="fl" src="${FLAG_CDN}${c}.svg" alt="" loading="lazy">`:''; }
   function teamColor(team){ return (TEAM_META[team]&&TEAM_META[team][1])||'#3b6fd4'; }
-  function fl(team){ return `<span class="fl">${flag(team)}</span> ${team}`; }  // flag + name
+  function fl(team){ return `${flag(team)} ${team}`; }  // flag + name
   // distinct accent per group for easier navigation
   const GROUP_COLORS = {A:"#34d399",B:"#3b6fd4",C:"#a78bfa",D:"#e98a3b",E:"#f4a23b",
     F:"#22d3ee",G:"#ef6461",H:"#d6b25e",I:"#6cb4e4",J:"#ec4899",K:"#84cc16",L:"#fb7185"};
@@ -719,7 +723,7 @@
     $('ratings-list').innerHTML=sorted.map((n,i)=>{
       const w=Math.round(100*(rating(n)-min+25)/(max-min+25));
       const fn=formNudge(n), fs=Math.abs(fn)<5?'':(fn>0?`<span style="color:var(--accent);font-size:11px;margin-left:6px;">▲${Math.round(fn)}</span>`:`<span style="color:var(--bad);font-size:11px;margin-left:6px;">▼${Math.round(-fn)}</span>`);
-      return `<div class="rk"><span class="n">${i+1}</span><span class="nm"><span class="fl">${flag(n)}</span> ${n}${fs}</span><span class="conf">${state.teams[n].group}</span><span class="t"><span class="f" style="width:${w}%;background:${teamColor(n)}"></span></span><span class="rt">${Math.round(rating(n))}</span></div>`;
+      return `<div class="rk"><span class="n">${i+1}</span><span class="nm">${flag(n)} ${n}${fs}</span><span class="conf">${state.teams[n].group}</span><span class="t"><span class="f" style="width:${w}%;background:${teamColor(n)}"></span></span><span class="rt">${Math.round(rating(n))}</span></div>`;
     }).join('');
   }
   function renderGroups(){
@@ -747,7 +751,7 @@
         const st=(state.status||{})[r.n];
         const badge = st==='qualified'?'<span style="color:var(--accent);font-size:9px;font-family:var(--mono);margin-left:5px;">✓ thru</span>'
                     : st==='eliminated'?'<span style="color:var(--bad);font-size:9px;font-family:var(--mono);margin-left:5px;">out</span>' : '';
-        return `<tr class="${i<2?'qual':''}${st==='eliminated'?' elim':''}"><td><span class="fl">${flag(r.n)}</span> ${r.n}${badge}</td><td>${r.p}</td><td>${r.w}-${r.d}-${r.l}</td><td>${r.gf-r.ga>=0?'+':''}${r.gf-r.ga}</td><td class="pts">${r.pts}</td></tr>`;
+        return `<tr class="${i<2?'qual':''}${st==='eliminated'?' elim':''}"><td>${flag(r.n)} ${r.n}${badge}</td><td>${r.p}</td><td>${r.w}-${r.d}-${r.l}</td><td>${r.gf-r.ga>=0?'+':''}${r.gf-r.ga}</td><td class="pts">${r.pts}</td></tr>`;
       }).join('');
       return `<div class="grp" style="--gc:${GROUP_COLORS[g]||'var(--accent)'}"><h3><span class="gdot"></span>Group ${g}</h3><table><colgroup><col class="c-team"><col class="c-p"><col class="c-wdl"><col class="c-gd"><col class="c-pts"></colgroup><tr><th>team</th><th>p</th><th>w-d-l</th><th>gd</th><th>pts</th></tr>${body}</table></div>`;
     }).join('');
@@ -887,10 +891,10 @@
     // champion hero — the single biggest answer, tinted with the champion's flag colour
     const champ=ranked[0], cp=pct(fc.tally[champ].win);
     const cc=teamColor(champ);
-    const chasers=ranked.slice(1,4).map(t=>`<span class="pill" style="--tc:${teamColor(t)}"><span class="fl">${flag(t)}</span><b>${t}</b><span>${fmt(fc.tally[t].win)}%</span></span>`).join('');
+    const chasers=ranked.slice(1,4).map(t=>`<span class="pill" style="--tc:${teamColor(t)}">${flag(t)}<b>${t}</b><span>${fmt(fc.tally[t].win)}%</span></span>`).join('');
     $('champ-hero').innerHTML=`<div class="champ" style="--champ:${cc}">
       <div class="eyebrow"><span class="dot"></span>Predicted champion</div>
-      <h2 class="name"><span class="cflag">${flag(champ)}</span>${champ}</h2>
+      <h2 class="name">${flag(champ)}${champ}</h2>
       <div class="line">
         <div class="odds"><div class="big">${fmt(fc.tally[champ].win)}%</div><div class="cap">to lift the trophy</div></div>
         <div class="chase"><div class="cap">Closest challengers</div>${chasers}</div>
@@ -902,7 +906,7 @@
       const dead=st==='eliminated';
       return `<tr${dead?' class="elim"':''}>
         <td class="rank">${i+1}</td>
-        <td><span class="fl">${flag(t)}</span> ${t} <span class="grp">${state.teams[t].group}</span></td>
+        <td>${flag(t)} ${t} <span class="grp">${state.teams[t].group}</span></td>
         <td class="winpct"><span class="winbar" style="width:${w}%;background:${teamColor(t)}"></span><span>${fmt(r.win)}%</span></td>
         <td class="dim">${fmt(r.final)}</td>
         <td class="dim">${fmt(r.sf)}</td>
