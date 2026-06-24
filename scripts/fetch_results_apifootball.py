@@ -36,6 +36,10 @@ KEY = os.environ.get("API_FOOTBALL_KEY", "").strip()
 # If the field comes back empty, double-check these two values in your dashboard.
 WC_LEAGUE_ID = "1"
 SEASON = "2026"
+# Genuine pre-match calls began when the live pipeline started freezing predictions
+# for upcoming matches. Anything that kicked off before this is backfilled history
+# (computed after the fact) and must not count toward the model's scored record.
+GENUINE_FROM_UTC = "2026-06-22T17:00:00"
 API_URL = f"https://v3.football.api-sports.io/fixtures?league={WC_LEAGUE_ID}&season={SEASON}"
 OUT = "results.json"
 
@@ -156,13 +160,26 @@ def main():
 
     model = Model()
     for mm in matches:
+        # A match counts as a genuine call only if it kicked off at/after the cutoff
+        # AND its prediction was frozen earlier (while it was still upcoming/live).
+        kicked_before_cutoff = (mm.get("utc") or "") < GENUINE_FROM_UTC
         if mm["home"] in model.rating and mm["away"] in model.rating:
-            if mm["id"] in prev_pred:
+            if mm["id"] in prev_pred and not kicked_before_cutoff:
+                # genuine: frozen in an earlier run, before this (post-cutoff) match finished
                 mm["predicted"] = prev_pred[mm["id"]]
-            elif not model.is_seed(mm["home"], mm["hg"], mm["ag"], mm["away"]):
-                p = model.predict(mm["home"], mm["away"], neutral=True)
-                if p:
-                    mm["predicted"] = {"pA": round(p[0], 4), "pD": round(p[1], 4), "pB": round(p[2], 4)}
+                mm["backfilled"] = False
+            else:
+                # either it predates the genuine era, or we'd be computing it after the fact —
+                # treat as backfilled history, shown but not scored
+                src = prev_pred.get(mm["id"])
+                if src:
+                    mm["predicted"] = src
+                elif not model.is_seed(mm["home"], mm["hg"], mm["ag"], mm["away"]):
+                    p = model.predict(mm["home"], mm["away"], neutral=True)
+                    if p:
+                        mm["predicted"] = {"pA": round(p[0], 4), "pD": round(p[1], 4), "pB": round(p[2], 4)}
+                if mm.get("predicted"):
+                    mm["backfilled"] = True
             if not model.is_seed(mm["home"], mm["hg"], mm["ag"], mm["away"]):
                 model.learn(mm["home"], mm["hg"], mm["ag"], mm["away"], neutral=True)
         if mm.get("predicted"):
