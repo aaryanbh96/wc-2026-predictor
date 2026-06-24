@@ -356,9 +356,9 @@
   <div class="content">
   <!-- THE ANSWER, FIRST: champion + live + today's matches (forecast view only) -->
   <div id="answer-zone">
-  <div id="live-block"></div>
   <div id="champ-hero"></div>
   <div id="today-block"></div>
+  <div id="live-block"></div>
   </div>
 
   <header>
@@ -1390,7 +1390,9 @@
     const map={'USA':'USA','United States':'USA','Korea Republic':'Korea Republic',
       'IR Iran':'IR Iran','Iran':'IR Iran','Czech Republic':'Czechia','Turkey':'Türkiye',
       'Côte d\u2019Ivoire':'Côte d\'Ivoire','Ivory Coast':'Côte d\'Ivoire','DR Congo':'Congo DR',
-      'Congo DR':'Congo DR','Cape Verde':'Cabo Verde','Bosnia and Herzegovina':'Bosnia and Herzegovina'};
+      'Congo DR':'Congo DR','Cape Verde':'Cabo Verde',
+      'Bosnia & Herzegovina':'Bosnia and Herzegovina','Bosnia and Herzegovina':'Bosnia and Herzegovina',
+      'Bosnia':'Bosnia and Herzegovina'};
     return map[n]||n;
   }
 
