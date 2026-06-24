@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24T04:00:20Z",
+  "updated": "2026-06-24T05:25:36Z",
   "matches": [
     {
       "id": 1489369,
@@ -847,37 +847,87 @@
       "top": [
         {
           "team": "Argentina",
-          "win": 0.1906
+          "win": 0.1943
         },
         {
           "team": "France",
-          "win": 0.1497
+          "win": 0.1487
         },
         {
           "team": "England",
-          "win": 0.0835
+          "win": 0.0898
         },
         {
           "team": "USA",
-          "win": 0.0786
+          "win": 0.0777
         },
         {
           "team": "Spain",
-          "win": 0.0663
+          "win": 0.0659
         },
         {
           "team": "Germany",
-          "win": 0.06
+          "win": 0.0612
         },
         {
           "team": "Mexico",
-          "win": 0.0574
+          "win": 0.0572
         },
         {
-          "team": "Netherlands",
-          "win": 0.0474
+          "team": "Brazil",
+          "win": 0.0435
         }
       ]
     }
-  ]
+  ],
+  "status": {
+    "Mexico": "qualified",
+    "Korea Republic": "alive",
+    "Czechia": "alive",
+    "South Africa": "alive",
+    "Canada": "qualified",
+    "Switzerland": "qualified",
+    "Bosnia and Herzegovina": "alive",
+    "Qatar": "alive",
+    "Brazil": "alive",
+    "Morocco": "alive",
+    "Scotland": "alive",
+    "Haiti": "alive",
+    "USA": "qualified",
+    "Paraguay": "alive",
+    "Australia": "alive",
+    "Türkiye": "alive",
+    "Germany": "qualified",
+    "Ecuador": "alive",
+    "Côte d'Ivoire": "alive",
+    "Curaçao": "alive",
+    "Netherlands": "alive",
+    "Japan": "alive",
+    "Sweden": "alive",
+    "Tunisia": "eliminated",
+    "Egypt": "alive",
+    "Belgium": "alive",
+    "IR Iran": "alive",
+    "New Zealand": "alive",
+    "Spain": "alive",
+    "Uruguay": "alive",
+    "Cabo Verde": "alive",
+    "Saudi Arabia": "alive",
+    "France": "qualified",
+    "Norway": "qualified",
+    "Senegal": "alive",
+    "Iraq": "alive",
+    "Argentina": "qualified",
+    "Austria": "alive",
+    "Algeria": "alive",
+    "Jordan": "alive",
+    "Colombia": "qualified",
+    "Congo DR": "alive",
+    "Portugal": "qualified",
+    "Uzbekistan": "alive",
+    "England": "alive",
+    "Ghana": "alive",
+    "Panama": "alive",
+    "Croatia": "alive"
+  }
 }
