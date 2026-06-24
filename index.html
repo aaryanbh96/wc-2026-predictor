@@ -98,6 +98,7 @@
   .grp td:first-child{text-align:left;font-family:var(--sans);white-space:normal;overflow:hidden;text-overflow:ellipsis;}
   .grp col.c-team{width:auto;} .grp col.c-p{width:26px;} .grp col.c-wdl{width:54px;} .grp col.c-gd{width:38px;} .grp col.c-pts{width:34px;}
   .grp tr.qual td{color:var(--accent);}
+  .grp tr.elim td{opacity:.45;}
   .grp .pts{font-weight:650;color:var(--ink);}
 
   .pred{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;}
@@ -401,7 +402,7 @@
   function initStandings(){ const s={}; SEED.forEach(([n])=>{ s[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; }); return s; }
   function freshState(){
     const s={teams:freshTeams(),games:0,log:[],standings:initStandings(),
-      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[], frozenMatches:[], daily:[], live:[]};
+      predictions:[], preHit:0, preGraded:0, preBrierSum:0, syncedIds:[], seedSigs:[], forecast:null, upcoming:[], frozenMatches:[], daily:[], live:[], status:{}};
     SEED_RESULTS.forEach(([a,ga,gb,b])=>{
       learn(s,a,ga,gb,b,true,1,true);
       s.seedSigs.push(sigOf(a,ga,gb,b));
@@ -414,7 +415,7 @@
     try{ const raw=localStorage.getItem(KEY); if(raw){ const s=JSON.parse(raw);
       s.standings=s.standings||initStandings(); s.predictions=s.predictions||[];
       s.preHit=s.preHit||0; s.preGraded=s.preGraded||0; s.preBrierSum=s.preBrierSum||0;
-      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; s.frozenMatches=s.frozenMatches||[]; s.daily=s.daily||[]; s.live=s.live||[]; return s; } }catch(e){}
+      s.syncedIds=s.syncedIds||[]; s.seedSigs=s.seedSigs||[]; s.upcoming=s.upcoming||[]; s.frozenMatches=s.frozenMatches||[]; s.daily=s.daily||[]; s.live=s.live||[]; s.status=s.status||{}; return s; } }catch(e){}
     return freshState();
   }
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
@@ -707,7 +708,12 @@
     $('groups-grid').innerHTML=Object.keys(groups).sort().map(g=>{
       const rows=groups[g].map(n=>({n,...tbl[n]}))
         .sort((x,y)=>y.pts-x.pts||(y.gf-y.ga)-(x.gf-x.ga)||y.gf-x.gf||x.n.localeCompare(y.n));
-      const body=rows.map((r,i)=>`<tr class="${i<2?'qual':''}"><td>${r.n}</td><td>${r.p}</td><td>${r.w}-${r.d}-${r.l}</td><td>${r.gf-r.ga>=0?'+':''}${r.gf-r.ga}</td><td class="pts">${r.pts}</td></tr>`).join('');
+      const body=rows.map((r,i)=>{
+        const st=(state.status||{})[r.n];
+        const badge = st==='qualified'?'<span style="color:var(--accent);font-size:9px;font-family:var(--mono);margin-left:5px;">✓ thru</span>'
+                    : st==='eliminated'?'<span style="color:var(--bad);font-size:9px;font-family:var(--mono);margin-left:5px;">out</span>' : '';
+        return `<tr class="${i<2?'qual':''}${st==='eliminated'?' elim':''}"><td>${r.n}${badge}</td><td>${r.p}</td><td>${r.w}-${r.d}-${r.l}</td><td>${r.gf-r.ga>=0?'+':''}${r.gf-r.ga}</td><td class="pts">${r.pts}</td></tr>`;
+      }).join('');
       return `<div class="grp"><h3>Group ${g}</h3><table><colgroup><col class="c-team"><col class="c-p"><col class="c-wdl"><col class="c-gd"><col class="c-pts"></colgroup><tr><th>team</th><th>p</th><th>w-d-l</th><th>gd</th><th>pts</th></tr>${body}</table></div>`;
     }).join('');
   }
@@ -793,6 +799,7 @@
   function computeForecast(nsim, overrides){
     nsim=nsim||NSIM;
     const all=names();
+    const elim=state.status||{};
     EFF={}; all.forEach(n=> EFF[n]= (overrides&&overrides[n]!=null)? overrides[n] : effRating(n));
     const groups={}; all.forEach(n=>{ (groups[state.teams[n].group]=groups[state.teams[n].group]||[]).push(n); });
     const gkeys=Object.keys(groups).sort();
@@ -817,6 +824,15 @@
         nxt.forEach(w=> tally[w][stage]++);
         cur=nxt;
       }
+    }
+    // eliminated teams cannot win — zero their championship tally so odds are honest.
+    // (they may still appear in earlier-round tallies from the group sim, which is fine.)
+    let removedWins=0;
+    all.forEach(t=>{ if(elim[t]==='eliminated'){ removedWins+=tally[t].win; tally[t].win=0; } });
+    // redistribute the removed win-share proportionally among living teams so odds sum to 100%
+    if(removedWins>0){
+      const livingWins=all.reduce((s,t)=>s+(elim[t]==='eliminated'?0:tally[t].win),0);
+      if(livingWins>0){ all.forEach(t=>{ if(elim[t]!=='eliminated') tally[t].win += tally[t].win/livingWins*removedWins; }); }
     }
     return {tally, nsim};
   }
@@ -1085,6 +1101,7 @@
       state.frozenMatches = data.matches || [];   // server-frozen predictions + results (shared, canonical)
       state.daily = data.daily || [];              // daily champion snapshots (shared, locked)
       state.live = data.live || [];                // in-progress matches (shared)
+      state.status = data.status || {};            // qualified/eliminated/alive per team (shared)
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
       renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
