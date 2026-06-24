@@ -43,11 +43,11 @@
   .bg-stadium{position:fixed;inset:0;z-index:0;pointer-events:none;
     background:#0e1116 url("assets/stadium.png") center top/cover no-repeat;}
   .bg-stadium::after{content:"";position:absolute;inset:0;
-    background:linear-gradient(90deg, rgba(14,17,22,.35) 0%, rgba(14,17,22,.82) 28%, rgba(14,17,22,.82) 72%, rgba(14,17,22,.35) 100%),
-               linear-gradient(180deg, rgba(14,17,22,.25), rgba(14,17,22,.6));}
+    background:linear-gradient(90deg, rgba(14,17,22,.15) 0%, rgba(14,17,22,.45) 30%, rgba(14,17,22,.45) 70%, rgba(14,17,22,.15) 100%),
+               linear-gradient(180deg, rgba(14,17,22,.1), rgba(14,17,22,.4));}
   .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:32px 24px 80px;
-    background:var(--bg);box-shadow:0 0 0 1px var(--line), 0 30px 80px rgba(0,0,0,.55);
-    border-radius:0;}
+    background:rgba(14,17,22,.62);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+    box-shadow:0 0 0 1px var(--line), 0 30px 80px rgba(0,0,0,.55);border-radius:0;}
   @media (min-width:1141px){ .wrap{border-radius:16px;margin:24px auto;} }
   .wrap{max-width:1140px;margin:0 auto;padding:32px 24px 80px;}
   @media (max-width:760px){
