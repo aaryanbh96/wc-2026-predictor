@@ -1154,19 +1154,30 @@
   // ---- live now: matches in progress, pinned with the model's pre-match call ----
   function renderLive(){
     const block=$('live-block'); if(!block) return;
-    // Build the live set from BOTH sources: the worker overlay (fresh scores) and
-    // results.json state.live (slower). Merge by team pairing so a score never blanks
-    // out just because one render source momentarily lacks it.
+    // The worker's liveScores is the source of truth for what's currently live (it updates
+    // every poll and removes finished matches). state.live (from results.json) is slower
+    // and lingers after full-time, so we only use it as a fallback for matches the worker
+    // hasn't reported yet — never to resurrect a match the worker has already cleared.
     const byKey={};
-    (state.live||[]).forEach(m=>{
-      if(!state.teams[m.home]||!state.teams[m.away]) return;
-      byKey[m.home+'|'+m.away]={home:m.home,away:m.away,predicted:m.predicted};
-    });
+    const haveWorkerData = Object.keys(liveScores||{}).length>0 || workerSeenLive;
     Object.values(liveScores||{}).forEach(ls=>{
       const home=ls.home, away=ls.away;
       if(!state.teams[home]||!state.teams[away]) return;
       const k=home+'|'+away;
-      byKey[k]=Object.assign(byKey[k]||{home,away}, {ls});
+      // find matching prediction from state.live if present
+      const sm=(state.live||[]).find(m=>m.home===home&&m.away===away);
+      byKey[k]={home,away,predicted:sm&&sm.predicted,ls};
+    });
+    // fallback: matches in state.live the worker hasn't reported AND hasn't cleared
+    (state.live||[]).forEach(m=>{
+      if(!state.teams[m.home]||!state.teams[m.away]) return;
+      const k=m.home+'|'+m.away;
+      if(byKey[k]) return;
+      // if the worker has been active and this match isn't in its live set, it's finished —
+      // don't show it. Only show state.live matches before the worker has any data.
+      if(haveWorkerData && liveCleared[k]) return;
+      if(haveWorkerData && !liveScores[k] && workerSeenLive) return;
+      byKey[k]={home:m.home,away:m.away,predicted:m.predicted};
     });
     const lv=Object.values(byKey);
     if(!lv.length){ block.innerHTML=''; return; }
@@ -1392,6 +1403,9 @@
   // the live cards, without waiting for the heavy results.json pipeline.
   const LIVE_URL = 'https://wc2026-live.aryanbh96.workers.dev';   // set to your deployed worker
   let liveScores = {};   // key "Home|Away" -> {hg,ag,minute,status}
+  let liveMiss = {};     // key -> consecutive polls a live match has been absent
+  let liveCleared = {};  // keys the worker has confirmed finished (removed from live)
+  let workerSeenLive = false;  // true once the worker has returned any live match this session
   async function fetchLiveScores(){
     if(!LIVE_URL) return;
     try{
@@ -1399,19 +1413,26 @@
       if(!r.ok) return;            // fetch failed — keep showing last known scores
       const d = await r.json();
       const incoming = d.live||[];
-      // Only update when we actually got live data. If the worker briefly returns an
-      // empty list (between polls, transient), DON'T wipe the scores we're showing.
-      if(!incoming.length){
-        // a match we were tracking may have just ended; only clear those that are
-        // confirmed gone if the worker has a fresh timestamp AND empty list for a while.
-        // For now, keep last known scores so the display never blanks mid-match.
-        renderLive(); renderToday();
-        return;
-      }
-      // merge incoming scores into the sticky store (overwrite per match, keep others)
+      // Build the set of keys present in THIS poll
+      const present = new Set();
       incoming.forEach(m=>{
         const home=NAME_FIX(m.home), away=NAME_FIX(m.away);
-        liveScores[home+'|'+away]={hg:m.hg, ag:m.ag, minute:m.minute, status:m.status, home, away};
+        const k=home+'|'+away;
+        present.add(k);
+        liveScores[k]={hg:m.hg, ag:m.ag, minute:m.minute, status:m.status, home, away};
+        liveMiss[k]=0;   // seen now -> reset its absence counter
+        delete liveCleared[k];
+        workerSeenLive=true;
+      });
+      // Any match we're currently showing but that's ABSENT this poll: count the miss.
+      // One miss could be a transient blip (keep showing). Two consecutive misses means
+      // the match genuinely ended (it dropped out of live=all) -> remove it so it doesn't
+      // linger as "live" after full-time.
+      Object.keys(liveScores).forEach(k=>{
+        if(!present.has(k)){
+          liveMiss[k]=(liveMiss[k]||0)+1;
+          if(liveMiss[k]>=2){ delete liveScores[k]; delete liveMiss[k]; liveCleared[k]=1; }
+        }
       });
       renderLive();      // re-render live cards with fresh scores
       renderToday();     // today's strip shows live scores too
