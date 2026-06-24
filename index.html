@@ -215,7 +215,7 @@
     background:linear-gradient(105deg,
         color-mix(in srgb, var(--champ, var(--gold)) 58%, #1a1f29) 0%,
         color-mix(in srgb, var(--champ, var(--gold)) 44%, #1a1f29) 100%);
-    padding:40px 38px;margin:8px 0 8px;
+    padding:40px 38px 52px;margin:8px 0 8px;
     box-shadow:0 16px 50px -12px color-mix(in srgb, var(--champ, var(--gold)) 50%, transparent);}
   /* soft bright bloom top-left where the name reads */
   .champ::before{content:"";position:absolute;left:-5%;top:-40%;width:60%;height:180%;pointer-events:none;
@@ -258,6 +258,18 @@
 
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
   .fc tr.elim td{opacity:.4;}
+  /* brighter, more readable forecast labels */
+  .fc-head{color:var(--ink)!important;font-size:13px!important;}
+  #fc-meta{color:var(--mut)!important;}
+  .fc th{color:var(--mut)!important;}
+  .upc-acc{color:var(--mut)!important;}
+  /* jump-to-forecast button on champion card */
+  .champ-jump{position:absolute;right:24px;bottom:20px;display:inline-flex;align-items:center;gap:6px;
+    background:rgba(10,13,18,.35);border:1px solid rgba(255,255,255,.22);color:#fff;
+    font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:7px 13px;border-radius:999px;
+    cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .15s,transform .15s;z-index:2;}
+  .champ-jump:hover{background:rgba(10,13,18,.55);transform:translateY(2px);}
+  .champ-jump svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
   /* upcoming fixtures with the model's locked-in calls */
   .upc-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
@@ -328,7 +340,7 @@
       <div class="navsec">Reference</div>
       <button class="tab" data-t="ratings"><svg class="ic" viewBox="0 0 24 24"><path d="M5 20V10m7 10V4m7 16v-7"/></svg><span class="tlabel">Ratings</span></button>
       <button class="tab" data-t="groups"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg><span class="tlabel">Groups</span></button>
-      <button class="tab" data-t="teams"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 6a3 3 0 0 1 0 6m5 8c0-2.5-2-4-4-4.5"/></svg><span class="tlabel">Teams</span></button>
+      <button class="tab" data-t="teams"><svg class="ic" viewBox="0 0 24 24"><path d="M5 3v18"/><path d="M5 4h11l-2 3 2 3H5"/></svg><span class="tlabel">Teams</span></button>
       <div class="navfoot">
         <button class="tab tab-inline" data-t="how"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4 1.5c0 1.5-2 2-2 3"/><circle cx="12" cy="16.5" r=".5" fill="currentColor"/></svg><span class="tlabel">Help</span></button>
         <span class="navfoot-sep">·</span>
@@ -361,8 +373,8 @@
 
   <section class="panel on" id="p-forecast">
     <div id="upcoming-block" style="margin-top:4px;"></div>
-    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;margin-top:22px;">
-      <div class="sechead" style="margin:0;">Full forecast — <span id="fc-nsim">20,000</span> simulations</div>
+    <div id="fc-anchor" style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;margin-top:22px;scroll-margin-top:20px;">
+      <div class="sechead fc-head" style="margin:0;">Full forecast — <span id="fc-nsim">20,000</span> simulations</div>
       <button class="ghost" id="rerun-sim">Re-run simulation</button>
     </div>
     <p class="hint" id="fc-meta" style="margin:0 0 14px;">Each run plays the rest of the tournament forward from current ratings.</p>
@@ -1018,7 +1030,10 @@
       <div class="line">
         <div class="odds"><div class="big">${fmt(fc.tally[champ].win)}%</div><div class="cap">to lift the trophy</div></div>
         <div class="chase"><div class="cap">Closest challengers</div>${chasers}</div>
-      </div></div>`;
+      </div>
+      <button class="champ-jump" id="champ-jump">Full forecast <svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+      </div>`;
+    const cj=$('champ-jump'); if(cj) cj.onclick=()=>{ const t=$('fc-anchor'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); };
     const rows=ranked.map((t,i)=>{
       const r=fc.tally[t], wp=pct(r.win);
       const w=Math.max(2,Math.round(100*wp/maxWin));
@@ -1090,7 +1105,7 @@
         <div class="plab"><span><b>${f.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${f.away}</b> ${pB}%</span></div>
       </div>`;
     }).join('');
-    block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Upcoming matches</div><div class="upc-acc">${accLine}</div></div>${cards}`;
+    block.innerHTML=`<div class="upc-head"><div class="sechead fc-head" style="margin:0;">Upcoming matches</div><div class="upc-acc">${accLine}</div></div>${cards}`;
   }
 
   // ---- "Today's matches" banner: a compact, lively strip so the page feels alive on landing ----
