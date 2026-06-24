@@ -915,12 +915,12 @@
     const cards=day.map(f=>{
       const pr=probs(f.home,f.away,true);
       const pend=findPending(f.home,f.away);
-      const ko=Date.parse(f.utc), within=ko-Date.now()<=LOCK_WINDOW_MS;
       const fav=pr.pA>=pr.pB?f.home:f.away, favP=Math.round(Math.max(pr.pA,pr.pB)*100);
-      const flag = pend? '<span class="lockflag">call locked</span>'
-                 : within? '<span class="lockflag live">locking…</span>'
-                 : `<span class="ko">${fmtKO(f.utc)}</span>`;
-      const koLine = (pend||within)? `<span class="ko" style="margin-left:8px;">${fmtKO(f.utc)}</span>` : '';
+      // The model's call for every upcoming match is frozen server-side in the shared
+      // results file before kickoff (see Track record) — so "call locked" is literally true
+      // and conveys the model going on record, tamper-proof, ahead of time.
+      const flag = `<span class="lockflag">🔒 call locked</span>`;
+      const koLine = `<span class="ko" style="margin-left:8px;">${fmtKO(f.utc)}</span>`;
       const pA=Math.round(pr.pA*100),pD=Math.round(pr.pD*100),pB=Math.round(pr.pB*100);
       return `<div class="ufix">
         <div class="top"><span class="teams">${f.home} v ${f.away}${koLine}</span>${flag}</div>
@@ -1029,7 +1029,7 @@
     box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px;flex-wrap:wrap;gap:8px;">
         <div class="sechead" style="margin:0;">Championship equity over time</div>
         <span style="font-family:var(--mono);font-size:11px;color:var(--dim);">top ${ends.length} contenders</span></div>
-      <p class="hint" style="margin:0 0 10px;">Based on the daily snapshot the model froze at the end of each day — so it can differ slightly from the live forecast below, which re-runs from the very latest ratings.</p>
+      <p class="hint" style="margin:0 0 10px;">Based on the daily snapshot the model froze at the end of each day — so it can differ slightly from the live forecast, which re-runs from the very latest ratings.</p>
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;">
         ${grid}${xlab}${lines}${dots}${labels}
       </svg>`;
