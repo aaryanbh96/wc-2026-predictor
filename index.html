@@ -843,7 +843,7 @@
       <tr><th></th><th>team</th><th>win</th><th>final</th><th>semi</th><th>quarter</th><th>last 16</th></tr>
       ${rows}</table>`;
     $('fc-nsim').textContent=fc.nsim.toLocaleString();
-    $('fc-meta').textContent=`Last simulated ${ptDateTime(fc.at)} · ${fc.nsim.toLocaleString()} runs from current ratings. Third-place qualifiers approximated by rating; treat as an estimate, not the official bracket.`;
+    $('fc-meta').textContent=`Last simulated ${ptDateTime(fc.at)} · ${fc.nsim.toLocaleString()} runs from the latest ratings — this is the live forecast, so it can differ slightly from the daily chart (frozen each evening) and shift run-to-run as results come in. Third-place qualifiers approximated by rating; an estimate, not the official bracket.`;
   }
 
   // ---- upcoming fixtures & auto-lock ----
@@ -993,9 +993,10 @@
       labels+=`<line x1="${x(days.length-1)+4}" y1="${ly}" x2="${x(days.length-1)+12}" y2="${e.yi}" stroke="${e.c}" stroke-width="1" opacity="0.4"/>`;
       labels+=`<text x="${x(days.length-1)+15}" y="${e.yi+3}" font-size="11" font-family="var(--sans)" fill="${e.c}">${e.team} ${Math.round(e.val*100)}%</text>`;
     });
-    box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 10px;flex-wrap:wrap;gap:8px;">
+    box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px;flex-wrap:wrap;gap:8px;">
         <div class="sechead" style="margin:0;">Championship equity over time</div>
         <span style="font-family:var(--mono);font-size:11px;color:var(--dim);">top ${ends.length} contenders</span></div>
+      <p class="hint" style="margin:0 0 10px;">Based on the daily snapshot the model froze at the end of each day — so it can differ slightly from the live forecast below, which re-runs from the very latest ratings.</p>
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;">
         ${grid}${xlab}${lines}${dots}${labels}
       </svg>`;
