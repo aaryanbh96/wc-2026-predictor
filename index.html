@@ -34,7 +34,7 @@
     --ink:#f5f8fc; --mut:#b4c0d2; --dim:#7a8699;
     --display:'Bebas Neue', 'Arial Narrow', sans-serif;
     --accent:#22c55e; --accentq:#16a34a;
-    --a:#22c55e; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
+    --a:#22c55e; --b:#f59e0b; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
     --radius:12px; --radius-sm:8px;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -47,12 +47,12 @@
   .bg-stadium{position:fixed;inset:0;z-index:0;pointer-events:none;
     background:#0e1116 url("assets/stadium.png") center top/cover no-repeat;}
   .bg-stadium::after{content:"";position:absolute;inset:0;
-    background:linear-gradient(90deg, rgba(14,17,22,.15) 0%, rgba(14,17,22,.45) 30%, rgba(14,17,22,.45) 70%, rgba(14,17,22,.15) 100%),
-               linear-gradient(180deg, rgba(14,17,22,.1), rgba(14,17,22,.4));}
+    background:linear-gradient(90deg, rgba(14,17,22,.1) 0%, rgba(14,17,22,.3) 30%, rgba(14,17,22,.3) 70%, rgba(14,17,22,.1) 100%),
+               linear-gradient(180deg, rgba(14,17,22,.05), rgba(14,17,22,.28));}
   .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:32px 24px 80px;
-    background:linear-gradient(165deg, rgba(34,42,56,.55), rgba(16,20,28,.62));
-    backdrop-filter:blur(20px) saturate(135%);-webkit-backdrop-filter:blur(20px) saturate(135%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.06), 0 40px 90px -20px rgba(0,0,0,.65);
+    background:linear-gradient(165deg, rgba(40,48,64,.4), rgba(20,26,36,.46));
+    backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 0 0 1px rgba(255,255,255,.08), 0 40px 90px -20px rgba(0,0,0,.5);
     border-radius:0;}
   @media (min-width:1141px){ .wrap{border-radius:20px;margin:24px auto;} }
   @media (max-width:760px){
@@ -211,16 +211,15 @@
   .sechead{font-size:12px;font-family:var(--mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin:4px 0 12px;}
 
   /* champion hero — the headline answer, tinted with the champion's own flag colour */
-  .champ{position:relative;overflow:hidden;border-radius:18px;border:1px solid color-mix(in srgb, var(--champ, var(--gold)) 35%, var(--line));
-    background:linear-gradient(100deg,
-        color-mix(in srgb, var(--champ, var(--gold)) 46%, #12161e) 0%,
-        color-mix(in srgb, var(--champ, var(--gold)) 32%, #12161e) 50%,
-        color-mix(in srgb, var(--champ, var(--gold)) 14%, #11141b) 100%);
+  .champ{position:relative;overflow:hidden;border-radius:18px;border:1px solid color-mix(in srgb, var(--champ, var(--gold)) 45%, var(--line));
+    background:linear-gradient(105deg,
+        color-mix(in srgb, var(--champ, var(--gold)) 58%, #1a1f29) 0%,
+        color-mix(in srgb, var(--champ, var(--gold)) 44%, #1a1f29) 100%);
     padding:40px 38px;margin:8px 0 8px;
-    box-shadow:0 16px 50px -12px color-mix(in srgb, var(--champ, var(--gold)) 40%, transparent);}
-  /* soft glow bloom from the left so the card is brightest where the name reads */
-  .champ::before{content:"";position:absolute;left:-8%;top:-30%;width:55%;height:160%;pointer-events:none;
-    background:radial-gradient(circle, color-mix(in srgb, var(--champ, var(--gold)) 42%, transparent), transparent 70%);}
+    box-shadow:0 16px 50px -12px color-mix(in srgb, var(--champ, var(--gold)) 50%, transparent);}
+  /* soft bright bloom top-left where the name reads */
+  .champ::before{content:"";position:absolute;left:-5%;top:-40%;width:60%;height:180%;pointer-events:none;
+    background:radial-gradient(circle, color-mix(in srgb, var(--champ, var(--gold)) 55%, transparent), transparent 68%);}
   /* faint pitch stripes — football's own world, kept subtle */
   .champ::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:1;
     background:repeating-linear-gradient(115deg, rgba(255,255,255,.06) 0 2px, transparent 2px 60px),
