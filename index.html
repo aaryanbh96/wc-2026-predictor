@@ -256,11 +256,11 @@
   .t-time{font-family:var(--mono);font-size:11px;color:var(--mut);}
   .t-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;}
   .t-live{font-family:var(--mono);font-size:10px;color:var(--bad);font-weight:700;letter-spacing:.04em;}
-  .today-jump{display:inline-flex;align-items:center;gap:6px;background:rgba(239,100,97,.12);
-    border:1px solid rgba(239,100,97,.4);color:var(--bad);font-family:var(--mono);font-size:11px;
-    letter-spacing:.04em;padding:6px 12px;border-radius:999px;cursor:pointer;margin-left:auto;
-    transition:background .15s,transform .15s;}
-  .today-jump:hover{background:rgba(239,100,97,.22);transform:translateY(2px);}
+  .today-jump{display:inline-flex;align-items:center;gap:6px;background:rgba(10,13,18,.35);
+    border:1px solid rgba(255,255,255,.22);color:#fff;font-family:var(--mono);font-size:11px;
+    letter-spacing:.04em;padding:7px 13px;border-radius:999px;cursor:pointer;margin-left:auto;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .15s,transform .15s;}
+  .today-jump:hover{background:rgba(10,13,18,.55);transform:translateY(2px);}
   .today-jump svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
@@ -371,15 +371,15 @@
     <p class="sub">The model that calls the World Cup before it happens — simulating every remaining match 20,000 times, learning from each result, and grading its own predictions in the open.</p>
   </header>
 
-  <div id="live-block"></div>
-
-  <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 4px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
+  <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 14px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
     <span id="syncbar" style="color:var(--mut);">Updating World Cup results…</span>
     <div style="display:flex;gap:8px;">
       <button class="ghost" id="share-btn" style="padding:5px 13px;">Share</button>
       <button class="ghost" id="refresh-main" style="padding:5px 13px;">Refresh results</button>
     </div>
   </div>
+
+  <div id="live-block"></div>
 
 
   <section class="panel on" id="p-forecast">
