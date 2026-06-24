@@ -293,6 +293,9 @@
   .live-card .teams{font-size:15px;font-weight:600;}
   .live-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--bad);text-transform:uppercase;letter-spacing:.1em;}
   .live-dot{width:7px;height:7px;border-radius:50%;background:var(--bad);animation:pulse 1.4s infinite;}
+  .live-score{font-family:var(--display);font-size:26px;letter-spacing:.04em;color:#fff;margin:0 4px;line-height:1;vertical-align:-2px;}
+  .live-score .live-dash{color:var(--mut);margin:0 4px;font-size:.8em;}
+  .live-min{font-variant-numeric:tabular-nums;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
   .ufix-v{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;}
   .ufix-v.hit{background:rgba(74,222,128,.12);color:var(--accent);}
@@ -1123,9 +1126,11 @@
     }).sort((a,b)=>Date.parse(a.utc)-Date.parse(b.utc));
     if(!today.length){ block.innerHTML=''; return; }
     const chips=today.map(m=>{
-      const live=(state.live||[]).some(x=>x.home===m.home&&x.away===m.away);
+      const ls=liveScores[m.home+'|'+m.away];
+      const live=!!ls || (state.live||[]).some(x=>x.home===m.home&&x.away===m.away);
       const time=new Date(m.utc).toLocaleTimeString('en-US',{timeZone:PT,hour:'numeric',minute:'2-digit'});
-      const meta = live?'<span class="t-live">● LIVE</span>'
+      const meta = ls&&ls.hg!=null ? `<span class="t-score">${ls.hg}–${ls.ag}</span><span class="t-live">${ls.status==='HT'?'HT':(ls.minute!=null?ls.minute+"'":'LIVE')}</span>`
+                 : live?'<span class="t-live">● LIVE</span>'
                  : m._done?`<span class="t-score">${m.hg}–${m.ag}</span>`
                  : `<span class="t-time">${time}</span>`;
       return `<div class="tchip${live?' on':''}">
@@ -1141,13 +1146,16 @@
     const lv=(state.live||[]).filter(m=>state.teams[m.home]&&state.teams[m.away]);
     if(!lv.length){ block.innerHTML=''; return; }
     const cards=lv.map(m=>{
-      // prefer the server-frozen pre-match prediction; fall back to current
       const p = m.predicted || (()=>{ const pr=probs(m.home,m.away,true); return {pA:pr.pA,pD:pr.pD,pB:pr.pB}; })();
       const pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
       const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
+      // fresh live score from the worker overlay, if available
+      const ls=liveScores[m.home+'|'+m.away];
+      const score = ls && ls.hg!=null ? `<span class="live-score">${ls.hg}<span class="live-dash">–</span>${ls.ag}</span>` : '';
+      const minute = ls ? `<span class="live-min">${ls.status==='HT'?'HT':(ls.minute!=null?ls.minute+"'":'')}</span>` : '';
       return `<div class="live-card">
-        <div class="top"><span class="teams">${fl(m.home)} <span class="vs">v</span> ${fl(m.away)}</span>
-          <span class="live-badge"><span class="live-dot"></span>Live now</span></div>
+        <div class="top"><span class="teams">${fl(m.home)} ${score||'<span class="vs">v</span>'} ${fl(m.away)}</span>
+          <span class="live-badge"><span class="live-dot"></span>${minute||'Live now'}</span></div>
         <div class="pbar" style="margin-top:10px;"><i style="width:${pA}%;background:var(--a)"></i><i style="width:${pD}%;background:var(--draw)"></i><i style="width:${pB}%;background:var(--b)"></i></div>
         <div class="plab"><span><b>${m.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${m.away}</b> ${pB}%</span></div>
         <div class="plab" style="margin-top:4px;"><span class="ko">Model's pre-match call: favored ${fav} ${favP}%</span></div>
@@ -1276,7 +1284,7 @@
   // ---- auto-update: read results.json written hourly by the GitHub Action ----
   function syncBar(msg, kind){
     const el=$('syncbar'); if(!el) return;
-    el.style.color = kind==='err'?'var(--bad)':kind==='ok'?'var(--accent)':'var(--mut)';
+    el.style.color = kind==='err'?'var(--bad)':kind==='warn'?'var(--warn)':kind==='ok'?'var(--accent)':'var(--mut)';
     el.textContent=msg;
   }
   async function fetchResults(manual){
@@ -1309,21 +1317,41 @@
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
       renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
-      const checkedNow = ptDateTime(Date.now());      // live: when the page just checked
-      let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · checked ${checkedNow}`
-                       : `Live · checked ${checkedNow}`;
-      // surface the next kickoff — more reassuring than any "updated" timestamp
-      const nx=nextMatchday()[0];
-      if(nx){
-        const mins=Math.round((Date.parse(nx.utc)-Date.now())/60000);
-        if(mins>0){
-          const t = mins<60? `${mins} min` : `${Math.floor(mins/60)}h ${mins%60}m`;
-          msg += ` · next match in ${t}`;
+      // HONEST freshness: base the claim on when the PIPELINE last wrote data
+      // (data.updated), not merely when the browser fetched. If the pipeline has
+      // gone stale, say so plainly rather than falsely claiming "Live".
+      const dataUpdated = data.updated ? Date.parse(data.updated) : null;
+      const ageMin = dataUpdated ? Math.round((Date.now()-dataUpdated)/60000) : null;
+      const liveActive = (data.live||[]).length>0 || Object.keys(liveScores||{}).length>0;
+      // "fresh" thresholds: during live matches we expect frequent updates (15 min),
+      // otherwise the regular cron cadence is fine (90 min).
+      const staleLimit = liveActive ? 15 : 90;
+      let msg;
+      if(ageMin==null){
+        msg = `Checked ${ptDateTime(Date.now())}`;
+      } else if(ageMin <= staleLimit){
+        const ago = ageMin<1? 'just now' : (ageMin<60? `${ageMin} min ago` : `${Math.floor(ageMin/60)}h ${ageMin%60}m ago`);
+        msg = applied? `Synced ${applied} new result${applied>1?'s':''} · updated ${ago}`
+                     : (liveActive? `Live · updated ${ago}` : `Up to date · ${ago}`);
+      } else {
+        // stale — be honest, don't claim live
+        const ago = ageMin<60? `${ageMin} min ago` : `${Math.floor(ageMin/60)}h ${ageMin%60}m ago`;
+        msg = `Last updated ${ago} · reconnecting…`;
+      }
+      // surface the next kickoff when not stale
+      if(ageMin!=null && ageMin<=staleLimit){
+        const nx=nextMatchday()[0];
+        if(nx){
+          const mins=Math.round((Date.parse(nx.utc)-Date.now())/60000);
+          if(mins>0){
+            const t = mins<60? `${mins} min` : `${Math.floor(mins/60)}h ${mins%60}m`;
+            msg += ` · next match in ${t}`;
+          }
         }
       }
       if(lockedNow>0) msg += ` · locked ${lockedNow} upcoming`;
       if(unmatched.length) msg += ` · ${unmatched.length} unmatched (name mismatch)`;
-      syncBar(msg, 'ok');
+      syncBar(msg, ageMin!=null && ageMin>staleLimit ? 'warn' : 'ok');
     }catch(e){
       syncBar(manual?'Sync failed — check that results.json is reachable.':'','err');
     }
@@ -1342,6 +1370,39 @@
   // Paste your deployed Worker URL here (e.g. https://wc2026-counter.<you>.workers.dev).
   // Leave as '' to disable the public counter entirely (it just stays hidden).
   const COUNTER_URL = 'https://wc2026-counter.aryanbh96.workers.dev';
+
+  // ---- fast live scores from the Cloudflare worker (updates between Action runs) ----
+  // The worker polls API-Football's live=all and caches the lightweight live state in KV.
+  // We read it here every ~30s while matches are live and overlay fresh score+minute onto
+  // the live cards, without waiting for the heavy results.json pipeline.
+  const LIVE_URL = 'https://wc2026-live.aryanbh96.workers.dev';   // set to your deployed worker
+  let liveScores = {};   // key "Home|Away" -> {hg,ag,minute,status}
+  async function fetchLiveScores(){
+    if(!LIVE_URL) return;
+    try{
+      const r = await fetch(LIVE_URL, {cache:'no-store'});
+      if(!r.ok) return;
+      const d = await r.json();
+      const next={};
+      (d.live||[]).forEach(m=>{
+        // map feed names to our names where needed
+        const home=NAME_FIX(m.home), away=NAME_FIX(m.away);
+        next[home+'|'+away]={hg:m.hg, ag:m.ag, minute:m.minute, status:m.status, home, away};
+      });
+      liveScores=next;
+      renderLive();      // re-render live cards with fresh scores
+      renderToday();     // today's strip shows live scores too
+    }catch(e){ /* worker unreachable — fall back to results.json live state */ }
+  }
+  // light name normaliser mirroring the feed's spellings (front-end side)
+  function NAME_FIX(n){
+    const map={'USA':'USA','United States':'USA','Korea Republic':'Korea Republic',
+      'IR Iran':'IR Iran','Iran':'IR Iran','Czech Republic':'Czechia','Turkey':'Türkiye',
+      'Côte d\u2019Ivoire':'Côte d\'Ivoire','Ivory Coast':'Côte d\'Ivoire','DR Congo':'Congo DR',
+      'Congo DR':'Congo DR','Cape Verde':'Cabo Verde','Bosnia and Herzegovina':'Bosnia and Herzegovina'};
+    return map[n]||n;
+  }
+
   (async function visitorCount(){
     if(!COUNTER_URL) return;
     try{
@@ -1362,6 +1423,10 @@
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
   renderForecast();
+  // live scores: fetch once now, then poll every 30s (worker is cheap; only spends an
+  // API request when a WC match is actually live)
+  fetchLiveScores();
+  setInterval(fetchLiveScores, 30000);
   autoLockUpcoming(); renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
   fetchResults(false);   // auto-sync on page load
 })();
