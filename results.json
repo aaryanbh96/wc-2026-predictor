@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24T21:00:21Z",
+  "updated": "2026-06-24T22:15:15Z",
   "matches": [
     {
       "id": 1489369,
@@ -579,28 +579,6 @@
   ],
   "upcoming": [
     {
-      "id": 1489405,
-      "utc": "2026-06-24T22:00:00+00:00",
-      "home": "Morocco",
-      "away": "Haiti",
-      "predicted": {
-        "pA": 0.8348,
-        "pD": 0.106,
-        "pB": 0.0592
-      }
-    },
-    {
-      "id": 1489406,
-      "utc": "2026-06-24T22:00:00+00:00",
-      "home": "Scotland",
-      "away": "Brazil",
-      "predicted": {
-        "pA": 0.1703,
-        "pD": 0.1574,
-        "pB": 0.6723
-      }
-    },
-    {
       "id": 1539010,
       "utc": "2026-06-25T01:00:00+00:00",
       "home": "Czechia",
@@ -821,7 +799,30 @@
       }
     }
   ],
-  "live": [],
+  "live": [
+    {
+      "id": 1489405,
+      "utc": "2026-06-24T22:00:00+00:00",
+      "home": "Morocco",
+      "away": "Haiti",
+      "predicted": {
+        "pA": 0.8348,
+        "pD": 0.106,
+        "pB": 0.0592
+      }
+    },
+    {
+      "id": 1489406,
+      "utc": "2026-06-24T22:00:00+00:00",
+      "home": "Scotland",
+      "away": "Brazil",
+      "predicted": {
+        "pA": 0.1703,
+        "pD": 0.1574,
+        "pB": 0.6723
+      }
+    }
+  ],
   "daily": [
     {
       "date": "2026-06-22",
@@ -897,31 +898,31 @@
         },
         {
           "team": "France",
-          "win": 0.1489
+          "win": 0.149
         },
         {
           "team": "England",
-          "win": 0.0851
+          "win": 0.0833
         },
         {
           "team": "USA",
-          "win": 0.0726
+          "win": 0.0741
         },
         {
           "team": "Spain",
-          "win": 0.067
+          "win": 0.0622
         },
         {
           "team": "Germany",
-          "win": 0.0605
+          "win": 0.0573
         },
         {
           "team": "Mexico",
-          "win": 0.0545
+          "win": 0.0539
         },
         {
-          "team": "Brazil",
-          "win": 0.0444
+          "team": "Netherlands",
+          "win": 0.0464
         }
       ]
     }
