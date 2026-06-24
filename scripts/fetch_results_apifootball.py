@@ -240,6 +240,22 @@ def main():
     daily.sort(key=lambda d: d.get("date", ""))
     out["daily"] = daily
 
+    # ---- tournament qualification status (provably-correct: qualified / eliminated / alive) ----
+    try:
+        from qualify import compute_status
+        group_of = {n: g for n, g, r in __import__("model").SEED}
+        fin_for_q = [{"home": m["home"], "away": m["away"], "hg": m["hg"], "ag": m["ag"]} for m in matches]
+        # remaining group-stage games = upcoming/live fixtures where both teams share a group
+        rem_for_q = []
+        for m in (upcoming + live):
+            a, b = m["home"], m["away"]
+            if group_of.get(a) and group_of.get(a) == group_of.get(b):
+                rem_for_q.append({"home": a, "away": b})
+        out["status"] = compute_status(group_of, fin_for_q, rem_for_q)
+    except Exception as e:
+        print("qualification status skipped:", e, file=sys.stderr)
+        out["status"] = {}
+
     # only rewrite if substantive data changed
     old = None
     if os.path.exists(OUT):
