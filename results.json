@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24T00:57:47Z",
+  "updated": "2026-06-24T01:57:43Z",
   "matches": [
     {
       "id": 1489369,
@@ -13,6 +13,7 @@
         "pD": 0.1549,
         "pB": 0.1653
       },
+      "backfilled": true,
       "hit": true
     },
     {
@@ -27,6 +28,7 @@
         "pD": 0.2692,
         "pB": 0.3638
       },
+      "backfilled": true,
       "hit": true
     },
     {
@@ -49,6 +51,7 @@
         "pD": 0.2155,
         "pB": 0.2792
       },
+      "backfilled": true,
       "hit": true
     },
     {
@@ -63,6 +66,7 @@
         "pD": 0.1215,
         "pB": 0.7843
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -77,6 +81,7 @@
         "pD": 0.2316,
         "pB": 0.3061
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -91,6 +96,7 @@
         "pD": 0.228,
         "pB": 0.4718
       },
+      "backfilled": true,
       "hit": true
     },
     {
@@ -105,6 +111,7 @@
         "pD": 0.2262,
         "pB": 0.2972
       },
+      "backfilled": true,
       "hit": true
     },
     {
@@ -119,6 +126,7 @@
         "pD": 0.1373,
         "pB": 0.1284
       },
+      "backfilled": true,
       "hit": true
     },
     {
@@ -133,6 +141,7 @@
         "pD": 0.2314,
         "pB": 0.3058
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -147,6 +156,7 @@
         "pD": 0.2273,
         "pB": 0.4737
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -161,6 +171,7 @@
         "pD": 0.2397,
         "pB": 0.3191
       },
+      "backfilled": true,
       "hit": true
     },
     {
@@ -175,6 +186,7 @@
         "pD": 0.1251,
         "pB": 0.1021
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -189,6 +201,7 @@
         "pD": 0.2312,
         "pB": 0.3054
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -203,6 +216,7 @@
         "pD": 0.1772,
         "pB": 0.6135
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -217,6 +231,7 @@
         "pD": 0.1627,
         "pB": 0.181
       },
+      "backfilled": true,
       "hit": false
     },
     {
@@ -431,6 +446,7 @@
         "pD": 0.0966,
         "pB": 0.0373
       },
+      "backfilled": false,
       "hit": true
     },
     {
@@ -445,6 +461,7 @@
         "pD": 0.2424,
         "pB": 0.3234
       },
+      "backfilled": false,
       "hit": true
     },
     {
@@ -459,6 +476,7 @@
         "pD": 0.2082,
         "pB": 0.5255
       },
+      "backfilled": false,
       "hit": true
     },
     {
@@ -473,6 +491,7 @@
         "pD": 0.1341,
         "pB": 0.1217
       },
+      "backfilled": false,
       "hit": true
     },
     {
@@ -487,6 +506,7 @@
         "pD": 0.1555,
         "pB": 0.1664
       },
+      "backfilled": false,
       "hit": false
     },
     {
@@ -501,6 +521,7 @@
         "pD": 0.1683,
         "pB": 0.6397
       },
+      "backfilled": false,
       "hit": true
     }
   ],
@@ -804,35 +825,35 @@
       "top": [
         {
           "team": "Argentina",
-          "win": 0.1918
+          "win": 0.1888
         },
         {
           "team": "France",
-          "win": 0.1512
+          "win": 0.156
         },
         {
           "team": "England",
-          "win": 0.0893
+          "win": 0.0887
         },
         {
           "team": "USA",
-          "win": 0.0754
+          "win": 0.0778
         },
         {
           "team": "Spain",
-          "win": 0.0667
+          "win": 0.0692
         },
         {
           "team": "Germany",
-          "win": 0.0578
+          "win": 0.0592
         },
         {
           "team": "Mexico",
-          "win": 0.0573
+          "win": 0.0578
         },
         {
-          "team": "Brazil",
-          "win": 0.0474
+          "team": "Netherlands",
+          "win": 0.0454
         }
       ]
     }
