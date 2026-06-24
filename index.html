@@ -36,7 +36,8 @@
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;}
+  html{overflow-x:hidden;overscroll-behavior:none;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;overscroll-behavior-y:none;max-width:100%;}
   .wrap{max-width:1140px;margin:0 auto;padding:32px 24px 80px;}
   @media (max-width:760px){
     .layout{grid-template-columns:1fr;gap:0;}
@@ -68,20 +69,25 @@
   /* two-column layout: left sidebar nav + main content */
   .layout{display:grid;grid-template-columns:204px 1fr;gap:40px;align-items:start;}
   .sidebar{position:sticky;top:28px;}
-  .content{min-width:0;}
+  .content{min-width:0;max-width:100%;overflow-x:hidden;}
+  .content table{max-width:100%;}
   .navtoggle{display:none;}
   .navgroups{display:flex;flex-direction:column;}
   /* sidebar brand block: cohost flags + live clock at the top */
-  .brand{margin-bottom:6px;padding-bottom:16px;border-bottom:1px solid var(--line);}
-  .brand-flags{display:flex;gap:6px;align-items:center;margin-bottom:11px;}
-  .brand-flags .fl{width:34px;height:24px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.3);}
+  .brand{margin-bottom:4px;padding-bottom:13px;border-bottom:1px solid var(--line);}
+  .brand-flags{display:flex;gap:6px;align-items:center;margin-bottom:9px;}
+  .brand-flags .fl{width:32px;height:23px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.3);}
   .brand-clock{font-family:var(--mono);font-size:11px;line-height:1.5;}
   .brand-clock #pt-date{color:var(--ink);} .brand-clock #pt-time{color:var(--accent);}
-  .navsec{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--ink);font-weight:600;margin:22px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--line);}
-  .navsec:first-of-type{margin-top:18px;}
-  .tab{background:none;border:none;color:var(--mut);font-size:15px;font-family:var(--sans);
-    text-align:left;padding:6px 2px;cursor:pointer;display:flex;align-items:center;gap:7px;
+  .tab-top{margin-top:14px;font-weight:600;}
+  .navsec{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--mut);font-weight:600;margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line);}
+  .navfoot{display:flex;align-items:center;gap:4px;margin-top:18px;padding-top:13px;border-top:1px solid var(--line);}
+  .navfoot-sep{color:var(--dim);}
+  .tab-inline{padding:2px 4px;margin-left:0;border-left:none;font-size:14px;}
+  .tab-inline.on{border-left:none;color:var(--accent);}
+  .tab{background:none;border:none;color:var(--mut);font-size:14.5px;font-family:var(--sans);
+    text-align:left;padding:5px 2px;cursor:pointer;display:flex;align-items:center;gap:7px;
     border-left:2px solid transparent;padding-left:12px;margin-left:-2px;transition:color .12s,border-color .12s;}
   .tab:hover{color:var(--ink);}
   .tab.on{color:var(--ink);border-left-color:var(--accent);font-weight:600;}
@@ -250,8 +256,8 @@
           <span id="pt-date"></span><br><span id="pt-time"></span>
         </div>
       </div>
+      <button class="tab on tab-top" data-t="forecast">Forecast</button>
       <div class="navsec">Predict</div>
-      <button class="tab on" data-t="forecast">Forecast</button>
       <button class="tab" data-t="predict">Predict match</button>
       <button class="tab" data-t="shock">Shock the model</button>
       <div class="navsec">My scratchpad</div>
@@ -263,9 +269,11 @@
       <button class="tab" data-t="ratings">Ratings</button>
       <button class="tab" data-t="groups">Groups</button>
       <button class="tab" data-t="teams">Teams</button>
-      <div class="navsec">Info</div>
-      <button class="tab" data-t="how">Help</button>
-      <button class="tab" data-t="about">About</button>
+      <div class="navfoot">
+        <button class="tab tab-inline" data-t="how">Help</button>
+        <span class="navfoot-sep">·</span>
+        <button class="tab tab-inline" data-t="about">About</button>
+      </div>
     </div>
   </nav>
 
