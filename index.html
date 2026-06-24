@@ -33,8 +33,8 @@
     --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
     --ink:#f5f8fc; --mut:#b4c0d2; --dim:#7a8699;
     --display:'Bebas Neue', 'Arial Narrow', sans-serif;
-    --accent:#4ade80; --accentq:#34d399;
-    --a:#7c6df2; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
+    --accent:#3b82f6; --accentq:#2563eb;
+    --a:#3b82f6; --b:#34d399; --draw:#8b97a8; --warn:#f4a23b; --bad:#ef6461; --gold:#d6b25e;
     --radius:12px; --radius-sm:8px;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -214,6 +214,21 @@
   .champ .chase .pill b{color:var(--ink);font-weight:600;} .champ .chase .pill span:last-child{font-family:var(--mono);font-size:11px;color:var(--mut);margin-left:2px;}
   .fl{display:inline-block;width:1.25em;height:.9em;object-fit:cover;border-radius:2px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
 
+  /* Today's matches — a lively strip that makes the page feel alive on landing */
+  #today-block{margin:14px 0 0;}
+  .today-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .today-lab{font-family:var(--display);font-size:22px;letter-spacing:.03em;color:var(--ink);white-space:nowrap;}
+  .tchips{display:flex;gap:8px;flex-wrap:wrap;flex:1;}
+  .tchip{display:inline-flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);
+    border-radius:999px;padding:6px 13px;font-size:13px;font-weight:500;}
+  .tchip.on{border-color:var(--bad);background:rgba(239,100,97,.1);}
+  .tchip .tteams{display:inline-flex;align-items:center;gap:6px;}
+  .tchip .tteams .fl{width:1.4em;height:1em;}
+  .tchip .tvs{color:var(--dim);font-size:.85em;}
+  .t-time{font-family:var(--mono);font-size:11px;color:var(--mut);}
+  .t-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;}
+  .t-live{font-family:var(--mono);font-size:10px;color:var(--bad);font-weight:700;letter-spacing:.04em;}
+
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
   .fc tr.elim td{opacity:.4;}
 
@@ -294,11 +309,25 @@
   </nav>
 
   <div class="content">
+  <!-- THE ANSWER, FIRST: champion + live + today's matches (forecast view only) -->
+  <div id="answer-zone">
+  <div id="live-block"></div>
+  <div id="champ-hero"></div>
+  <div id="today-block"></div>
+  </div>
+
   <header>
-    <div class="kicker">Elo + online learning · pre-match ledger · 48 teams</div>
     <h1>World Cup 2026 Predictor</h1>
-    <p class="sub">Forecasts who wins the World Cup by simulating the whole remaining tournament thousands of times from current team ratings. Updates automatically as real results come in. Per-match prediction and a self-grading ledger live in the tabs below.</p>
+    <p class="sub">Who wins the World Cup? This simulates the whole remaining tournament 20,000 times to find out — and updates itself after every match.</p>
   </header>
+
+  <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 18px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
+    <span id="syncbar" style="color:var(--mut);">Updating World Cup results…</span>
+    <div style="display:flex;gap:8px;">
+      <button class="ghost" id="share-btn" style="padding:5px 13px;">Share</button>
+      <button class="ghost" id="refresh-main" style="padding:5px 13px;">Refresh results</button>
+    </div>
+  </div>
 
   <div class="stats">
     <div class="stat hl"><div class="lab">pre-match hit rate</div><div class="val" id="s-prehit">—</div></div>
@@ -308,25 +337,15 @@
     <div class="stat"><div class="lab">teams</div><div class="val" id="s-teams">48</div></div>
   </div>
 
-  <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 18px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
-    <span id="syncbar" style="color:var(--mut);">Loading latest results…</span>
-    <div style="display:flex;gap:8px;">
-      <button class="ghost" id="share-btn" style="padding:5px 13px;">Share</button>
-      <button class="ghost" id="refresh-main" style="padding:5px 13px;">Refresh results</button>
-    </div>
-  </div>
-
 
   <section class="panel on" id="p-forecast">
-    <div id="live-block"></div>
-    <div id="champ-hero"></div>
-    <div id="upcoming-block" style="margin-top:22px;"></div>
+    <div id="upcoming-block" style="margin-top:4px;"></div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;margin-top:22px;">
       <div class="sechead" style="margin:0;">Full forecast — <span id="fc-nsim">20,000</span> simulations</div>
       <button class="ghost" id="rerun-sim">Re-run simulation</button>
     </div>
     <p class="hint" id="fc-meta" style="margin:0 0 14px;">Each run plays the rest of the tournament forward from current ratings.</p>
-    <div id="forecast-out"><div class="empty">Running the first simulation…</div></div>
+    <div id="forecast-out"><div class="empty">Simulating tournament…</div></div>
   </section>
 
   <section class="panel" id="p-predict">
@@ -837,6 +856,7 @@
       document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
       t.classList.add('on'); $('p-'+t.dataset.t).classList.add('on');
       const v=t.dataset.t;
+      const az=$('answer-zone'); if(az) az.style.display = (v==='forecast')?'block':'none';
       if(v==='forecast')renderForecast();
       if(v==='record')renderTrackRecord();
       if(v==='daily')renderDaily();
@@ -1044,6 +1064,32 @@
     block.innerHTML=`<div class="upc-head"><div class="sechead" style="margin:0;">Upcoming matches</div><div class="upc-acc">${accLine}</div></div>${cards}`;
   }
 
+  // ---- "Today's matches" banner: a compact, lively strip so the page feels alive on landing ----
+  function renderToday(){
+    const block=$('today-block'); if(!block) return;
+    const todayPT=ptDayKey(Date.now());
+    // today's fixtures from upcoming + live + finished-today
+    const pool=[...(state.live||[]), ...(state.upcoming||[]),
+                ...(state.matches||state.frozenMatches||[]).map(m=>({home:m.home,away:m.away,utc:m.utc,_done:true,hg:m.hg,ag:m.ag}))];
+    const seen=new Set();
+    const today=pool.filter(m=>{
+      if(!m.utc||ptDayKey(m.utc)!==todayPT) return false;
+      const k=m.home+'|'+m.away; if(seen.has(k)) return false; seen.add(k); return true;
+    }).sort((a,b)=>Date.parse(a.utc)-Date.parse(b.utc));
+    if(!today.length){ block.innerHTML=''; return; }
+    const chips=today.map(m=>{
+      const live=(state.live||[]).some(x=>x.home===m.home&&x.away===m.away);
+      const time=new Date(m.utc).toLocaleTimeString('en-US',{timeZone:PT,hour:'numeric',minute:'2-digit'});
+      const meta = live?'<span class="t-live">● LIVE</span>'
+                 : m._done?`<span class="t-score">${m.hg}–${m.ag}</span>`
+                 : `<span class="t-time">${time}</span>`;
+      return `<div class="tchip${live?' on':''}">
+        <span class="tteams">${flag(m.home)} <span class="tvs">v</span> ${flag(m.away)}</span>
+        ${meta}</div>`;
+    }).join('');
+    block.innerHTML=`<div class="today-wrap"><div class="today-lab">Today's matches</div><div class="tchips">${chips}</div></div>`;
+  }
+
   // ---- live now: matches in progress, pinned with the model's pre-match call ----
   function renderLive(){
     const block=$('live-block'); if(!block) return;
@@ -1217,7 +1263,7 @@
       state.status = data.status || {};            // qualified/eliminated/alive per team (shared)
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
-      renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
+      renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
       const checkedNow = ptDateTime(Date.now());      // live: when the page just checked
       let msg = applied? `Synced ${applied} new result${applied>1?'s':''} · checked ${checkedNow}`
                        : `Live · checked ${checkedNow}`;
@@ -1271,7 +1317,7 @@
   fillAll(); refreshStats(); renderRatings();
   if(!state.forecast) runForecast();
   renderForecast();
-  autoLockUpcoming(); renderUpcoming(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
+  autoLockUpcoming(); renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
   fetchResults(false);   // auto-sync on page load
 })();
 </script>
