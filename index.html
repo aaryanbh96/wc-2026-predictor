@@ -40,13 +40,15 @@
   .wrap{max-width:1140px;margin:0 auto;padding:32px 24px 80px;}
   @media (max-width:760px){
     .layout{grid-template-columns:1fr;gap:0;}
-    .sidebar{position:static;margin-bottom:18px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--panel);}
+    .sidebar{position:static;margin-bottom:18px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel);}
     .navtoggle{display:block;width:100%;background:none;border:none;color:var(--ink);font-family:var(--mono);
       font-size:13px;text-align:left;cursor:pointer;padding:4px 0;letter-spacing:.06em;}
-    .navgroups{display:none;padding-top:8px;}
-    .navgroups.open{display:flex;}
+    .navgroups{display:contents;}            /* let brand show; groups list toggles separately */
+    .navgroups .navsec, .navgroups .tab{display:none;}
+    .navgroups.open .navsec, .navgroups.open .tab{display:flex;}
+    .brand{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px;padding-bottom:12px;}
+    .brand-flags{margin-bottom:0;}
     .navsec{margin:14px 0 6px;}
-    .navsec:first-child{margin-top:6px;}
   }
   header{margin-bottom:28px;}
   .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
@@ -64,13 +66,20 @@
   .stat.hl{border-color:rgba(74,222,128,.35);}
 
   /* two-column layout: left sidebar nav + main content */
-  .layout{display:grid;grid-template-columns:188px 1fr;gap:38px;align-items:start;}
+  .layout{display:grid;grid-template-columns:204px 1fr;gap:40px;align-items:start;}
   .sidebar{position:sticky;top:28px;}
+  .content{min-width:0;}
   .navtoggle{display:none;}
   .navgroups{display:flex;flex-direction:column;}
-  .navsec{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--dim);margin:20px 0 8px;padding-left:2px;}
-  .navsec:first-child{margin-top:0;}
+  /* sidebar brand block: cohost flags + live clock at the top */
+  .brand{margin-bottom:6px;padding-bottom:16px;border-bottom:1px solid var(--line);}
+  .brand-flags{display:flex;gap:6px;align-items:center;margin-bottom:11px;}
+  .brand-flags .fl{width:34px;height:24px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.3);}
+  .brand-clock{font-family:var(--mono);font-size:11px;line-height:1.5;}
+  .brand-clock #pt-date{color:var(--ink);} .brand-clock #pt-time{color:var(--accent);}
+  .navsec{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink);font-weight:600;margin:22px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--line);}
+  .navsec:first-of-type{margin-top:18px;}
   .tab{background:none;border:none;color:var(--mut);font-size:15px;font-family:var(--sans);
     text-align:left;padding:6px 2px;cursor:pointer;display:flex;align-items:center;gap:7px;
     border-left:2px solid transparent;padding-left:12px;margin-left:-2px;transition:color .12s,border-color .12s;}
@@ -231,14 +240,39 @@
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
-      <div class="kicker">Elo + online learning · pre-match ledger · 48 teams</div>
-      <div id="pt-clock" style="font-family:var(--mono);font-size:12px;color:var(--mut);text-align:right;white-space:nowrap;">
-        <span id="pt-date" style="color:var(--ink);"></span><br><span id="pt-time" style="color:var(--accent);"></span>
+  <div class="layout">
+  <nav class="sidebar">
+    <button class="navtoggle" id="nav-toggle" aria-label="Menu">Menu ▾</button>
+    <div class="navgroups" id="nav-groups">
+      <div class="brand">
+        <div class="brand-flags"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ca.svg" alt="Canada"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg" alt="USA"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/mx.svg" alt="Mexico"></div>
+        <div id="pt-clock" class="brand-clock">
+          <span id="pt-date"></span><br><span id="pt-time"></span>
+        </div>
       </div>
+      <div class="navsec">Predict</div>
+      <button class="tab on" data-t="forecast">Forecast</button>
+      <button class="tab" data-t="predict">Predict match</button>
+      <button class="tab" data-t="shock">Shock the model</button>
+      <div class="navsec">My scratchpad</div>
+      <button class="tab" data-t="ledger">Scratchpad <span class="badge" id="pend-badge" style="display:none;">0</span></button>
+      <div class="navsec">Track &amp; history</div>
+      <button class="tab" data-t="record">Track record</button>
+      <button class="tab" data-t="daily">Daily records</button>
+      <div class="navsec">Reference</div>
+      <button class="tab" data-t="ratings">Ratings</button>
+      <button class="tab" data-t="groups">Groups</button>
+      <button class="tab" data-t="teams">Teams</button>
+      <div class="navsec">Info</div>
+      <button class="tab" data-t="how">Help</button>
+      <button class="tab" data-t="about">About</button>
     </div>
-    <h1>World Cup 2026 Predictor <span class="hosts"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ca.svg" alt="Canada"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg" alt="USA"><img class="fl" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/mx.svg" alt="Mexico"></span></h1>
+  </nav>
+
+  <div class="content">
+  <header>
+    <div class="kicker">Elo + online learning · pre-match ledger · 48 teams</div>
+    <h1>World Cup 2026 Predictor</h1>
     <p class="sub">Forecasts who wins the World Cup by simulating the whole remaining tournament thousands of times from current team ratings. Updates automatically as real results come in. Per-match prediction and a self-grading ledger live in the tabs below.</p>
   </header>
 
@@ -258,29 +292,6 @@
     </div>
   </div>
 
-  <div class="layout">
-  <nav class="sidebar">
-    <button class="navtoggle" id="nav-toggle" aria-label="Menu">Menu ▾</button>
-    <div class="navgroups" id="nav-groups">
-      <div class="navsec">Predict</div>
-      <button class="tab on" data-t="forecast">Forecast</button>
-      <button class="tab" data-t="predict">Predict match</button>
-      <button class="tab" data-t="shock">Shock the model</button>
-      <div class="navsec">My stuff</div>
-      <button class="tab" data-t="ledger">My scratchpad <span class="badge" id="pend-badge" style="display:none;">0</span></button>
-      <button class="tab" data-t="record">Track record</button>
-      <button class="tab" data-t="daily">Daily records</button>
-      <div class="navsec">Reference</div>
-      <button class="tab" data-t="ratings">Ratings</button>
-      <button class="tab" data-t="groups">Groups</button>
-      <button class="tab" data-t="teams">Teams</button>
-      <div class="navsec navsec-end">Info</div>
-      <button class="tab" data-t="how">Help</button>
-      <button class="tab" data-t="about">About</button>
-    </div>
-  </nav>
-
-  <div class="content">
 
   <section class="panel on" id="p-forecast">
     <div id="live-block"></div>
