@@ -351,9 +351,9 @@
   <section class="panel" id="p-about">
     <div class="prose" style="max-width:60ch;">
       <p style="font-size:16px;color:var(--ink);"><b>About</b></p>
-      <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> 🇩🇪 is my team.</p>
+      <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> 🇩🇪 is the teamam rooting for.</p>
       <p>I made this because the 2026 World Cup looked genuinely hard to call, and I wanted a model that predicts each match, learns from what actually happens, and keeps itself honest about how well it's doing — all updating on its own as the tournament unfolds.</p>
-      <p>It's an Elo-style rating model with momentum, a Monte Carlo tournament simulation, and an automated pipeline that fetches results and re-grades the model's own pre-match calls.</p>
+      <p>It's an Elo-style rating model with momentum, a Monte Carlo simulation that plays out the tournament 20,000 times, and an automated pipeline that pulls live results, re-rates every team, and grades its own pre-match predictions — all updating on its own. Built with a real-time data feed, a scheduled pipeline, and a serverless backend.</p>
       <p>More of my work lives at <a href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>.</p>
     </div>
   </section>
@@ -940,43 +940,62 @@
   // Championship Equity Trajectory — each top team's win-prob across days
   function renderEquityChart(days){
     const box=$('equity-chart'); if(!box) return;
-    // teams to plot: union of each day's top-8, ranked by their latest value, capped at 8
     const latest=days[days.length-1].top||[];
     const order=latest.map(t=>t.team).slice(0,8);
-    // ensure we have a value per team per day (0 if absent that day)
-    const valOf=(day,team)=>{ const e=(day.top||[]).find(x=>x.team===team); return e?e.win:0; };
+    // value for a team on a given day, or null if that day didn't record it (so we don't
+    // draw a misleading line down to 0% for teams missing from an early day's top list)
+    const valOf=(day,team)=>{ const e=(day.top||[]).find(x=>x.team===team); return e?e.win:null; };
     if(days.length<2){
       box.innerHTML=`<div class="hint" style="margin-bottom:14px;">The trajectory chart appears once there are at least two days of records — right now there's ${days.length}. Check back after the next matchday.</div>`;
       return;
     }
-    const W=680,H=300,padL=38,padR=96,padT=16,padB=28;
-    const maxV=Math.max(0.05,...days.flatMap(dd=>order.map(t=>valOf(dd,t))));
+    const W=720,H=320,padL=40,padR=150,padT=18,padB=30;  // wider right gutter for labels
+    const vals=days.flatMap(dd=>order.map(t=>valOf(dd,t))).filter(v=>v!=null);
+    const maxV=Math.max(0.05,...vals);
     const x=i=>padL+(W-padL-padR)*(days.length<=1?0:i/(days.length-1));
     const y=v=>padT+(H-padT-padB)*(1-v/maxV);
     const palette=['#d6b25e','#7c6df2','#34d399','#f4a23b','#ef6461','#5db0ff','#c77dff','#8b97a8'];
-    // gridlines
     let grid='';
     for(let g=0;g<=4;g++){ const gv=maxV*g/4, gy=y(gv);
       grid+=`<line x1="${padL}" y1="${gy}" x2="${W-padR}" y2="${gy}" stroke="var(--line)" stroke-width="1"/>`;
       grid+=`<text x="${padL-6}" y="${gy+3}" text-anchor="end" font-size="9" font-family="var(--mono)" fill="var(--dim)">${Math.round(gv*100)}%</text>`;
     }
-    // x labels (dates)
     let xlab='';
     days.forEach((dd,i)=>{ if(days.length>6 && i%2!==0 && i!==days.length-1) return;
       const lb=new Date(dd.date+'T12:00:00Z').toLocaleDateString('en-US',{timeZone:PT,month:'numeric',day:'numeric'});
       xlab+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="9" font-family="var(--mono)" fill="var(--dim)">${lb}</text>`;
     });
-    // lines + end labels
-    let lines='',dots='',labels='';
+    // build lines (skipping null gaps) and collect end-label positions
+    let lines='',dots='';
+    const ends=[];
     order.forEach((team,ti)=>{
       const c=palette[ti%palette.length];
-      const pts=days.map((dd,i)=>`${x(i)},${y(valOf(dd,team))}`).join(' ');
-      lines+=`<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>`;
+      // split into segments across nulls so a missing day doesn't draw a false line
+      let seg=[], segs=[];
+      days.forEach((dd,i)=>{ const v=valOf(dd,team); if(v==null){ if(seg.length){segs.push(seg);seg=[];} } else { seg.push(`${x(i)},${y(v)}`); } });
+      if(seg.length) segs.push(seg);
+      segs.forEach(s=>{ if(s.length>1) lines+=`<polyline points="${s.join(' ')}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>`;
+        else if(s.length===1) lines+=`<circle cx="${s[0].split(',')[0]}" cy="${s[0].split(',')[1]}" r="2.5" fill="${c}"/>`; });
       const lv=valOf(days[days.length-1],team);
-      dots+=`<circle cx="${x(days.length-1)}" cy="${y(lv)}" r="3" fill="${c}"/>`;
-      labels+=`<text x="${x(days.length-1)+7}" y="${y(lv)+3}" font-size="10" font-family="var(--sans)" fill="${c}">${team} ${Math.round(lv*100)}%</text>`;
+      if(lv!=null){ dots+=`<circle cx="${x(days.length-1)}" cy="${y(lv)}" r="3" fill="${c}"/>`;
+        ends.push({team,c,val:lv,yi:y(lv)}); }
     });
-    box.innerHTML=`<div class="sechead" style="margin:0 0 10px;">Championship equity over time</div>
+    // de-collide end labels: sort by y, then push apart so none overlap (min 13px gap)
+    ends.sort((a,b)=>a.yi-b.yi);
+    const GAP=13;
+    for(let i=1;i<ends.length;i++){ if(ends[i].yi - ends[i-1].yi < GAP) ends[i].yi = ends[i-1].yi + GAP; }
+    // keep within chart vertically
+    const maxY=H-6; for(let i=ends.length-1;i>0;i--){ if(ends[i].yi>maxY){ ends[i].yi=maxY; if(ends[i-1].yi>ends[i].yi-GAP) ends[i-1].yi=ends[i].yi-GAP; } }
+    let labels='';
+    ends.forEach(e=>{
+      const ly=y(e.val);
+      // little connector from the dot to the (possibly shifted) label
+      labels+=`<line x1="${x(days.length-1)+4}" y1="${ly}" x2="${x(days.length-1)+12}" y2="${e.yi}" stroke="${e.c}" stroke-width="1" opacity="0.4"/>`;
+      labels+=`<text x="${x(days.length-1)+15}" y="${e.yi+3}" font-size="11" font-family="var(--sans)" fill="${e.c}">${e.team} ${Math.round(e.val*100)}%</text>`;
+    });
+    box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 10px;flex-wrap:wrap;gap:8px;">
+        <div class="sechead" style="margin:0;">Championship equity over time</div>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--dim);">top ${ends.length} contenders</span></div>
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;">
         ${grid}${xlab}${lines}${dots}${labels}
       </svg>`;
