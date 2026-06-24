@@ -38,6 +38,17 @@
   *{box-sizing:border-box;}
   html{overscroll-behavior-x:none;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip;}
+  /* stadium photo lives in the page margins, framing the app like a stadium around a pitch.
+     The central column floats over it as an opaque card, so text never sits on the photo. */
+  .bg-stadium{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:#0e1116 url("assets/stadium.png") center top/cover no-repeat;}
+  .bg-stadium::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg, rgba(14,17,22,.35) 0%, rgba(14,17,22,.82) 28%, rgba(14,17,22,.82) 72%, rgba(14,17,22,.35) 100%),
+               linear-gradient(180deg, rgba(14,17,22,.25), rgba(14,17,22,.6));}
+  .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:32px 24px 80px;
+    background:var(--bg);box-shadow:0 0 0 1px var(--line), 0 30px 80px rgba(0,0,0,.55);
+    border-radius:0;}
+  @media (min-width:1141px){ .wrap{border-radius:16px;margin:24px auto;} }
   .wrap{max-width:1140px;margin:0 auto;padding:32px 24px 80px;}
   @media (max-width:760px){
     .layout{grid-template-columns:1fr;gap:0;}
@@ -245,6 +256,7 @@
 </style>
 </head>
 <body>
+<div class="bg-stadium" aria-hidden="true"></div>
 <div class="wrap">
   <div class="layout">
   <nav class="sidebar">
