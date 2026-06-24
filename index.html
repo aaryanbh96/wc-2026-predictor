@@ -256,6 +256,12 @@
   .t-time{font-family:var(--mono);font-size:11px;color:var(--mut);}
   .t-score{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;}
   .t-live{font-family:var(--mono);font-size:10px;color:var(--bad);font-weight:700;letter-spacing:.04em;}
+  .today-jump{display:inline-flex;align-items:center;gap:6px;background:rgba(239,100,97,.12);
+    border:1px solid rgba(239,100,97,.4);color:var(--bad);font-family:var(--mono);font-size:11px;
+    letter-spacing:.04em;padding:6px 12px;border-radius:999px;cursor:pointer;margin-left:auto;
+    transition:background .15s,transform .15s;}
+  .today-jump:hover{background:rgba(239,100,97,.22);transform:translateY(2px);}
+  .today-jump svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
   .fc tr.elim td{opacity:.4;}
@@ -354,17 +360,18 @@
   </nav>
 
   <div class="content">
-  <!-- THE ANSWER, FIRST: champion + live + today's matches (forecast view only) -->
+  <!-- THE ANSWER, FIRST: champion + today's matches -->
   <div id="answer-zone">
   <div id="champ-hero"></div>
   <div id="today-block"></div>
-  <div id="live-block"></div>
   </div>
 
   <header>
     <h1>World Cup 2026 Predictor</h1>
     <p class="sub">The model that calls the World Cup before it happens — simulating every remaining match 20,000 times, learning from each result, and grading its own predictions in the open.</p>
   </header>
+
+  <div id="live-block"></div>
 
   <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 4px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
     <span id="syncbar" style="color:var(--mut);">Updating World Cup results…</span>
@@ -1138,25 +1145,42 @@
         <span class="tteams">${flag(m.home)} <span class="tvs">v</span> ${flag(m.away)}</span>
         ${meta}</div>`;
     }).join('');
-    block.innerHTML=`<div class="today-wrap"><div class="today-lab">Today's matches</div><div class="tchips">${chips}</div></div>`;
+    const anyLive = Object.keys(liveScores||{}).length>0 || (state.live||[]).length>0;
+    const jump = anyLive ? `<button class="today-jump" id="today-jump" title="Jump to live scores">Live scores <svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>` : '';
+    block.innerHTML=`<div class="today-wrap"><div class="today-lab">Today's matches</div><div class="tchips">${chips}</div>${jump}</div>`;
+    const tj=$('today-jump'); if(tj) tj.onclick=()=>{ const t=$('live-block'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); };
   }
 
   // ---- live now: matches in progress, pinned with the model's pre-match call ----
   function renderLive(){
     const block=$('live-block'); if(!block) return;
-    const lv=(state.live||[]).filter(m=>state.teams[m.home]&&state.teams[m.away]);
+    // Build the live set from BOTH sources: the worker overlay (fresh scores) and
+    // results.json state.live (slower). Merge by team pairing so a score never blanks
+    // out just because one render source momentarily lacks it.
+    const byKey={};
+    (state.live||[]).forEach(m=>{
+      if(!state.teams[m.home]||!state.teams[m.away]) return;
+      byKey[m.home+'|'+m.away]={home:m.home,away:m.away,predicted:m.predicted};
+    });
+    Object.values(liveScores||{}).forEach(ls=>{
+      const home=ls.home, away=ls.away;
+      if(!state.teams[home]||!state.teams[away]) return;
+      const k=home+'|'+away;
+      byKey[k]=Object.assign(byKey[k]||{home,away}, {ls});
+    });
+    const lv=Object.values(byKey);
     if(!lv.length){ block.innerHTML=''; return; }
     const cards=lv.map(m=>{
       const p = m.predicted || (()=>{ const pr=probs(m.home,m.away,true); return {pA:pr.pA,pD:pr.pD,pB:pr.pB}; })();
       const pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
       const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
-      // fresh live score from the worker overlay, if available
-      const ls=liveScores[m.home+'|'+m.away];
-      const score = ls && ls.hg!=null ? `<span class="live-score">${ls.hg}<span class="live-dash">–</span>${ls.ag}</span>` : '';
-      const minute = ls ? `<span class="live-min">${ls.status==='HT'?'HT':(ls.minute!=null?ls.minute+"'":'')}</span>` : '';
+      const ls=m.ls || liveScores[m.home+'|'+m.away];
+      const hasScore = ls && ls.hg!=null;
+      const score = hasScore ? `<span class="live-score">${ls.hg}<span class="live-dash">–</span>${ls.ag}</span>` : '<span class="vs">v</span>';
+      const minute = ls && ls.status==='HT' ? 'HT' : (ls && ls.minute!=null ? ls.minute+"'" : 'LIVE');
       return `<div class="live-card">
-        <div class="top"><span class="teams">${fl(m.home)} ${score||'<span class="vs">v</span>'} ${fl(m.away)}</span>
-          <span class="live-badge"><span class="live-dot"></span>${minute||'Live now'}</span></div>
+        <div class="top"><span class="teams">${fl(m.home)} ${score} ${fl(m.away)}</span>
+          <span class="live-badge"><span class="live-dot"></span>${minute}</span></div>
         <div class="pbar" style="margin-top:10px;"><i style="width:${pA}%;background:var(--a)"></i><i style="width:${pD}%;background:var(--draw)"></i><i style="width:${pB}%;background:var(--b)"></i></div>
         <div class="plab"><span><b>${m.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${m.away}</b> ${pB}%</span></div>
         <div class="plab" style="margin-top:4px;"><span class="ko">Model's pre-match call: favored ${fav} ${favP}%</span></div>
