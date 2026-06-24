@@ -256,15 +256,16 @@ def main():
         print("qualification status skipped:", e, file=sys.stderr)
         out["status"] = {}
 
-    # only rewrite if substantive data changed
+    # only rewrite if substantive data changed (now includes qualification status,
+    # so the first run that adds status — or any status change — triggers a write)
     old = None
     if os.path.exists(OUT):
         try:
             prev = json.load(open(OUT))
-            old = (prev.get("matches"), prev.get("upcoming"), prev.get("live"))
+            old = (prev.get("matches"), prev.get("upcoming"), prev.get("live"), prev.get("status"))
         except Exception:
             old = None
-    if old == (matches, upcoming, live):
+    if old == (matches, upcoming, live, out.get("status")):
         print(f"No change: {len(matches)} finished, {len(live)} live, {len(upcoming)} upcoming.")
         return
 
