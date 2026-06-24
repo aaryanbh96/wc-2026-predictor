@@ -64,7 +64,11 @@ NAME_MAP = {
     "Congo DR": "Congo DR",
     "Czech Republic": "Czechia",
     "Bosnia and Herzegovina": "Bosnia and Herzegovina",
+    "Bosnia & Herzegovina": "Bosnia and Herzegovina",
+    "Bosnia": "Bosnia and Herzegovina",
     "Curacao": "Curaçao",
+    "Cote d'Ivoire": "Côte d'Ivoire",
+    "Ivory Coast": "Côte d'Ivoire",
 }
 
 VALID = {
