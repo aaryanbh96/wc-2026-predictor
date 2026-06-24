@@ -231,7 +231,6 @@
     <button class="tab on" data-t="forecast">Forecast</button>
     <button class="tab" data-t="predict">Predict match</button>
     <button class="tab" data-t="ledger">My scratchpad <span class="badge" id="pend-badge" style="display:none;">0</span></button>
-    <button class="tab" data-t="result">Log result</button>
     <button class="tab" data-t="record">Track record</button>
     <button class="tab" data-t="daily">Daily records</button>
     <button class="tab" data-t="shock">Shock the model</button>
@@ -272,26 +271,6 @@
     <div id="pending-list"></div>
     <div class="sechead" style="margin-top:24px;">Graded — pre-match calls scored against reality</div>
     <div id="graded-list"></div>
-  </section>
-
-  <section class="panel" id="p-result">
-    <p class="prose" style="margin-bottom:14px;">Enter a finished score. If a locked prediction exists for this match, it gets graded first, then the model learns. No prediction on file? It still learns — it just won't count toward pre-match accuracy.</p>
-    <div class="row">
-      <div class="field"><label>home / team a</label><select id="ra"></select></div>
-      <div class="field sm"><label>gf</label><input id="ga" type="number" min="0" value="0"></div>
-      <div class="field sm"><label>gf</label><input id="gb" type="number" min="0" value="0"></div>
-      <div class="field"><label>away / team b</label><select id="rb"></select></div>
-    </div>
-    <div class="row">
-      <div class="field sm" style="flex:0 0 110px;"><label>venue</label>
-        <select id="rn"><option value="1">neutral</option><option value="0">a at home</option></select></div>
-      <div class="field sm" style="flex:0 0 130px;"><label>stage weight</label>
-        <select id="rw"><option value="1">group ×1</option><option value="1.25">R32/R16 ×1.25</option><option value="1.5">QF+ ×1.5</option></select></div>
-      <button class="act" id="go-result">Submit &amp; learn</button>
-    </div>
-    <div id="result-out"></div>
-    <div class="toolbar"><button class="ghost" id="sync-now">Sync now</button><button class="ghost" id="show-log">Update history</button></div>
-    <div id="logbox" style="margin-top:12px;display:none;"></div>
   </section>
 
   <section class="panel" id="p-ratings"><div id="ratings-list"></div></section>
@@ -374,7 +353,7 @@
       <p style="font-size:16px;color:var(--ink);"><b>About</b></p>
       <p>Hi — I'm Aryan Bhardwaj. I build things, I like soccer, and <b>Germany</b> 🇩🇪 is my team.</p>
       <p>I made this because the 2026 World Cup looked genuinely hard to call, and I wanted a model that predicts each match, learns from what actually happens, and keeps itself honest about how well it's doing — all updating on its own as the tournament unfolds.</p>
-      <p>It's an Elo-style rating model with momentum, a Monte Carlo tournament simulation, and an automated pipeline that fetches results and re-grades the model's own pre-match calls. Built as a static site with a small serverless backend — no big infrastructure, just a thing that runs itself.</p>
+      <p>It's an Elo-style rating model with momentum, a Monte Carlo tournament simulation, and an automated pipeline that fetches results and re-grades the model's own pre-match calls.</p>
       <p>More of my work lives at <a href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>.</p>
     </div>
   </section>
@@ -540,7 +519,6 @@
   function fillSel(el,keep){ const cur=keep||el.value; el.innerHTML=names().map(n=>`<option ${n===cur?'selected':''}>${n}</option>`).join(''); }
   function fillAll(){
     fillSel($('pa'),$('pa').value||'Argentina'); fillSel($('pb'),$('pb').value||'Brazil');
-    fillSel($('ra'),$('ra').value||'Argentina'); fillSel($('rb'),$('rb').value||'Brazil');
   }
   function refreshStats(){
     // top-of-page stats reflect the SHARED, server-frozen track record (genuine pre-match
@@ -585,15 +563,7 @@
     };
   }
 
-  function doResult(){
-    const a=$('ra').value,b=$('rb').value,ga=+$('ga').value,gb=+$('gb').value;
-    const neutral=$('rn').value==='1',stageW=+$('rw').value;
-    if(a===b){ $('result-out').innerHTML='<p class="note">Pick two different teams.</p>'; return; }
-    if(ga<0||gb<0){ $('result-out').innerHTML='<p class="note">Scores can\'t be negative.</p>'; return; }
-    settleMatch(a,ga,gb,b,neutral,stageW);
-  }
-
-  // central entry point used by manual log AND (later) auto-update
+  // central entry point used by the scratchpad's Settle & learn AND the auto-update sync
   function settleMatch(a,ga,gb,b,neutral,stageW){
     const pend=findPending(a,b);
     let gradeInfo=null;
@@ -603,17 +573,9 @@
       if(pend.a!==a){ pga=gb; pgb=ga; }
       gradeInfo=gradePrediction(pend,pga,pgb);
     }
-    const res=learn(state,a,ga,gb,b,neutral,stageW,false);
-    save(); refreshStats(); renderRatings(); fillAll(); renderLog(); renderGroups(); renderLedger();
+    learn(state,a,ga,gb,b,neutral,stageW,false);
+    save(); refreshStats(); renderRatings(); fillAll(); renderGroups(); renderLedger();
     runForecast(); renderForecast(); renderUpcoming();
-    let html=`<div class="card">`;
-    if(gradeInfo){
-      html+=`<p class="note" style="margin-top:0;">Graded the locked call: <span class="${gradeInfo.hit?'':'danger'}">${gradeInfo.hit?'✓ correct':'✗ missed'}</span> · brier ${gradeInfo.brier.toFixed(3)}</p>`;
-    } else {
-      html+=`<p class="note" style="margin-top:0;">No locked prediction for this match — learned from it, but it won't count toward pre-match accuracy.</p>`;
-    }
-    html+=`<p class="note">${a}: ${Math.round(res.before.a)} → <b>${Math.round(rating(a))}</b> (${res.delta>=0?'+':''}${res.delta.toFixed(0)}) &nbsp;·&nbsp; ${b}: ${Math.round(res.before.b)} → <b>${Math.round(rating(b))}</b> (${-res.delta>=0?'+':''}${(-res.delta).toFixed(0)})${res.upset?' <span class="danger">· upset</span>':''}</p></div>`;
-    $('result-out').innerHTML=html;
   }
 
   function renderLedger(){
@@ -732,10 +694,7 @@
       return `<div class="grp"><h3>Group ${g}</h3><table><tr><th>team</th><th>p</th><th>w-d-l</th><th>gd</th><th>pts</th></tr>${body}</table></div>`;
     }).join('');
   }
-  function renderLog(){
-    if(!state.log.length){ $('logbox').innerHTML='<div class="log">No results yet.</div>'; return; }
-    $('logbox').innerHTML='<div class="log">'+state.log.map(e=>`<div class="${e.up?'up':''}">${e.seed?'· ':''}${e.txt}</div>`).join('')+'</div>';
-  }
+  function renderLog(){ /* Log result panel removed; kept as no-op for safety */ }
   function renderTeams(){
     $('teams-list').innerHTML=names().map(n=>
       `<div class="editrow"><span>${n}</span><span style="flex:0 0 50px;color:var(--dim);font-family:var(--mono);font-size:11px;">Grp ${state.teams[n].group}</span><span style="flex:0 0 50px;text-align:right;font-family:var(--mono);">${Math.round(rating(n))}</span><span class="x" data-rm="${n}" title="remove">✕</span></div>`).join('');
@@ -759,9 +718,7 @@
     };
   });
   $('go-predict').onclick=doPredict;
-  $('go-result').onclick=doResult;
-  $('show-log').onclick=()=>{ const b=$('logbox'); b.style.display=b.style.display==='none'?'block':'none'; renderLog(); };
-  $('sync-now').onclick=()=>fetchResults(true);
+  $('reset-all').onclick=()=>{ if(confirm('Reset to seed, re-apply round-1, and clear the ledger?')){ state=freshState(); save(); refreshStats(); renderRatings(); renderTeams(); fillAll(); renderGroups(); renderLedger(); $('predict-out').innerHTML=''; } };
   $('refresh-main').onclick=()=>fetchResults(true);
   $('share-btn').onclick=async()=>{
     const fc=state.forecast;
@@ -796,7 +753,6 @@
     state.standings[nm]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0};
     $('nt-name').value=''; save(); renderTeams(); renderRatings(); fillAll(); refreshStats(); renderGroups();
   };
-  $('reset-all').onclick=()=>{ if(confirm('Reset to seed, re-apply round-1, and clear the ledger?')){ state=freshState(); save(); refreshStats(); renderRatings(); renderTeams(); fillAll(); renderLog(); renderGroups(); renderLedger(); $('predict-out').innerHTML=''; $('result-out').innerHTML=''; } };
   $('export').onclick=()=>{ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='wc2026_predictor.json'; a.click(); URL.revokeObjectURL(url); };
 
   // ---- Monte Carlo: simulate the rest of the tournament to forecast the winner ----
