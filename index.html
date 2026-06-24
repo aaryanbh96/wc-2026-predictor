@@ -4,10 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>World Cup 2026 Predictor — who's winning, updated live</title>
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<link rel="icon" type="image/png" href="assets/favicon-fifa.png">
+<link rel="apple-touch-icon" href="assets/favicon-fifa.png">
 <meta name="description" content="A live World Cup 2026 forecast: simulates the whole tournament thousands of times to predict the champion, updates automatically after every match, and grades its own pre-match calls. Built by Aryan Bhardwaj.">
 <link rel="canonical" href="https://wc2026.rearyan.com/">
 <!-- Open Graph (Facebook, iMessage, WhatsApp, LinkedIn, Discord) -->
@@ -56,6 +54,8 @@
     border-radius:0;}
   @media (min-width:1141px){ .wrap{border-radius:20px;margin:24px auto;} }
   @media (max-width:760px){
+    .champ .name{font-size:52px;}
+    .champ{padding:26px 22px 44px;}
     .layout{grid-template-columns:1fr;gap:0;}
     .sidebar{position:static;margin-bottom:18px;}
     .navtoggle{display:block;width:100%;background:none;border:none;color:var(--ink);font-family:var(--mono);
@@ -215,7 +215,8 @@
     background:linear-gradient(105deg,
         color-mix(in srgb, var(--champ, var(--gold)) 58%, #1a1f29) 0%,
         color-mix(in srgb, var(--champ, var(--gold)) 44%, #1a1f29) 100%);
-    padding:40px 38px 52px;margin:8px 0 8px;
+    padding:44px 38px 52px;margin:8px 0 8px;min-height:300px;
+    display:flex;flex-direction:column;justify-content:center;
     box-shadow:0 16px 50px -12px color-mix(in srgb, var(--champ, var(--gold)) 50%, transparent);}
   /* soft bright bloom top-left where the name reads */
   .champ::before{content:"";position:absolute;left:-5%;top:-40%;width:60%;height:180%;pointer-events:none;
@@ -227,7 +228,7 @@
   .champ .eyebrow{position:relative;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
     text-transform:uppercase;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px;opacity:.92;}
   .champ .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.8);}
-  .champ .name{position:relative;font-family:var(--display);font-size:clamp(60px,13vw,128px);font-weight:400;
+  .champ .name{position:relative;font-family:var(--display);font-size:104px;font-weight:400;
     letter-spacing:.01em;line-height:.9;margin:0;color:#fff;display:flex;align-items:center;gap:18px;text-shadow:0 2px 24px rgba(0,0,0,.25);}
   .champ .name .fl{width:1.1em;height:.78em;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.4);vertical-align:0;}
   .champ .line{position:relative;display:flex;gap:30px;flex-wrap:wrap;margin-top:18px;align-items:flex-end;}
@@ -1317,37 +1318,24 @@
       const lockedNow = autoLockUpcoming();
       if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
       renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
-      // HONEST freshness, but context-aware. Old data is only a problem when we'd
-      // EXPECT fresh updates — i.e. a match is live, just finished, or kicks off soon.
-      // During quiet hours (no live match, next kickoff hours away) old data is normal
-      // and the bar should calmly say "up to date", not alarm with "reconnecting".
+      // HONEST freshness, but only alarm when it actually matters: a match is LIVE
+      // and yet scores aren't refreshing. Before kickoff there's genuinely nothing new
+      // to fetch, so old data is normal and we stay calm.
       const dataUpdated = data.updated ? Date.parse(data.updated) : null;
       const ageMin = dataUpdated ? Math.round((Date.now()-dataUpdated)/60000) : null;
       const liveActive = (data.live||[]).length>0 || Object.keys(liveScores||{}).length>0;
-      // minutes until next kickoff (if any)
       const nx=nextMatchday()[0];
       const minsToNext = nx ? Math.round((Date.parse(nx.utc)-Date.now())/60000) : null;
-      // we're in an "active window" if a match is live, or one starts within 30 min,
-      // or one started within the last ~3 hours (could still be live/just finished)
-      const inActiveWindow = liveActive
-        || (minsToNext!=null && minsToNext>=-180 && minsToNext<=30);
 
       let msg, barKind='ok';
-      if(ageMin==null){
-        msg = `Checked ${ptDateTime(Date.now())}`;
-      } else if(liveActive){
+      if(liveActive){
         msg = `Live · scores updating`;
-      } else if(inActiveWindow && ageMin>15){
-        // matches around now but data hasn't refreshed — genuinely worth flagging
-        const ago = ageMin<60? `${ageMin} min ago` : `${Math.floor(ageMin/60)}h ${ageMin%60}m ago`;
-        msg = `Last updated ${ago} · reconnecting…`; barKind='warn';
       } else if(applied>0){
         msg = `Synced ${applied} new result${applied>1?'s':''}`;
       } else {
-        // quiet hours or recently fresh — calmly up to date
+        // not live: calmly up to date (old data before kickoff is normal)
         msg = `Up to date`;
       }
-      // helpful context: next kickoff
       if(minsToNext!=null && minsToNext>0){
         const t = minsToNext<60? `${minsToNext} min` : `${Math.floor(minsToNext/60)}h ${minsToNext%60}m`;
         msg += ` · next match in ${t}`;
