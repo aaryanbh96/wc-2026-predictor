@@ -217,6 +217,9 @@ def main():
     }
 
     # ---- daily champion snapshot ----
+    # Record ONE settled snapshot per day, only AFTER all of that day's games have
+    # finished (no match scheduled today is still live or upcoming). This keeps the
+    # daily record a clean end-of-day picture rather than a mid-day, half-played one.
     daily = []
     if os.path.exists(OUT):
         try:
@@ -225,19 +228,38 @@ def main():
             daily = []
     try:
         from zoneinfo import ZoneInfo
-        pt_today = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d")
+        PT = ZoneInfo("America/Los_Angeles")
+        pt_today = datetime.now(PT).strftime("%Y-%m-%d")
     except Exception:
+        PT = None
         pt_today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    fc = model.forecast(20000)
-    top8 = [{"team": t, "win": round(p, 4)} for t, p in fc[:8]]
-    snapshot = {"date": pt_today, "games_played": len(matches), "top": top8}
-    existing = next((d for d in daily if d.get("date") == pt_today), None)
-    if existing:
-        existing.update(snapshot)
-    else:
+    def _pt_date(utc_str):
+        """Return the PT calendar date (YYYY-MM-DD) for an ISO8601 utc string."""
+        if not utc_str:
+            return None
+        try:
+            dt = datetime.fromisoformat(utc_str.replace("Z", "+00:00"))
+            if PT is not None:
+                dt = dt.astimezone(PT)
+            return dt.strftime("%Y-%m-%d")
+        except Exception:
+            return None
+
+    # Is today's slate complete? i.e. no live or upcoming match falls on today (PT).
+    today_still_playing = any(_pt_date(m.get("utc")) == pt_today for m in live) \
+        or any(_pt_date(m.get("utc")) == pt_today for m in upcoming)
+    # Did today even have any games? (don't record a snapshot for a day with no matches)
+    today_had_games = any(_pt_date(m.get("utc")) == pt_today for m in matches)
+    already_recorded = any(d.get("date") == pt_today for d in daily)
+
+    if today_had_games and not today_still_playing and not already_recorded:
+        fc = model.forecast(20000)
+        top8 = [{"team": t, "win": round(p, 4)} for t, p in fc[:8]]
+        snapshot = {"date": pt_today, "games_played": len(matches), "top": top8}
         daily.append(snapshot)
-    daily.sort(key=lambda d: d.get("date", ""))
+        daily.sort(key=lambda d: d.get("date", ""))
+        print(f"Daily snapshot recorded for {pt_today} (today's games all finished).")
     out["daily"] = daily
 
     # ---- tournament qualification status (provably-correct: qualified / eliminated / alive) ----
