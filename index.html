@@ -53,66 +53,7 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 0 0 1px rgba(255,255,255,.08), 0 40px 90px -20px rgba(0,0,0,.5);
     border-radius:0;}
   @media (min-width:1141px){ .wrap{border-radius:20px;margin:24px auto;} }
-  @media (max-width:760px){
-    /* ---- layout collapses to a single full-width column ---- */
-    .layout{grid-template-columns:1fr;gap:0;}
-    .wrap{padding:16px 14px 90px;}   /* bottom padding clears the tab bar */
-    .content{max-width:100%;}
-
-    /* ---- hide the desktop icon-rail sidebar entirely on mobile ---- */
-    .sidebar{display:none;}
-
-    /* ---- bottom tab bar (native-app style) ---- */
-    .mobnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:100;
-      background:rgba(16,20,28,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-      border-top:1px solid rgba(255,255,255,.1);padding:6px 4px calc(6px + env(safe-area-inset-bottom));
-      justify-content:space-around;align-items:stretch;}
-    .mobnav button{flex:1;background:none;border:none;color:var(--mut);display:flex;flex-direction:column;
-      align-items:center;gap:3px;padding:5px 2px;cursor:pointer;font-family:var(--sans);font-size:9.5px;
-      letter-spacing:.01em;border-radius:8px;min-width:0;}
-    .mobnav button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;
-      stroke-linecap:round;stroke-linejoin:round;}
-    .mobnav button.on{color:var(--accent);}
-    .mobnav button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-    /* the "More" sheet for overflow tabs */
-    .mobmore{display:none;position:fixed;left:0;right:0;bottom:0;z-index:101;
-      background:rgba(20,26,36,.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-      border-top:1px solid rgba(255,255,255,.12);border-radius:18px 18px 0 0;
-      padding:14px 16px calc(20px + env(safe-area-inset-bottom));}
-    .mobmore.open{display:block;}
-    .mobmore-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-    .mobmore button{background:var(--panel);border:1px solid var(--line);border-radius:12px;
-      color:var(--ink);padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;
-      font-size:12px;cursor:pointer;font-family:var(--sans);}
-    .mobmore button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-    .mobmore-back{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.5);display:none;}
-    .mobmore-back.open{display:block;}
-
-    /* ---- champion card: scale down, fit the screen ---- */
-    .champ .name{font-size:46px;line-height:.9;}
-    .champ{padding:24px 20px 30px;min-height:0;}
-    .champ .name .fl{width:.95em;height:.66em;}
-    .champ .line{flex-direction:column;gap:18px;align-items:stretch;}
-    .champ .odds .big{font-size:42px;}
-    .champ-jump{position:static;margin-top:16px;align-self:flex-start;}
-
-    /* ---- today's matches: tighter ---- */
-    .today-wrap{gap:10px;}
-    .today-lab{font-size:20px;}
-
-    /* ---- forecast table: show only WIN%, hide deeper rounds, tap row for detail ---- */
-    .fc th:nth-child(n+4), .fc td:nth-child(n+4){display:none;}
-    .fc .grp{display:none;}            /* hide the group-letter sub-box that rendered oddly */
-    .fc td, .fc th{padding:10px 6px;font-size:13px;}
-    .fc .tcell{font-size:14px;}
-    .fcrow-tap{cursor:pointer;}
-    .fc-detail{font-size:12px;color:var(--mut);font-family:var(--mono);padding:0 6px 10px;}
-
-    /* ---- headings and spacing ---- */
-    h1{font-size:34px;}
-    .sub{font-size:14px;}
-    .stats{grid-template-columns:1fr 1fr;}
-  }
+  @media (min-width:1141px){ .wrap{border-radius:20px;margin:24px auto;} }
 
   /* the bottom tab bar and more-sheet exist only on mobile; hidden on desktop */
   .mobnav, .mobmore, .mobmore-back{display:none;}
@@ -370,6 +311,67 @@
   .fc .rank{position:relative;}
   .fc .rank::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:2px;background:var(--row,transparent);}
   .fc .dim{color:var(--mut);}
+
+  /* ============================================================
+     MOBILE — placed LAST so these rules win over the desktop
+     rules above (same specificity → later wins). Only applies
+     at <=760px, so desktop/laptop are completely unaffected.
+     ============================================================ */
+  @media (max-width:760px){
+    /* layout collapses to a single full-width column */
+    .layout{grid-template-columns:1fr !important;gap:0 !important;}
+    .wrap{padding:16px 14px 90px !important;max-width:100% !important;}
+    .content{max-width:100% !important;min-width:0 !important;}
+    .sidebar{display:none !important;}
+
+    /* bottom tab bar (native-app style) */
+    .mobnav{display:flex !important;position:fixed;left:0;right:0;bottom:0;z-index:100;
+      background:rgba(16,20,28,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,.1);padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+      justify-content:space-around;align-items:stretch;}
+    .mobnav button{flex:1;background:none;border:none;color:var(--mut);display:flex;flex-direction:column;
+      align-items:center;gap:3px;padding:5px 2px;cursor:pointer;font-family:var(--sans);font-size:9.5px;
+      letter-spacing:.01em;border-radius:8px;min-width:0;}
+    .mobnav button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;
+      stroke-linecap:round;stroke-linejoin:round;}
+    .mobnav button.on{color:var(--accent);}
+    .mobnav button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+    .mobmore{display:none;position:fixed;left:0;right:0;bottom:0;z-index:101;
+      background:rgba(20,26,36,.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,.12);border-radius:18px 18px 0 0;
+      padding:14px 16px calc(20px + env(safe-area-inset-bottom));}
+    .mobmore.open{display:block;}
+    .mobmore-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .mobmore button{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+      color:var(--ink);padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;
+      font-size:12px;cursor:pointer;font-family:var(--sans);}
+    .mobmore button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+    .mobmore-back{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.5);display:none;}
+    .mobmore-back.open{display:block;}
+
+    /* champion card: scale down, fit the screen */
+    .champ .name{font-size:44px !important;line-height:.9;}
+    .champ{padding:24px 20px 30px !important;min-height:0 !important;}
+    .champ .name .fl{width:.95em;height:.66em;}
+    .champ .line{flex-direction:column;gap:18px;align-items:stretch;}
+    .champ .odds .big{font-size:42px;}
+    .champ-jump{position:static !important;margin-top:16px;align-self:flex-start;}
+
+    /* today's matches */
+    .today-wrap{gap:10px;}
+    .today-lab{font-size:20px;}
+
+    /* forecast table: show only team + WIN%, hide deeper rounds */
+    .fc th:nth-child(n+4), .fc td:nth-child(n+4){display:none !important;}
+    .fc .grp{display:none;}
+    .fc td, .fc th{padding:10px 6px;font-size:13px;}
+    .fc .tcell{font-size:14px;}
+
+    /* headings and spacing */
+    h1{font-size:34px !important;}
+    .sub{font-size:14px;}
+    .stats{grid-template-columns:1fr 1fr !important;}
+  }
 </style>
 </head>
 <body>
