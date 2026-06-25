@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25T06:45:15Z",
+  "updated": "2026-06-25T20:15:14Z",
   "matches": [
     {
       "id": 1489369,
@@ -639,28 +639,6 @@
   ],
   "upcoming": [
     {
-      "id": 1489410,
-      "utc": "2026-06-25T20:00:00+00:00",
-      "home": "Ecuador",
-      "away": "Germany",
-      "predicted": {
-        "pA": 0.1045,
-        "pD": 0.1262,
-        "pB": 0.7692
-      }
-    },
-    {
-      "id": 1489409,
-      "utc": "2026-06-25T20:00:00+00:00",
-      "home": "Curaçao",
-      "away": "Côte d'Ivoire",
-      "predicted": {
-        "pA": 0.1802,
-        "pD": 0.1623,
-        "pB": 0.6574
-      }
-    },
-    {
       "id": 1539011,
       "utc": "2026-06-25T23:00:00+00:00",
       "home": "Japan",
@@ -848,7 +826,30 @@
       }
     }
   ],
-  "live": [],
+  "live": [
+    {
+      "id": 1489410,
+      "utc": "2026-06-25T20:00:00+00:00",
+      "home": "Ecuador",
+      "away": "Germany",
+      "predicted": {
+        "pA": 0.1045,
+        "pD": 0.1262,
+        "pB": 0.7692
+      }
+    },
+    {
+      "id": 1489409,
+      "utc": "2026-06-25T20:00:00+00:00",
+      "home": "Curaçao",
+      "away": "Côte d'Ivoire",
+      "predicted": {
+        "pA": 0.1802,
+        "pD": 0.1623,
+        "pB": 0.6574
+      }
+    }
+  ],
   "daily": [
     {
       "date": "2026-06-22",
@@ -949,6 +950,44 @@
         {
           "team": "Germany",
           "win": 0.0527
+        }
+      ]
+    },
+    {
+      "date": "2026-06-25",
+      "games_played": 54,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1844
+        },
+        {
+          "team": "France",
+          "win": 0.1434
+        },
+        {
+          "team": "Mexico",
+          "win": 0.0799
+        },
+        {
+          "team": "England",
+          "win": 0.079
+        },
+        {
+          "team": "USA",
+          "win": 0.0677
+        },
+        {
+          "team": "Brazil",
+          "win": 0.0601
+        },
+        {
+          "team": "Spain",
+          "win": 0.0599
+        },
+        {
+          "team": "Germany",
+          "win": 0.0548
         }
       ]
     }
