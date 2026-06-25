@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25T03:00:19Z",
+  "updated": "2026-06-25T06:45:15Z",
   "matches": [
     {
       "id": 1489369,
@@ -835,6 +835,17 @@
         "pD": 0.0913,
         "pB": 0.8838
       }
+    },
+    {
+      "id": 1561329,
+      "utc": "2026-06-28T19:00:00+00:00",
+      "home": "South Africa",
+      "away": "Canada",
+      "predicted": {
+        "pA": 0.4692,
+        "pD": 0.229,
+        "pB": 0.3018
+      }
     }
   ],
   "live": [],
@@ -909,35 +920,35 @@
       "top": [
         {
           "team": "Argentina",
-          "win": 0.1832
+          "win": 0.1818
         },
         {
           "team": "France",
-          "win": 0.1442
+          "win": 0.1424
         },
         {
           "team": "England",
-          "win": 0.08
+          "win": 0.0852
         },
         {
           "team": "Mexico",
-          "win": 0.0767
+          "win": 0.0755
         },
         {
           "team": "USA",
-          "win": 0.0695
-        },
-        {
-          "team": "Brazil",
-          "win": 0.0634
+          "win": 0.0692
         },
         {
           "team": "Spain",
-          "win": 0.0597
+          "win": 0.0621
+        },
+        {
+          "team": "Brazil",
+          "win": 0.0604
         },
         {
           "team": "Germany",
-          "win": 0.0524
+          "win": 0.0527
         }
       ]
     }
