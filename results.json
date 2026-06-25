@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25T20:15:14Z",
+  "updated": "2026-06-25T22:00:20Z",
   "matches": [
     {
       "id": 1489369,
@@ -635,6 +635,36 @@
       },
       "backfilled": false,
       "hit": false
+    },
+    {
+      "id": 1489410,
+      "utc": "2026-06-25T20:00:00+00:00",
+      "home": "Ecuador",
+      "away": "Germany",
+      "hg": 2,
+      "ag": 1,
+      "predicted": {
+        "pA": 0.1045,
+        "pD": 0.1262,
+        "pB": 0.7692
+      },
+      "backfilled": false,
+      "hit": false
+    },
+    {
+      "id": 1489409,
+      "utc": "2026-06-25T20:00:00+00:00",
+      "home": "Curaçao",
+      "away": "Côte d'Ivoire",
+      "hg": 0,
+      "ag": 2,
+      "predicted": {
+        "pA": 0.1802,
+        "pD": 0.1623,
+        "pB": 0.6574
+      },
+      "backfilled": false,
+      "hit": true
     }
   ],
   "upcoming": [
@@ -826,30 +856,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1489410,
-      "utc": "2026-06-25T20:00:00+00:00",
-      "home": "Ecuador",
-      "away": "Germany",
-      "predicted": {
-        "pA": 0.1045,
-        "pD": 0.1262,
-        "pB": 0.7692
-      }
-    },
-    {
-      "id": 1489409,
-      "utc": "2026-06-25T20:00:00+00:00",
-      "home": "Curaçao",
-      "away": "Côte d'Ivoire",
-      "predicted": {
-        "pA": 0.1802,
-        "pD": 0.1623,
-        "pB": 0.6574
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -955,39 +962,39 @@
     },
     {
       "date": "2026-06-25",
-      "games_played": 54,
+      "games_played": 56,
       "top": [
         {
           "team": "Argentina",
-          "win": 0.1844
+          "win": 0.1889
         },
         {
           "team": "France",
-          "win": 0.1434
-        },
-        {
-          "team": "Mexico",
-          "win": 0.0799
+          "win": 0.151
         },
         {
           "team": "England",
-          "win": 0.079
+          "win": 0.0822
+        },
+        {
+          "team": "Mexico",
+          "win": 0.0816
         },
         {
           "team": "USA",
-          "win": 0.0677
+          "win": 0.0731
         },
         {
           "team": "Brazil",
-          "win": 0.0601
+          "win": 0.0636
         },
         {
           "team": "Spain",
-          "win": 0.0599
+          "win": 0.062
         },
         {
-          "team": "Germany",
-          "win": 0.0548
+          "team": "Netherlands",
+          "win": 0.0422
         }
       ]
     }
@@ -1011,8 +1018,8 @@
     "Türkiye": "alive",
     "Germany": "qualified",
     "Ecuador": "alive",
-    "Côte d'Ivoire": "alive",
-    "Curaçao": "alive",
+    "Côte d'Ivoire": "qualified",
+    "Curaçao": "eliminated",
     "Netherlands": "alive",
     "Japan": "alive",
     "Sweden": "alive",
