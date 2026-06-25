@@ -54,21 +54,68 @@
     border-radius:0;}
   @media (min-width:1141px){ .wrap{border-radius:20px;margin:24px auto;} }
   @media (max-width:760px){
-    .champ .name{font-size:52px;}
-    .champ{padding:26px 22px 44px;}
+    /* ---- layout collapses to a single full-width column ---- */
     .layout{grid-template-columns:1fr;gap:0;}
-    .sidebar{position:static;margin-bottom:18px;}
-    .navtoggle{display:block;width:100%;background:none;border:none;color:var(--ink);font-family:var(--mono);
-      font-size:13px;text-align:left;cursor:pointer;padding:8px 12px;letter-spacing:.06em;}
-    .navgroups{width:100%!important;padding:10px 14px;}
-    .navgroups .navsec, .navgroups .tab .tlabel, .navgroups .brand-clock{opacity:1!important;height:auto!important;}
-    .navgroups .navsec{display:none;}
-    .navgroups.open .navsec{display:block;}
-    .navgroups .tab{display:none;}
-    .navgroups.open .tab{display:flex;}
-    .brand{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px;padding-bottom:12px;}
-    .brand-flags{margin-bottom:0;}
+    .wrap{padding:16px 14px 90px;}   /* bottom padding clears the tab bar */
+    .content{max-width:100%;}
+
+    /* ---- hide the desktop icon-rail sidebar entirely on mobile ---- */
+    .sidebar{display:none;}
+
+    /* ---- bottom tab bar (native-app style) ---- */
+    .mobnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:100;
+      background:rgba(16,20,28,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,.1);padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+      justify-content:space-around;align-items:stretch;}
+    .mobnav button{flex:1;background:none;border:none;color:var(--mut);display:flex;flex-direction:column;
+      align-items:center;gap:3px;padding:5px 2px;cursor:pointer;font-family:var(--sans);font-size:9.5px;
+      letter-spacing:.01em;border-radius:8px;min-width:0;}
+    .mobnav button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;
+      stroke-linecap:round;stroke-linejoin:round;}
+    .mobnav button.on{color:var(--accent);}
+    .mobnav button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+    /* the "More" sheet for overflow tabs */
+    .mobmore{display:none;position:fixed;left:0;right:0;bottom:0;z-index:101;
+      background:rgba(20,26,36,.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,.12);border-radius:18px 18px 0 0;
+      padding:14px 16px calc(20px + env(safe-area-inset-bottom));}
+    .mobmore.open{display:block;}
+    .mobmore-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .mobmore button{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+      color:var(--ink);padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;
+      font-size:12px;cursor:pointer;font-family:var(--sans);}
+    .mobmore button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+    .mobmore-back{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.5);display:none;}
+    .mobmore-back.open{display:block;}
+
+    /* ---- champion card: scale down, fit the screen ---- */
+    .champ .name{font-size:46px;line-height:.9;}
+    .champ{padding:24px 20px 30px;min-height:0;}
+    .champ .name .fl{width:.95em;height:.66em;}
+    .champ .line{flex-direction:column;gap:18px;align-items:stretch;}
+    .champ .odds .big{font-size:42px;}
+    .champ-jump{position:static;margin-top:16px;align-self:flex-start;}
+
+    /* ---- today's matches: tighter ---- */
+    .today-wrap{gap:10px;}
+    .today-lab{font-size:20px;}
+
+    /* ---- forecast table: show only WIN%, hide deeper rounds, tap row for detail ---- */
+    .fc th:nth-child(n+4), .fc td:nth-child(n+4){display:none;}
+    .fc .grp{display:none;}            /* hide the group-letter sub-box that rendered oddly */
+    .fc td, .fc th{padding:10px 6px;font-size:13px;}
+    .fc .tcell{font-size:14px;}
+    .fcrow-tap{cursor:pointer;}
+    .fc-detail{font-size:12px;color:var(--mut);font-family:var(--mono);padding:0 6px 10px;}
+
+    /* ---- headings and spacing ---- */
+    h1{font-size:34px;}
+    .sub{font-size:14px;}
+    .stats{grid-template-columns:1fr 1fr;}
   }
+
+  /* the bottom tab bar and more-sheet exist only on mobile; hidden on desktop */
+  .mobnav, .mobmore, .mobmore-back{display:none;}
   header{margin-bottom:28px;}
   .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
   h1{font-family:var(--display);font-size:46px;line-height:1;margin:0 0 10px;font-weight:400;letter-spacing:.02em;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
@@ -511,6 +558,11 @@
   </footer>
   </div><!-- /content -->
   </div><!-- /layout -->
+
+  <!-- mobile bottom tab bar (only visible on phones) -->
+  <nav class="mobnav" id="mobnav"></nav>
+  <div class="mobmore-back" id="mobmore-back"></div>
+  <div class="mobmore" id="mobmore"><div class="mobmore-grid" id="mobmore-grid"></div></div>
 </div>
 
 <script>
@@ -923,6 +975,54 @@
     };
   });
   (function(){ const nt=$('nav-toggle'); if(nt) nt.onclick=()=>$('nav-groups').classList.toggle('open'); })();
+
+  // ---- mobile bottom tab bar ----
+  function switchTab(name){
+    const t=[...document.querySelectorAll('.tab')].find(x=>x.dataset.t===name);
+    if(t) t.onclick();
+    syncMobNav(name);
+    closeMobMore();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function syncMobNav(active){
+    document.querySelectorAll('.mobnav button[data-t]').forEach(b=>{
+      b.classList.toggle('on', b.dataset.t===active);
+    });
+  }
+  function closeMobMore(){ const m=$('mobmore'),b=$('mobmore-back'); if(m)m.classList.remove('open'); if(b)b.classList.remove('open'); }
+  function buildMobNav(){
+    const nav=$('mobnav'); if(!nav) return;
+    // icons (reuse simple inline svgs)
+    const ic={
+      forecast:'<path d="M6 9l3-5 3 4 3-6 3 8"/><path d="M5 19h14M8 19v-3m4 3v-6m4 6v-2"/>',
+      record:'<path d="M4 19V5m0 14h16M8 16l3-4 3 2 4-6"/>',
+      predict:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+      ledger:'<path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>',
+      more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'
+    };
+    // primary tabs in the bar + everything else in "More"
+    const primary=[['forecast','Forecast'],['record','Track'],['predict','Predict'],['ledger','Scratchpad']];
+    const more=[['shock','Shock the model'],['daily','Daily records'],['ratings','Ratings'],
+                ['groups','Groups'],['teams','Teams'],['how','Help'],['about','About']];
+    nav.innerHTML = primary.map(([k,label])=>
+      `<button data-t="${k}"><svg viewBox="0 0 24 24">${ic[k]}</svg><span>${label}</span></button>`
+    ).join('') + `<button id="mob-more-btn"><svg viewBox="0 0 24 24">${ic.more}</svg><span>More</span></button>`;
+    nav.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
+    // more sheet
+    const grid=$('mobmore-grid');
+    const mic={shock:'<path d="M13 3L4 14h6l-1 7 9-11h-6z"/>',daily:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4m8-4v4"/>',
+      ratings:'<path d="M5 20V10m7 10V4m7 16v-7"/>',groups:'<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+      teams:'<path d="M5 3v18"/><path d="M5 4h11l-2 3 2 3H5"/>',how:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4 1.5c0 1.5-2 2-2 3"/><circle cx="12" cy="16.5" r=".5" fill="currentColor"/>',
+      about:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.5" r=".5" fill="currentColor"/>'};
+    grid.innerHTML=more.map(([k,label])=>
+      `<button data-t="${k}"><svg viewBox="0 0 24 24">${mic[k]||''}</svg><span>${label}</span></button>`
+    ).join('');
+    grid.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
+    $('mob-more-btn').onclick=()=>{ $('mobmore').classList.toggle('open'); $('mobmore-back').classList.toggle('open'); };
+    $('mobmore-back').onclick=closeMobMore;
+    syncMobNav('forecast');
+  }
+  buildMobNav();
   $('go-predict').onclick=doPredict;
   $('reset-all').onclick=()=>{ if(confirm('Reset to seed, re-apply round-1, and clear the ledger?')){ state=freshState(); save(); refreshStats(); renderRatings(); renderTeams(); fillAll(); renderGroups(); renderLedger(); $('predict-out').innerHTML=''; } };
   $('refresh-main').onclick=()=>fetchResults(true);
