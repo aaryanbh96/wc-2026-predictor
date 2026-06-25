@@ -560,12 +560,13 @@
   </footer>
   </div><!-- /content -->
   </div><!-- /layout -->
+</div><!-- /wrap -->
 
-  <!-- mobile bottom tab bar (only visible on phones) -->
-  <nav class="mobnav" id="mobnav"></nav>
-  <div class="mobmore-back" id="mobmore-back"></div>
-  <div class="mobmore" id="mobmore"><div class="mobmore-grid" id="mobmore-grid"></div></div>
-</div>
+<!-- mobile bottom tab bar — OUTSIDE .wrap so position:fixed pins to the viewport
+     (a backdrop-filter on .wrap would otherwise trap fixed descendants) -->
+<nav class="mobnav" id="mobnav"></nav>
+<div class="mobmore-back" id="mobmore-back"></div>
+<div class="mobmore" id="mobmore"><div class="mobmore-grid" id="mobmore-grid"></div></div>
 
 <script>
 (function(){
