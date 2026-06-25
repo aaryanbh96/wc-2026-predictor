@@ -6,6 +6,13 @@
 <title>World Cup 2026 Predictor — who's winning, updated live</title>
 <link rel="icon" type="image/png" href="assets/favicon-fifa.png">
 <link rel="apple-touch-icon" href="assets/favicon-fifa.png">
+<!-- PWA: installable as an app -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0e1116">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WC2026">
 <meta name="description" content="A live World Cup 2026 forecast: simulates the whole tournament thousands of times to predict the champion, updates automatically after every match, and grades its own pre-match calls. Built by Aryan Bhardwaj.">
 <link rel="canonical" href="https://wc2026.rearyan.com/">
 <!-- Open Graph (Facebook, iMessage, WhatsApp, LinkedIn, Discord) -->
@@ -1581,6 +1588,16 @@
   autoLockUpcoming(); renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
   fetchResults(false);   // auto-sync on page load
 })();
+</script>
+<!-- PWA: register the (cache-free) service worker so the site is installable -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('PWA service worker registered'))
+        .catch((err) => console.log('PWA service worker failed:', err));
+    });
+  }
 </script>
 </body>
 </html>
