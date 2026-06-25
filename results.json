@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25T01:15:14Z",
+  "updated": "2026-06-25T03:00:19Z",
   "matches": [
     {
       "id": 1489369,
@@ -605,6 +605,36 @@
       },
       "backfilled": false,
       "hit": true
+    },
+    {
+      "id": 1539010,
+      "utc": "2026-06-25T01:00:00+00:00",
+      "home": "Czechia",
+      "away": "Mexico",
+      "hg": 0,
+      "ag": 3,
+      "predicted": {
+        "pA": 0.087,
+        "pD": 0.1183,
+        "pB": 0.7948
+      },
+      "backfilled": false,
+      "hit": true
+    },
+    {
+      "id": 1489407,
+      "utc": "2026-06-25T01:00:00+00:00",
+      "home": "South Africa",
+      "away": "Korea Republic",
+      "hg": 1,
+      "ag": 0,
+      "predicted": {
+        "pA": 0.2235,
+        "pD": 0.1846,
+        "pB": 0.5918
+      },
+      "backfilled": false,
+      "hit": false
     }
   ],
   "upcoming": [
@@ -807,30 +837,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1539010,
-      "utc": "2026-06-25T01:00:00+00:00",
-      "home": "Czechia",
-      "away": "Mexico",
-      "predicted": {
-        "pA": 0.087,
-        "pD": 0.1183,
-        "pB": 0.7948
-      }
-    },
-    {
-      "id": 1489407,
-      "utc": "2026-06-25T01:00:00+00:00",
-      "home": "South Africa",
-      "away": "Korea Republic",
-      "predicted": {
-        "pA": 0.2235,
-        "pD": 0.1846,
-        "pB": 0.5918
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -898,7 +905,7 @@
     },
     {
       "date": "2026-06-24",
-      "games_played": 52,
+      "games_played": 54,
       "top": [
         {
           "team": "Argentina",
@@ -906,31 +913,31 @@
         },
         {
           "team": "France",
-          "win": 0.1452
+          "win": 0.1442
         },
         {
           "team": "England",
-          "win": 0.0855
-        },
-        {
-          "team": "USA",
-          "win": 0.0711
-        },
-        {
-          "team": "Brazil",
-          "win": 0.0644
-        },
-        {
-          "team": "Spain",
-          "win": 0.0628
+          "win": 0.08
         },
         {
           "team": "Mexico",
-          "win": 0.0539
+          "win": 0.0767
+        },
+        {
+          "team": "USA",
+          "win": 0.0695
+        },
+        {
+          "team": "Brazil",
+          "win": 0.0634
+        },
+        {
+          "team": "Spain",
+          "win": 0.0597
         },
         {
           "team": "Germany",
-          "win": 0.0529
+          "win": 0.0524
         }
       ]
     }
@@ -938,8 +945,8 @@
   "status": {
     "Mexico": "qualified",
     "Korea Republic": "alive",
-    "Czechia": "alive",
-    "South Africa": "alive",
+    "Czechia": "eliminated",
+    "South Africa": "qualified",
     "Canada": "qualified",
     "Switzerland": "qualified",
     "Bosnia and Herzegovina": "alive",
