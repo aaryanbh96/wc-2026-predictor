@@ -460,6 +460,27 @@
   .ann-date{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--accent);margin-bottom:6px;}
   .ann-text{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink);}
   @media (max-width:760px){ .note-teaser-text{font-size:12.5px;} }
+
+  /* "What changed" riser/faller card */
+  .changed-wrap{margin:18px 0 4px;padding:16px 18px;border-radius:14px;border:1px solid var(--line);
+    background:var(--panel);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  .changed-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .changed-title{font-family:var(--display);font-size:20px;letter-spacing:.01em;color:var(--ink);}
+  .changed-sub{font-family:var(--mono);font-size:11px;color:var(--mut);letter-spacing:.03em;}
+  .changed-note{margin:0;font-size:13.5px;color:var(--mut);line-height:1.6;}
+  .changed-empty{background:transparent;border-style:dashed;}
+  .chg-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .chg-col-head{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px;font-weight:600;}
+  .chg-up{color:var(--accent);} .chg-down{color:var(--bad);}
+  .chg-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line);}
+  .chg-row:first-of-type{border-top:none;}
+  .chg-team{font-size:13.5px;color:var(--ink);display:inline-flex;align-items:center;gap:6px;}
+  .chg-nums{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
+  .chg-now{font-family:var(--mono);font-size:13px;color:var(--mut);}
+  .chg-delta{font-family:var(--mono);font-size:12px;font-weight:600;}
+  .chg-delta.up{color:var(--accent);} .chg-delta.down{color:var(--bad);}
+  .chg-none{font-size:12.5px;color:var(--dim);font-style:italic;padding:7px 0;}
+  @media (max-width:760px){ .chg-cols{grid-template-columns:1fr;gap:20px;} }
 </style>
 </head>
 <body>
@@ -529,6 +550,7 @@
 
   <section class="panel on" id="p-forecast">
     <div id="upcoming-block" style="margin-top:4px;"></div>
+    <div id="changed-card"></div>
     <div id="fc-anchor" style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:6px;margin-top:22px;scroll-margin-top:20px;">
       <div class="sechead fc-head" style="margin:0;">Full forecast — <span id="fc-nsim">20,000</span> simulations</div>
       <button class="ghost" id="rerun-sim">Re-run simulation</button>
@@ -1395,6 +1417,65 @@
     requestAnimationFrame(frame);
   }
 
+  // ---- "What changed today?" — biggest title-odds movers between the two most recent daily snapshots ----
+  function renderChanged(){
+    const box=$('changed-card'); if(!box) return;
+    const days=(state.daily||[]).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    if(days.length<2){
+      // not enough history yet — show a quiet placeholder so the section isn't broken/empty
+      box.innerHTML=`<div class="changed-wrap changed-empty">
+        <div class="changed-head"><span class="changed-title">What changed</span></div>
+        <p class="changed-note">Once two days of results are in the books, this will show the biggest climbers and fallers in title odds. Check back after the next full day of matches.</p>
+      </div>`;
+      return;
+    }
+    const prev=days[days.length-2], curr=days[days.length-1];
+    const pmap={}, cmap={};
+    (prev.top||[]).forEach(t=>pmap[t.team]=t.win);
+    (curr.top||[]).forEach(t=>cmap[t.team]=t.win);
+    // union of teams that appear in either snapshot
+    const teams=new Set([...Object.keys(pmap),...Object.keys(cmap)]);
+    const moves=[];
+    teams.forEach(t=>{
+      const before=pmap[t], after=cmap[t];
+      if(before==null||after==null) return;   // need both days to compute a delta
+      const delta=(after-before)*100;
+      if(Math.abs(delta)>=0.05) moves.push({team:t, before:before*100, after:after*100, delta});
+    });
+    if(!moves.length){
+      box.innerHTML=`<div class="changed-wrap changed-empty">
+        <div class="changed-head"><span class="changed-title">What changed</span></div>
+        <p class="changed-note">Title odds held steady between the last two recorded days — no significant movers.</p>
+      </div>`;
+      return;
+    }
+    const risers=moves.filter(m=>m.delta>0).sort((a,b)=>b.delta-a.delta).slice(0,3);
+    const fallers=moves.filter(m=>m.delta<0).sort((a,b)=>a.delta-b.delta).slice(0,3);
+    const dateLabel=new Date(curr.date+'T12:00:00Z').toLocaleDateString('en-US',{timeZone:PT,month:'short',day:'numeric'});
+    const row=(m)=>{
+      const up=m.delta>0;
+      const sign=up?'+':'';
+      return `<div class="chg-row">
+        <span class="chg-team">${flag(m.team)} ${m.team}</span>
+        <span class="chg-nums"><span class="chg-now">${m.after.toFixed(1)}%</span>
+          <span class="chg-delta ${up?'up':'down'}">${up?'▲':'▼'} ${sign}${m.delta.toFixed(1)}</span></span>
+      </div>`;
+    };
+    box.innerHTML=`<div class="changed-wrap">
+      <div class="changed-head"><span class="changed-title">What changed</span><span class="changed-sub">title-odds shift through ${dateLabel}</span></div>
+      <div class="chg-cols">
+        <div class="chg-col">
+          <div class="chg-col-head chg-up">▲ Climbing</div>
+          ${risers.length?risers.map(row).join(''):'<div class="chg-none">no risers</div>'}
+        </div>
+        <div class="chg-col">
+          <div class="chg-col-head chg-down">▼ Falling</div>
+          ${fallers.length?fallers.map(row).join(''):'<div class="chg-none">no fallers</div>'}
+        </div>
+      </div>
+    </div>`;
+  }
+
   function renderForecast(){
     const fc=state.forecast;
     if(!fc){ $('forecast-out').innerHTML='<div class="empty">No simulation yet.</div>'; return; }
@@ -1455,6 +1536,7 @@
       ${rows}</table>`;
     $('fc-nsim').textContent=fc.nsim.toLocaleString();
     $('fc-meta').textContent=`Last simulated ${ptDateTime(fc.at)} · ${fc.nsim.toLocaleString()} runs from the latest ratings — this is the live forecast, so it can differ slightly from the daily chart (frozen each evening) and shift run-to-run as results come in. Third-place qualifiers approximated by rating; an estimate, not the official bracket.`;
+    renderChanged();
   }
 
   // ---- upcoming fixtures & auto-lock ----
