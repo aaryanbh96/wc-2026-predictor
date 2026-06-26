@@ -480,6 +480,7 @@
   .chg-delta{font-family:var(--mono);font-size:12px;font-weight:600;}
   .chg-delta.up{color:var(--accent);} .chg-delta.down{color:var(--bad);}
   .chg-none{font-size:12.5px;color:var(--dim);font-style:italic;padding:7px 0;}
+  .chg-foot{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--dim);line-height:1.55;}
   @media (max-width:760px){ .chg-cols{grid-template-columns:1fr;gap:20px;} }
 </style>
 </head>
@@ -1473,6 +1474,7 @@
           ${fallers.length?fallers.map(row).join(''):'<div class="chg-none">no fallers</div>'}
         </div>
       </div>
+      <p class="chg-foot">Tracking the top 8 contenders — the stable group that actually decides the title. Teams further down swing too wildly day to day to mean much.</p>
     </div>`;
   }
 
