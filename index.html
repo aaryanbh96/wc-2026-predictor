@@ -443,6 +443,36 @@
     .tchip,.champ .chase .pill,.ufix,button.ghost,.tsfact{transition:none;}
     .tchip:hover,.champ .chase .pill:hover,.ufix:hover,.tsfact:hover{transform:none;}
   }
+  /* slim announcement teaser at top */
+  .note-teaser{display:flex;align-items:center;gap:10px;width:100%;margin:16px 0 0;padding:10px 14px;
+    border-radius:10px;background:color-mix(in srgb,var(--accent) 8%, var(--panel));
+    border:1px solid color-mix(in srgb,var(--accent) 22%, var(--line));cursor:pointer;text-align:left;
+    font-family:var(--sans);transition:background .14s, border-color .14s;}
+  .note-teaser:hover{background:color-mix(in srgb,var(--accent) 14%, var(--panel));border-color:color-mix(in srgb,var(--accent) 40%, var(--line));}
+  .note-teaser-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;
+    box-shadow:0 0 10px var(--accent);animation:loadPulse 2s ease-in-out infinite;}
+  .note-teaser-text{flex:1;color:var(--ink);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .note-teaser-cta{color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
+  /* announcements section at the bottom */
+  .ann-section{margin-top:8px;}
+  .ann{padding:14px 0;border-top:1px solid var(--line);}
+  .ann:first-of-type{border-top:none;}
+  .ann-date{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--accent);margin-bottom:6px;}
+  .ann-text{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink);}
+  @media (max-width:760px){ .note-teaser-text{font-size:12.5px;} }
+
+  /* slim PWA install banner */
+  .install-banner{display:flex;align-items:center;gap:10px;width:100%;margin:10px 0 0;padding:10px 14px;
+    border-radius:10px;background:color-mix(in srgb,var(--accent) 12%, var(--panel));
+    border:1px solid color-mix(in srgb,var(--accent) 32%, var(--line));cursor:pointer;text-align:left;
+    font-family:var(--sans);transition:background .14s, border-color .14s;}
+  .install-banner:hover{background:color-mix(in srgb,var(--accent) 18%, var(--panel));}
+  .install-banner svg{width:18px;height:18px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+  .install-text{flex:1;color:var(--ink);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .install-cta{color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
+  .install-x{color:var(--mut);font-size:18px;line-height:1;padding:0 2px;flex-shrink:0;}
+  .install-x:hover{color:var(--ink);}
+  @media (max-width:760px){ .install-text{font-size:12.5px;} }
 </style>
 </head>
 <body>
@@ -487,6 +517,21 @@
   <div id="today-block"></div>
   </div>
 
+  <!-- slim announcement teaser — links down to the full announcements section -->
+  <button id="note-teaser" class="note-teaser" onclick="document.getElementById('announcements')?.scrollIntoView({behavior:'smooth'})">
+    <span class="note-teaser-dot"></span>
+    <span class="note-teaser-text">Brutal day for the model — just 2 of 6 calls landed.</span>
+    <span class="note-teaser-cta">Read more ↓</span>
+  </button>
+
+  <!-- slim install (PWA) banner — links to instructions, or triggers native install -->
+  <button id="install-banner" class="install-banner" style="display:none;">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>
+    <span class="install-text">Install this as an app on your phone</span>
+    <span class="install-cta">How ↓</span>
+    <span class="install-x" id="install-x" aria-label="Dismiss">×</span>
+  </button>
+
   <header>
     <h1>World Cup 2026 Predictor</h1>
     <p class="sub">The model that calls the World Cup before it happens — simulating every remaining match 20,000 times, learning from each result, and grading its own predictions in the open.</p>
@@ -518,6 +563,20 @@
       <div class="stat"><div class="lab">graded calls</div><div class="val" id="s-graded">0</div></div>
       <div class="stat"><div class="lab">games learned</div><div class="val" id="s-games">0</div></div>
       <div class="stat"><div class="lab">teams</div><div class="val" id="s-teams">48</div></div>
+    </div>
+
+    <!-- ANNOUNCEMENTS: notes from the builder. Newest first. To add one, copy a
+         .ann block and edit the date + text. To hide the section, set display:none on #announcements. -->
+    <div id="announcements" class="ann-section" style="scroll-margin-top:20px;">
+      <div class="sechead fc-head" style="margin:32px 0 14px;">📣 From the builder</div>
+      <div class="ann">
+        <div class="ann-date">Jun 25, 2026</div>
+        <p class="ann-text">Brutal day for the model — just 2 of 6 calls landed. It had USA at 83% (lost to Türkiye) and Germany at 77% (lost to Ecuador), and both went down. Upsets are exactly when these ratings learn the most. Humbling, but that's the game.</p>
+      </div>
+      <div class="ann">
+        <div class="ann-date">Jun 24, 2026</div>
+        <p class="ann-text">Live scores are now running during matches, and the whole thing got a mobile makeover. Tap any team in the forecast to dig in. More coming.</p>
+      </div>
     </div>
   </section>
 
@@ -620,6 +679,13 @@
       <p><b>Recent form (momentum).</b> On top of the base rating, the model tracks each team's last few games — opponent-adjusted, so drawing Spain and Uruguay says far more than beating a minnow. Only <i>surprising</i> results build form. Newest three games weigh heaviest, capped at five.</p>
       <p><b>The forecast.</b> From current ratings, it plays the rest of the tournament forward 20,000 times and counts how often each team wins — that's where the championship odds come from.</p>
       <p><b>Honest limits.</b> It only sees ratings — not injuries, rotation, rest, or tactics — so it won't beat a Vegas book. It's a transparent learner you can watch reason and hold accountable.</p>
+
+      <p id="install-help" style="font-size:15px;color:var(--ink);margin-top:22px;scroll-margin-top:20px;"><b>📲 Install it as an app</b></p>
+      <p>This site can be added to your phone or desktop like a real app — its own icon, full-screen, no browser bar. It's free and takes a few seconds. It still updates automatically; nothing to maintain.</p>
+      <p><b>iPhone / iPad (Safari):</b> tap the <b>Share</b> button (the square with an up-arrow) at the bottom of Safari, scroll down, and tap <b>“Add to Home Screen.”</b> Confirm, and the icon appears on your home screen.</p>
+      <p><b>Android (Chrome):</b> tap the <b>⋮</b> menu (top-right), then <b>“Install app”</b> or <b>“Add to Home screen.”</b> Some phones show an install banner automatically — just tap it.</p>
+      <p><b>Desktop (Chrome / Edge):</b> look for the <b>install icon</b> (a small monitor with a down-arrow) at the right end of the address bar, and click it.</p>
+      <p class="hint" style="margin-top:6px;">If you don't see the option, your browser may not support installable apps — the site still works perfectly in any browser.</p>
     </div>
   </section>
 
@@ -1098,6 +1164,8 @@
       t.classList.add('on'); $('p-'+t.dataset.t).classList.add('on');
       const v=t.dataset.t;
       const az=$('answer-zone'); if(az) az.style.display = (v==='forecast')?'block':'none';
+      const nt2=$('note-teaser'); if(nt2) nt2.style.display = (v==='forecast')?'flex':'none';
+      const ib=$('install-banner'); if(ib && ib.dataset.shown==='1') ib.style.display = (v==='forecast')?'flex':'none';
       if(v==='forecast')renderForecast();
       if(v==='record')renderTrackRecord();
       if(v==='daily')renderDaily();
@@ -1161,6 +1229,39 @@
     syncMobNav('forecast');
   }
   buildMobNav();
+
+  // ---- PWA install banner ----
+  (function(){
+    const banner=$('install-banner'), xBtn=$('install-x');
+    if(!banner) return;
+    let deferredPrompt=null;
+    const dismissed = localStorage.getItem('wc_install_dismissed')==='1';
+    // already running as an installed app? then never show the banner
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+
+    function showBanner(){ if(!dismissed && !isStandalone){ banner.style.display='flex'; banner.dataset.shown='1'; } }
+
+    // Chrome/Android/desktop: capture the install prompt so we can trigger it natively
+    window.addEventListener('beforeinstallprompt',(e)=>{
+      e.preventDefault(); deferredPrompt=e; showBanner();
+    });
+    // iOS Safari has no beforeinstallprompt — show the banner anyway (links to instructions)
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if(isIOS) showBanner();
+
+    banner.onclick=(e)=>{
+      if(e.target===xBtn) return;   // the × handles its own click
+      if(deferredPrompt){
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(()=>{ deferredPrompt=null; banner.style.display='none'; });
+      } else {
+        // no native prompt (e.g. iOS) — take them to the Help instructions
+        switchTab('how');
+        setTimeout(()=>{ const t=$('install-help'); if(t) t.scrollIntoView({behavior:'smooth'}); },120);
+      }
+    };
+    if(xBtn) xBtn.onclick=(e)=>{ e.stopPropagation(); banner.style.display='none'; localStorage.setItem('wc_install_dismissed','1'); };
+  })();
   $('go-predict').onclick=doPredict;
   $('reset-all').onclick=()=>{ if(confirm('Reset to seed, re-apply round-1, and clear the ledger?')){ state=freshState(); save(); refreshStats(); renderRatings(); renderTeams(); fillAll(); renderGroups(); renderLedger(); $('predict-out').innerHTML=''; } };
   $('refresh-main').onclick=()=>fetchResults(true);
