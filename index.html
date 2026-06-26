@@ -200,6 +200,15 @@
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
   .hint{font-size:12px;color:var(--dim);margin-top:6px;}
   .empty{color:var(--dim);font-size:14px;text-align:center;padding:30px 0;}
+  /* livelier loading state with pulsing dots */
+  .loading{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--mut);font-size:14px;padding:40px 0;}
+  .loading .dots{display:inline-flex;gap:5px;}
+  .loading .dots i{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;
+    animation:loadPulse 1.2s ease-in-out infinite;}
+  .loading .dots i:nth-child(2){animation-delay:.18s;}
+  .loading .dots i:nth-child(3){animation-delay:.36s;}
+  @keyframes loadPulse{0%,80%,100%{opacity:.25;transform:scale(.8);}40%{opacity:1;transform:scale(1.15);}}
+  @media (prefers-reduced-motion: reduce){ .loading .dots i{animation:none;opacity:.7;} }
   .editrow{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;}
   .editrow span{flex:1;}
   .editrow .x{color:var(--bad);cursor:pointer;font-family:var(--mono);}
@@ -418,6 +427,22 @@
     .tsnap-facts{grid-template-columns:1fr 1fr !important;}
     .tsstatus-grid{grid-template-columns:1fr !important;gap:22px;}
   }
+
+  /* micro-interactions: subtle, tasteful hover/tap feedback */
+  .tchip{transition:transform .14s ease, border-color .14s ease;}
+  .tchip:hover{transform:translateY(-2px);}
+  .champ .chase .pill{transition:transform .14s ease;}
+  .champ .chase .pill:hover{transform:translateY(-2px);}
+  .ufix{transition:transform .14s ease, border-color .14s ease;}
+  .ufix:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 30%,var(--line));}
+  button.ghost{transition:transform .12s ease, background .14s ease, border-color .14s ease;}
+  button.ghost:active{transform:scale(.97);}
+  .tsfact{transition:transform .14s ease;}
+  .tsfact:hover{transform:translateY(-3px);}
+  @media (prefers-reduced-motion: reduce){
+    .tchip,.champ .chase .pill,.ufix,button.ghost,.tsfact{transition:none;}
+    .tchip:hover,.champ .chase .pill:hover,.ufix:hover,.tsfact:hover{transform:none;}
+  }
 </style>
 </head>
 <body>
@@ -485,7 +510,7 @@
       <button class="ghost" id="rerun-sim">Re-run simulation</button>
     </div>
     <p class="hint" id="fc-meta" style="margin:0 0 14px;">Each run plays the rest of the tournament forward from current ratings.</p>
-    <div id="forecast-out"><div class="empty">Simulating tournament…</div></div>
+    <div id="forecast-out"><div class="loading"><span>Simulating tournament</span><span class="dots"><i></i><i></i><i></i></span></div></div>
     <!-- model credibility stats, moved below the forecast so the landing stays clean -->
     <div class="stats" style="margin-top:24px;">
       <div class="stat hl"><div class="lab">pre-match hit rate</div><div class="val" id="s-prehit">—</div></div>
@@ -937,7 +962,7 @@
   function runShockSim(){
     const out=$('shock-out');
     if(!Object.keys(shocks).length){ out.innerHTML='<div class="empty">Apply a shock above to see how the title picture changes.</div>'; return; }
-    out.innerHTML='<div class="empty">Running 20,000 simulations on the shocked ratings…</div>';
+    out.innerHTML='<div class="loading"><span>Running 20,000 simulations on the shocked ratings</span><span class="dots"><i></i><i></i><i></i></span></div>';
     setTimeout(()=>{
       // baseline (live) tally — reuse current forecast if present, else compute
       const base=(state.forecast&&state.forecast.tally)?state.forecast:computeForecast(NSIM);
@@ -1162,7 +1187,7 @@
   };
   $('shock-reset').onclick=()=>{ shocks={}; $('shock-slider').value=0; $('shock-val').textContent='0'; renderShockControls(); runShockSim(); };
   $('rerun-sim').onclick=()=>{
-    $('forecast-out').innerHTML='<div class="empty">Running simulation…</div>';
+    $('forecast-out').innerHTML='<div class="loading"><span>Running simulation</span><span class="dots"><i></i><i></i><i></i></span></div>';
     setTimeout(()=>{ runForecast(); renderForecast(); },30);
   };
   $('add-team').onclick=()=>{
