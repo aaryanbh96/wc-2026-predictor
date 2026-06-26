@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25T23:15:15Z",
+  "updated": "2026-06-26T01:00:19Z",
   "matches": [
     {
       "id": 1489369,
@@ -665,6 +665,36 @@
       },
       "backfilled": false,
       "hit": true
+    },
+    {
+      "id": 1539011,
+      "utc": "2026-06-25T23:00:00+00:00",
+      "home": "Japan",
+      "away": "Sweden",
+      "hg": 1,
+      "ag": 1,
+      "predicted": {
+        "pA": 0.5673,
+        "pD": 0.1932,
+        "pB": 0.2395
+      },
+      "backfilled": false,
+      "hit": false
+    },
+    {
+      "id": 1489412,
+      "utc": "2026-06-25T23:00:00+00:00",
+      "home": "Tunisia",
+      "away": "Netherlands",
+      "hg": 1,
+      "ag": 3,
+      "predicted": {
+        "pA": 0.0696,
+        "pD": 0.1106,
+        "pB": 0.8198
+      },
+      "backfilled": false,
+      "hit": true
     }
   ],
   "upcoming": [
@@ -834,30 +864,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1539011,
-      "utc": "2026-06-25T23:00:00+00:00",
-      "home": "Japan",
-      "away": "Sweden",
-      "predicted": {
-        "pA": 0.5673,
-        "pD": 0.1932,
-        "pB": 0.2395
-      }
-    },
-    {
-      "id": 1489412,
-      "utc": "2026-06-25T23:00:00+00:00",
-      "home": "Tunisia",
-      "away": "Netherlands",
-      "predicted": {
-        "pA": 0.0696,
-        "pD": 0.1106,
-        "pB": 0.8198
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -1021,8 +1028,8 @@
     "Ecuador": "alive",
     "Côte d'Ivoire": "qualified",
     "Curaçao": "eliminated",
-    "Netherlands": "alive",
-    "Japan": "alive",
+    "Netherlands": "qualified",
+    "Japan": "qualified",
     "Sweden": "alive",
     "Tunisia": "eliminated",
     "Egypt": "alive",
