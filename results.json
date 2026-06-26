@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-26T21:00:19Z",
+  "updated": "2026-06-26T21:15:13Z",
   "matches": [
     {
       "id": 1489369,
@@ -727,6 +727,21 @@
       "hit": false
     },
     {
+      "id": 1539074,
+      "utc": "2026-06-26T19:00:00+00:00",
+      "home": "Senegal",
+      "away": "Iraq",
+      "hg": 5,
+      "ag": 0,
+      "predicted": {
+        "pA": 0.5605,
+        "pD": 0.1956,
+        "pB": 0.2439
+      },
+      "backfilled": false,
+      "hit": true
+    },
+    {
       "id": 1489416,
       "utc": "2026-06-26T19:00:00+00:00",
       "home": "Norway",
@@ -898,19 +913,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1539074,
-      "utc": "2026-06-26T19:00:00+00:00",
-      "home": "Senegal",
-      "away": "Iraq",
-      "predicted": {
-        "pA": 0.5605,
-        "pD": 0.1956,
-        "pB": 0.2439
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -1089,7 +1092,7 @@
     "France": "qualified",
     "Norway": "qualified",
     "Senegal": "alive",
-    "Iraq": "alive",
+    "Iraq": "eliminated",
     "Argentina": "qualified",
     "Austria": "alive",
     "Algeria": "alive",
