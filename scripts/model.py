@@ -10,8 +10,8 @@ and formulas below are copied directly from the page.
 
 K_BASE = 30
 HOME_ADV = 60
-FORM_CAP = 140
-FORM_SCALE = 4.2
+FORM_CAP = 60
+FORM_SCALE = 2.5
 
 # 48-team seed: (name, group, rating) — identical to SEED in index.html
 SEED = [
