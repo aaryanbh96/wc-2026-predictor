@@ -443,16 +443,16 @@
     .tchip,.champ .chase .pill,.ufix,button.ghost,.tsfact{transition:none;}
     .tchip:hover,.champ .chase .pill:hover,.ufix:hover,.tsfact:hover{transform:none;}
   }
-  /* slim announcement teaser at top */
-  .note-teaser{display:flex;align-items:center;gap:10px;width:100%;margin:16px 0 0;padding:10px 14px;
-    border-radius:10px;background:color-mix(in srgb,var(--accent) 8%, var(--panel));
-    border:1px solid color-mix(in srgb,var(--accent) 22%, var(--line));cursor:pointer;text-align:left;
+  /* slim announcement teaser */
+  .note-teaser{display:flex;align-items:center;gap:8px;width:100%;margin:0 0 10px;padding:7px 12px;
+    border-radius:9px;background:color-mix(in srgb,var(--accent) 7%, var(--panel));
+    border:1px solid color-mix(in srgb,var(--accent) 18%, var(--line));cursor:pointer;text-align:left;
     font-family:var(--sans);transition:background .14s, border-color .14s;}
-  .note-teaser:hover{background:color-mix(in srgb,var(--accent) 14%, var(--panel));border-color:color-mix(in srgb,var(--accent) 40%, var(--line));}
-  .note-teaser-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;
-    box-shadow:0 0 10px var(--accent);animation:loadPulse 2s ease-in-out infinite;}
-  .note-teaser-text{flex:1;color:var(--ink);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .note-teaser-cta{color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
+  .note-teaser:hover{background:color-mix(in srgb,var(--accent) 13%, var(--panel));border-color:color-mix(in srgb,var(--accent) 34%, var(--line));}
+  .note-teaser-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;
+    box-shadow:0 0 8px var(--accent);animation:loadPulse 2s ease-in-out infinite;}
+  .note-teaser-text{flex:1;color:var(--mut);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .note-teaser-cta{color:var(--accent);font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
   /* announcements section at the bottom */
   .ann-section{margin-top:8px;}
   .ann{padding:14px 0;border-top:1px solid var(--line);}
@@ -460,19 +460,6 @@
   .ann-date{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--accent);margin-bottom:6px;}
   .ann-text{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink);}
   @media (max-width:760px){ .note-teaser-text{font-size:12.5px;} }
-
-  /* slim PWA install banner */
-  .install-banner{display:flex;align-items:center;gap:10px;width:100%;margin:10px 0 0;padding:10px 14px;
-    border-radius:10px;background:color-mix(in srgb,var(--accent) 12%, var(--panel));
-    border:1px solid color-mix(in srgb,var(--accent) 32%, var(--line));cursor:pointer;text-align:left;
-    font-family:var(--sans);transition:background .14s, border-color .14s;}
-  .install-banner:hover{background:color-mix(in srgb,var(--accent) 18%, var(--panel));}
-  .install-banner svg{width:18px;height:18px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-  .install-text{flex:1;color:var(--ink);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .install-cta{color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
-  .install-x{color:var(--mut);font-size:18px;line-height:1;padding:0 2px;flex-shrink:0;}
-  .install-x:hover{color:var(--ink);}
-  @media (max-width:760px){ .install-text{font-size:12.5px;} }
 </style>
 </head>
 <body>
@@ -517,25 +504,17 @@
   <div id="today-block"></div>
   </div>
 
-  <!-- slim announcement teaser — links down to the full announcements section -->
-  <button id="note-teaser" class="note-teaser" onclick="document.getElementById('announcements')?.scrollIntoView({behavior:'smooth'})">
-    <span class="note-teaser-dot"></span>
-    <span class="note-teaser-text">Brutal day for the model — just 2 of 6 calls landed.</span>
-    <span class="note-teaser-cta">Read more ↓</span>
-  </button>
-
-  <!-- slim install (PWA) banner — links to instructions, or triggers native install -->
-  <button id="install-banner" class="install-banner" style="display:none;">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>
-    <span class="install-text">Install this as an app on your phone</span>
-    <span class="install-cta">How ↓</span>
-    <span class="install-x" id="install-x" aria-label="Dismiss">×</span>
-  </button>
-
   <header>
     <h1>World Cup 2026 Predictor</h1>
     <p class="sub">The model that calls the World Cup before it happens — simulating every remaining match 20,000 times, learning from each result, and grading its own predictions in the open.</p>
   </header>
+
+  <!-- slim announcement teaser — links down to the full announcements section -->
+  <button id="note-teaser" class="note-teaser" onclick="document.getElementById('announcements')?.scrollIntoView({behavior:'smooth'})">
+    <span class="note-teaser-dot"></span>
+    <span class="note-teaser-text">Brutal day for the model — just 2 of 6 calls landed.</span>
+    <span class="note-teaser-cta">Read ↓</span>
+  </button>
 
   <div id="refreshbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 14px;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);">
     <span id="syncbar" style="color:var(--mut);">Updating World Cup results…</span>
@@ -702,6 +681,7 @@
   <footer style="margin-top:48px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim);">
     <span>Made by <span style="color:var(--ink);">Aryan Bhardwaj</span><span id="visitor-count" style="display:none;"> · <span style="color:var(--accent);" id="vc-num">—</span> visitors</span></span>
     <a id="site-link" href="https://rearyan.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">rearyan.com ↗</a>
+    <button id="install-link" style="background:none;border:none;color:var(--accent);font-family:var(--mono);font-size:12px;cursor:pointer;padding:0;">📲 Install app</button>
   </footer>
   </div><!-- /content -->
   </div><!-- /layout -->
@@ -1165,7 +1145,6 @@
       const v=t.dataset.t;
       const az=$('answer-zone'); if(az) az.style.display = (v==='forecast')?'block':'none';
       const nt2=$('note-teaser'); if(nt2) nt2.style.display = (v==='forecast')?'flex':'none';
-      const ib=$('install-banner'); if(ib && ib.dataset.shown==='1') ib.style.display = (v==='forecast')?'flex':'none';
       if(v==='forecast')renderForecast();
       if(v==='record')renderTrackRecord();
       if(v==='daily')renderDaily();
@@ -1230,37 +1209,22 @@
   }
   buildMobNav();
 
-  // ---- PWA install banner ----
+  // ---- PWA install (footer link) ----
   (function(){
-    const banner=$('install-banner'), xBtn=$('install-x');
-    if(!banner) return;
+    const link=$('install-link');
+    if(!link) return;
     let deferredPrompt=null;
-    const dismissed = localStorage.getItem('wc_install_dismissed')==='1';
-    // already running as an installed app? then never show the banner
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
-
-    function showBanner(){ if(!dismissed && !isStandalone){ banner.style.display='flex'; banner.dataset.shown='1'; } }
-
-    // Chrome/Android/desktop: capture the install prompt so we can trigger it natively
-    window.addEventListener('beforeinstallprompt',(e)=>{
-      e.preventDefault(); deferredPrompt=e; showBanner();
-    });
-    // iOS Safari has no beforeinstallprompt — show the banner anyway (links to instructions)
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if(isIOS) showBanner();
-
-    banner.onclick=(e)=>{
-      if(e.target===xBtn) return;   // the × handles its own click
+    window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); deferredPrompt=e; });
+    link.onclick=()=>{
       if(deferredPrompt){
         deferredPrompt.prompt();
-        deferredPrompt.userChoice.finally(()=>{ deferredPrompt=null; banner.style.display='none'; });
+        deferredPrompt.userChoice.finally(()=>{ deferredPrompt=null; });
       } else {
         // no native prompt (e.g. iOS) — take them to the Help instructions
         switchTab('how');
         setTimeout(()=>{ const t=$('install-help'); if(t) t.scrollIntoView({behavior:'smooth'}); },120);
       }
     };
-    if(xBtn) xBtn.onclick=(e)=>{ e.stopPropagation(); banner.style.display='none'; localStorage.setItem('wc_install_dismissed','1'); };
   })();
   $('go-predict').onclick=doPredict;
   $('reset-all').onclick=()=>{ if(confirm('Reset to seed, re-apply round-1, and clear the ledger?')){ state=freshState(); save(); refreshStats(); renderRatings(); renderTeams(); fillAll(); renderGroups(); renderLedger(); $('predict-out').innerHTML=''; } };
