@@ -855,7 +855,7 @@
   // ---- recent-form model: opponent-adjusted, recency-weighted momentum ----
   // moderate calibration with asymmetric goal-difference weighting:
   // heavy losses bite harder than wins reward, and a thrashing stings even when "expected".
-  const FORM_CAP=140, FORM_SCALE=4.2;
+  const FORM_CAP=60, FORM_SCALE=2.5;
   function rawExpect(a,b){ return 1/(1+Math.pow(10,((rating(b)-rating(a))/400))); } // base-rating only
   function formNudge(team){
     const t=state.teams[team]; if(!t||!t.hist||!t.hist.length) return 0;
