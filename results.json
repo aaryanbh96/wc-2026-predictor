@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-26T20:15:13Z",
+  "updated": "2026-06-26T21:00:19Z",
   "matches": [
     {
       "id": 1489369,
@@ -725,6 +725,21 @@
       },
       "backfilled": false,
       "hit": false
+    },
+    {
+      "id": 1489416,
+      "utc": "2026-06-26T19:00:00+00:00",
+      "home": "Norway",
+      "away": "France",
+      "hg": 1,
+      "ag": 4,
+      "predicted": {
+        "pA": 0.2328,
+        "pD": 0.1896,
+        "pB": 0.5775
+      },
+      "backfilled": false,
+      "hit": true
     }
   ],
   "upcoming": [
@@ -893,17 +908,6 @@
         "pA": 0.5605,
         "pD": 0.1956,
         "pB": 0.2439
-      }
-    },
-    {
-      "id": 1489416,
-      "utc": "2026-06-26T19:00:00+00:00",
-      "home": "Norway",
-      "away": "France",
-      "predicted": {
-        "pA": 0.2328,
-        "pD": 0.1896,
-        "pB": 0.5775
       }
     }
   ],
