@@ -579,7 +579,7 @@
     <!-- model credibility stats, moved below the forecast so the landing stays clean -->
     <div class="stats" style="margin-top:24px;">
       <div class="stat hl" title="Share of pre-kickoff calls the model got right."><div class="lab">pre-match hit rate</div><div class="val" id="s-prehit">—</div></div>
-      <div class="stat hl" title="Grades the model's confidence, not just its picks. Lower is better; below 0.25 beats guessing. See Help for more."><div class="lab">pre-match brier <small>↓</small></div><div class="val" id="s-prebrier">—</div></div>
+      <div class="stat hl" title="Grades the model's confidence, not just its picks. Lower is better; below ~0.67 beats guessing on a 3-way (win/draw/loss) call. See Help for more."><div class="lab">pre-match brier <small>↓</small></div><div class="val" id="s-prebrier">—</div></div>
       <div class="stat"><div class="lab">graded calls</div><div class="val" id="s-graded">0</div></div>
       <div class="stat"><div class="lab">games learned</div><div class="val" id="s-games">0</div></div>
       <div class="stat"><div class="lab">teams</div><div class="val" id="s-teams">48</div></div>
@@ -655,7 +655,7 @@
     <div id="analytics-empty" class="empty" style="display:none;">Not enough graded predictions yet. Once a handful of pre-match calls have been settled, the charts here come to life.</div>
     <div id="analytics-body">
       <div class="an-block">
-        <div class="an-head">Brier score over time <span class="an-sub">lower is better · 0.25 = guessing</span></div>
+        <div class="an-head">Brier score over time <span class="an-sub">lower is better · ~0.67 = guessing (3-way call)</span></div>
         <div id="an-brier-chart" class="an-chart"></div>
       </div>
       <div class="an-block">
@@ -722,7 +722,7 @@
       <p style="font-size:15px;color:var(--ink);margin-top:22px;"><b>How we grade the model</b></p>
       <p><b>Hit rate</b> is the simple one: of the calls the model locked in before kickoff, what share did it get right? Useful, but limited — a model that calls everything a coin-flip can get lucky on hit rate without really knowing anything.</p>
       <p><b>Brier score</b> is the honest one, and it's why we lead with it. It grades the model on its <i>confidence</i>, not just its picks. Saying "77% Germany" and being wrong is penalized far more than saying "55% Germany" and being wrong — because the first call was confidently mistaken, the second barely committed. It's the average squared gap between what the model predicted and what actually happened.</p>
-      <p><b>Reading it:</b> lower is better (it's an error score). <b>0.25</b> is the "knows nothing" line — what you'd score by calling every match 50/50. Anything <b>below 0.25</b> means the model has genuine predictive skill, not luck. That's the bar that matters: not "did it pick winners," but "were its probabilities actually trustworthy."</p>
+      <p><b>Reading it:</b> lower is better (it's an error score). Because every match has three possible outcomes — home win, draw, away win — the "knows nothing" line is about <b>0.67</b> (what you'd score by calling every match a flat 1-in-3 each way). Anything <b>below ~0.67</b> means the model has genuine predictive skill, not luck — and the further below, the sharper it is. That's the bar that matters: not "did it pick winners," but "were its probabilities actually trustworthy."</p>
 
       <p><b>Honest limits.</b> It only sees ratings — not injuries, rotation, rest, or tactics — so it won't beat a Vegas book. It's a transparent learner you can watch reason and hold accountable.</p>
 
@@ -1126,7 +1126,7 @@
 
     // --- 1. Brier over time (running average) ---
     let sum=0; const pts=fm.map((m,i)=>{ sum+=brierOf(m); return {x:i+1, y:sum/(i+1)}; });
-    drawLineChart($('an-brier-chart'), pts, {yMax:1, baseline:0.25, baselineLabel:'guessing (0.25)', color:'var(--accent)'});
+    drawLineChart($('an-brier-chart'), pts, {yMax:1.2, baseline:0.667, baselineLabel:'guessing (0.67)', color:'var(--accent)'});
 
     // --- 2. Calibration: bucket predicted prob of the model's TOP pick vs how often it hit ---
     const buckets=[[.0,.1],[.1,.2],[.2,.3],[.3,.4],[.4,.5],[.5,.6],[.6,.7],[.7,.8],[.8,.9],[.9,1.01]];
