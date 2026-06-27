@@ -452,6 +452,8 @@
   .note-teaser-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;
     box-shadow:0 0 8px var(--accent);animation:loadPulse 2s ease-in-out infinite;}
   .note-teaser-text{flex:1;color:var(--mut);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .note-teaser-date{font-family:var(--mono);font-size:10.5px;color:var(--accent);letter-spacing:.04em;flex-shrink:0;
+    padding-right:8px;border-right:1px solid var(--line);}
   .note-teaser-cta{color:var(--accent);font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
   /* announcements section at the bottom */
   .ann-section{margin-top:8px;}
@@ -552,6 +554,7 @@
   <!-- slim announcement teaser — links down to the full announcements section -->
   <button id="note-teaser" class="note-teaser" onclick="document.getElementById('announcements')?.scrollIntoView({behavior:'smooth'})">
     <span class="note-teaser-dot"></span>
+    <span class="note-teaser-date">Jun 25</span>
     <span class="note-teaser-text">Brutal day for the model — just 2 of 6 calls landed.</span>
     <span class="note-teaser-cta">Read ↓</span>
   </button>
