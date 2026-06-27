@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-27T02:00:25Z",
+  "updated": "2026-06-27T02:15:15Z",
   "matches": [
     {
       "id": 1489369,
@@ -757,6 +757,21 @@
       "hit": true
     },
     {
+      "id": 1489417,
+      "utc": "2026-06-27T00:00:00+00:00",
+      "home": "Uruguay",
+      "away": "Spain",
+      "hg": 0,
+      "ag": 1,
+      "predicted": {
+        "pA": 0.2113,
+        "pD": 0.1782,
+        "pB": 0.6105
+      },
+      "backfilled": false,
+      "hit": true
+    },
+    {
       "id": 1489413,
       "utc": "2026-06-27T00:00:00+00:00",
       "home": "Cabo Verde",
@@ -895,6 +910,17 @@
       }
     },
     {
+      "id": 1564789,
+      "utc": "2026-06-30T17:00:00+00:00",
+      "home": "Côte d'Ivoire",
+      "away": "Norway",
+      "predicted": {
+        "pA": 0.3699,
+        "pD": 0.268,
+        "pB": 0.3621
+      }
+    },
+    {
       "id": 1562586,
       "utc": "2026-07-02T00:00:00+00:00",
       "home": "USA",
@@ -906,19 +932,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1489417,
-      "utc": "2026-06-27T00:00:00+00:00",
-      "home": "Uruguay",
-      "away": "Spain",
-      "predicted": {
-        "pA": 0.2113,
-        "pD": 0.1782,
-        "pB": 0.6105
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -1092,7 +1106,7 @@
     "New Zealand": "alive",
     "Spain": "qualified",
     "Uruguay": "alive",
-    "Cabo Verde": "alive",
+    "Cabo Verde": "qualified",
     "Saudi Arabia": "eliminated",
     "France": "qualified",
     "Norway": "qualified",
