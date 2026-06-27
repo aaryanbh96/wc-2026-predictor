@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-27T03:15:13Z",
+  "updated": "2026-06-27T05:00:22Z",
   "matches": [
     {
       "id": 1489369,
@@ -785,6 +785,21 @@
       },
       "backfilled": false,
       "hit": false
+    },
+    {
+      "id": 1489415,
+      "utc": "2026-06-27T03:00:00+00:00",
+      "home": "New Zealand",
+      "away": "Belgium",
+      "hg": 1,
+      "ag": 5,
+      "predicted": {
+        "pA": 0.1369,
+        "pD": 0.1413,
+        "pB": 0.7218
+      },
+      "backfilled": false,
+      "hit": true
     }
   ],
   "upcoming": [
@@ -920,17 +935,6 @@
         "pA": 0.5465,
         "pD": 0.2006,
         "pB": 0.2529
-      }
-    },
-    {
-      "id": 1489415,
-      "utc": "2026-06-27T03:00:00+00:00",
-      "home": "New Zealand",
-      "away": "Belgium",
-      "predicted": {
-        "pA": 0.1369,
-        "pD": 0.1413,
-        "pB": 0.7218
       }
     }
   ],
@@ -1102,9 +1106,9 @@
     "Sweden": "alive",
     "Tunisia": "eliminated",
     "Egypt": "alive",
-    "Belgium": "alive",
+    "Belgium": "qualified",
     "IR Iran": "alive",
-    "New Zealand": "alive",
+    "New Zealand": "eliminated",
     "Spain": "qualified",
     "Uruguay": "alive",
     "Cabo Verde": "qualified",
