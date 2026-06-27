@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-27T21:15:13Z",
+  "updated": "2026-06-27T23:00:17Z",
   "matches": [
     {
       "id": 1489369,
@@ -815,6 +815,36 @@
       },
       "backfilled": false,
       "hit": true
+    },
+    {
+      "id": 1489420,
+      "utc": "2026-06-27T21:00:00+00:00",
+      "home": "Croatia",
+      "away": "Ghana",
+      "hg": 2,
+      "ag": 1,
+      "predicted": {
+        "pA": 0.3401,
+        "pD": 0.2531,
+        "pB": 0.4068
+      },
+      "backfilled": false,
+      "hit": false
+    },
+    {
+      "id": 1489422,
+      "utc": "2026-06-27T21:00:00+00:00",
+      "home": "Panama",
+      "away": "England",
+      "hg": 0,
+      "ag": 2,
+      "predicted": {
+        "pA": 0.0516,
+        "pD": 0.1028,
+        "pB": 0.8456
+      },
+      "backfilled": false,
+      "hit": true
     }
   ],
   "upcoming": [
@@ -962,30 +992,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1489420,
-      "utc": "2026-06-27T21:00:00+00:00",
-      "home": "Croatia",
-      "away": "Ghana",
-      "predicted": {
-        "pA": 0.3401,
-        "pD": 0.2531,
-        "pB": 0.4068
-      }
-    },
-    {
-      "id": 1489422,
-      "utc": "2026-06-27T21:00:00+00:00",
-      "home": "Panama",
-      "away": "England",
-      "predicted": {
-        "pA": 0.0516,
-        "pD": 0.1028,
-        "pB": 0.8456
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -1211,9 +1218,9 @@
     "Congo DR": "alive",
     "Portugal": "qualified",
     "Uzbekistan": "alive",
-    "England": "alive",
+    "England": "qualified",
     "Ghana": "alive",
-    "Panama": "alive",
-    "Croatia": "alive"
+    "Panama": "eliminated",
+    "Croatia": "qualified"
   }
 }
