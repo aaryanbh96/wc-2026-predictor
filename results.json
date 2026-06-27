@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-27T05:00:22Z",
+  "updated": "2026-06-27T05:15:15Z",
   "matches": [
     {
       "id": 1489369,
@@ -787,6 +787,21 @@
       "hit": false
     },
     {
+      "id": 1489414,
+      "utc": "2026-06-27T03:00:00+00:00",
+      "home": "Egypt",
+      "away": "IR Iran",
+      "hg": 1,
+      "ag": 1,
+      "predicted": {
+        "pA": 0.5465,
+        "pD": 0.2006,
+        "pB": 0.2529
+      },
+      "backfilled": false,
+      "hit": false
+    },
+    {
       "id": 1489415,
       "utc": "2026-06-27T03:00:00+00:00",
       "home": "New Zealand",
@@ -892,6 +907,17 @@
       }
     },
     {
+      "id": 1565176,
+      "utc": "2026-06-29T20:30:00+00:00",
+      "home": "Germany",
+      "away": "Paraguay",
+      "predicted": {
+        "pA": 0.5776,
+        "pD": 0.1896,
+        "pB": 0.2328
+      }
+    },
+    {
       "id": 1562345,
       "utc": "2026-06-30T01:00:00+00:00",
       "home": "Netherlands",
@@ -914,6 +940,17 @@
       }
     },
     {
+      "id": 1565177,
+      "utc": "2026-06-30T21:00:00+00:00",
+      "home": "France",
+      "away": "Sweden",
+      "predicted": {
+        "pA": 0.7254,
+        "pD": 0.1401,
+        "pB": 0.1345
+      }
+    },
+    {
       "id": 1562586,
       "utc": "2026-07-02T00:00:00+00:00",
       "home": "USA",
@@ -923,21 +960,31 @@
         "pD": 0.2449,
         "pB": 0.3274
       }
-    }
-  ],
-  "live": [
+    },
     {
-      "id": 1489414,
-      "utc": "2026-06-27T03:00:00+00:00",
-      "home": "Egypt",
-      "away": "IR Iran",
+      "id": 1565178,
+      "utc": "2026-07-03T18:00:00+00:00",
+      "home": "Australia",
+      "away": "Egypt",
       "predicted": {
-        "pA": 0.5465,
-        "pD": 0.2006,
-        "pB": 0.2529
+        "pA": 0.3577,
+        "pD": 0.265,
+        "pB": 0.3773
+      }
+    },
+    {
+      "id": 1565179,
+      "utc": "2026-07-03T22:00:00+00:00",
+      "home": "Argentina",
+      "away": "Cabo Verde",
+      "predicted": {
+        "pA": 0.7998,
+        "pD": 0.1167,
+        "pB": 0.0835
       }
     }
   ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -1078,6 +1125,44 @@
           "win": 0.0422
         }
       ]
+    },
+    {
+      "date": "2026-06-26",
+      "games_played": 66,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1863
+        },
+        {
+          "team": "France",
+          "win": 0.1726
+        },
+        {
+          "team": "Spain",
+          "win": 0.1187
+        },
+        {
+          "team": "England",
+          "win": 0.0867
+        },
+        {
+          "team": "Brazil",
+          "win": 0.0805
+        },
+        {
+          "team": "Netherlands",
+          "win": 0.0606
+        },
+        {
+          "team": "Portugal",
+          "win": 0.0502
+        },
+        {
+          "team": "Mexico",
+          "win": 0.0348
+        }
+      ]
     }
   ],
   "status": {
@@ -1105,7 +1190,7 @@
     "Japan": "qualified",
     "Sweden": "alive",
     "Tunisia": "eliminated",
-    "Egypt": "alive",
+    "Egypt": "qualified",
     "Belgium": "qualified",
     "IR Iran": "alive",
     "New Zealand": "eliminated",
