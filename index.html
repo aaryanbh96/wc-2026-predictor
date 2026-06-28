@@ -923,6 +923,22 @@
     const advA=1/(1+Math.pow(10,((rb-ra)/400)));
     return {advA, advB:1-advA};
   }
+  // Is a fixture a knockout tie (no draw possible)?
+  function isKnockoutRound(r){
+    const x=(r||'').toLowerCase();
+    return x.includes('round of')||x.includes('quarter')||x.includes('semi')||x.includes('final');
+  }
+  // Build a prediction label for a match. For knockouts, fold the draw into a 2-way
+  // "to advance" call so it never shows a draw; for group games, show the 3-way split.
+  function predLabel(m){
+    const p=m.predicted; if(!p) return '';
+    if(isKnockoutRound(m.round)){
+      const t=(p.pA+p.pB)||1, aA=p.pA/t, aB=p.pB/t;
+      const favHome=aA>=aB, fav=favHome?m.home:m.away, fp=Math.round((favHome?aA:aB)*100);
+      return `${m.home} ${Math.round(aA*100)}% · ${m.away} ${Math.round(aB*100)}% to advance`;
+    }
+    return `${m.home} ${Math.round(p.pA*100)}% · draw ${Math.round(p.pD*100)}% · ${m.away} ${Math.round(p.pB*100)}%`;
+  }
 
   // pure learning step (rating update + standings + log). Does NOT touch the pre-match ledger.
   function learn(s,a,ga,gb,b,neutral,stageW,isSeed){
@@ -1316,12 +1332,19 @@
       return;
     }
     const koCard=(m)=>{
-      // model prediction for this matchup (knockout = no draw; use advance probability)
+      // Prediction: prefer the model's ACTUAL locked pre-match call (m.predicted) so the
+      // bracket agrees with the track record. Knockouts have no draw, so fold the draw
+      // mass into the two sides to get a clean "% to advance" from the same locked numbers.
+      // Only for genuinely upcoming games with no frozen call do we compute live.
       let pred='';
-      if(state.teams[m.home] && state.teams[m.away]){
+      const fold=(pA,pB)=>{ const t=pA+pB||1; return [pA/t, pB/t]; }; // draw removed, renormalize
+      if(m.predicted){
+        const [aA,aB]=fold(m.predicted.pA, m.predicted.pB);
+        const favHome=aA>=aB, fav=favHome?m.home:m.away, fp=Math.round((favHome?aA:aB)*100);
+        pred=`<div class="ko-pred">model called <b>${fav}</b> ${fp}% to advance</div>`;
+      } else if(state.teams[m.home] && state.teams[m.away]){
         const ap=advanceProbs(m.home,m.away,true);
-        const favHome=ap.advA>=ap.advB;
-        const fav=favHome?m.home:m.away, fp=Math.round((favHome?ap.advA:ap.advB)*100);
+        const favHome=ap.advA>=ap.advB, fav=favHome?m.home:m.away, fp=Math.round((favHome?ap.advA:ap.advB)*100);
         pred=`<div class="ko-pred">model: <b>${fav}</b> ${fp}% to advance</div>`;
       }
       let score='';
@@ -1806,12 +1829,18 @@
     const cards=day.map(f=>{
       const pr=probs(f.home,f.away,true);
       const pend=findPending(f.home,f.away);
-      const fav=pr.pA>=pr.pB?f.home:f.away, favP=Math.round(Math.max(pr.pA,pr.pB)*100);
-      // The model's call for every upcoming match is frozen server-side in the shared
-      // results file before kickoff (see Track record) — so "call locked" is literally true
-      // and conveys the model going on record, tamper-proof, ahead of time.
+      const ko=isKnockoutRound(f.round);
       const badge = `<span class="lockflag">🔒 call locked</span>`;
       const koLine = `<span class="ko" style="margin-left:8px;">${fmtKO(f.utc)}</span>`;
+      if(ko){
+        // knockout: no draw — show a 2-way "to advance" bar
+        const t=(pr.pA+pr.pB)||1, aA=Math.round(pr.pA/t*100), aB=100-Math.round(pr.pA/t*100);
+        return `<div class="ufix">
+          <div class="top"><span class="teams">${fl(f.home)} <span class="vs">v</span> ${fl(f.away)}${koLine}</span>${badge}</div>
+          <div class="pbar"><i style="width:${aA}%;background:var(--a)"></i><i style="width:${aB}%;background:var(--b)"></i></div>
+          <div class="plab"><span><b>${f.home}</b> ${aA}%</span><span style="color:var(--dim)">to advance</span><span><b>${f.away}</b> ${aB}%</span></div>
+        </div>`;
+      }
       const pA=Math.round(pr.pA*100),pD=Math.round(pr.pD*100),pB=Math.round(pr.pB*100);
       return `<div class="ufix">
         <div class="top"><span class="teams">${fl(f.home)} <span class="vs">v</span> ${fl(f.away)}${koLine}</span>${badge}</div>
@@ -2004,7 +2033,10 @@
     </div><p class="hint" style="margin:8px 0 0;">Stats count only genuine pre-kickoff calls. Games marked <span style="color:var(--dim);">backfilled</span> finished before a live prediction was locked — shown for history, not scored.</p>`;
     const rows=fm.slice().sort((a,b)=>(b.utc||'').localeCompare(a.utc||'')).map(m=>{
       const p=m.predicted, pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
-      const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
+      const ko=isKnockoutRound(m.round);
+      // favored side: for knockouts, fold draw out; else straight win-prob compare
+      const fav=p.pA>=p.pB?m.home:m.away;
+      const favP=ko ? Math.round((Math.max(p.pA,p.pB)/((p.pA+p.pB)||1))*100) : Math.max(pA,pB);
       const done=typeof m.hit==='boolean';
       const verdict=m.backfilled?'<span class="ufix-v" style="background:var(--panel2);color:var(--dim);">backfilled</span>'
         :done?(m.hit?'<span class="ufix-v hit">✓ correct</span>':'<span class="ufix-v miss">✗ missed</span>'):'<span class="ufix-v pend">pending</span>';
@@ -2012,8 +2044,8 @@
       const when=m.utc?new Date(m.utc).toLocaleDateString('en-US',{timeZone:PT,month:'short',day:'numeric'}):'';
       return `<div class="ufix"${m.backfilled?' style="opacity:.6;"':''}>
         <div class="top"><span class="teams">${fl(m.home)} <span style="color:var(--dim)">${score}</span> ${fl(m.away)}</span>${verdict}</div>
-        <div class="plab" style="margin-top:8px;"><span>predicted: favored <b>${fav}</b> ${favP}%</span><span class="ko">${when}</span></div>
-        <div class="plab"><span>${m.home} ${pA}% · draw ${pD}% · ${m.away} ${pB}%</span></div>
+        <div class="plab" style="margin-top:8px;"><span>predicted: favored <b>${fav}</b> ${favP}%${ko?' to advance':''}</span><span class="ko">${when}</span></div>
+        <div class="plab"><span>${predLabel(m)}</span></div>
       </div>`;
     }).join('');
     list.innerHTML=rows;
