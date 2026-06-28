@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-28T23:00:25Z",
+  "updated": "2026-06-28T23:07:53Z",
   "matches": [
     {
       "id": 1489369,
@@ -3320,7 +3320,49 @@
         "pB": 0.2439
       },
       "backfilled": false,
-      "hit": true
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 12,
+          "soff": 11,
+          "shots": 28,
+          "blocked": 5,
+          "inbox": 17,
+          "outbox": 11,
+          "fouls": 10,
+          "corners": 12,
+          "offsides": 1,
+          "poss": 69,
+          "yellow": 2,
+          "red": 0,
+          "saves": 1,
+          "passes": 590,
+          "passacc": 518,
+          "passpct": 88,
+          "xg": 3.1,
+          "gprev": -0.09
+        },
+        "away": {
+          "sog": 1,
+          "soff": 1,
+          "shots": 6,
+          "blocked": 4,
+          "inbox": 1,
+          "outbox": 5,
+          "fouls": 11,
+          "corners": 3,
+          "offsides": 0,
+          "poss": 31,
+          "yellow": 2,
+          "red": 1,
+          "saves": 7,
+          "passes": 265,
+          "passacc": 184,
+          "passpct": 69,
+          "xg": 0.18,
+          "gprev": -0.09
+        }
+      }
     },
     {
       "id": 1489416,
@@ -3336,7 +3378,49 @@
         "pB": 0.5775
       },
       "backfilled": false,
-      "hit": true
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 3,
+          "shots": 10,
+          "blocked": 3,
+          "inbox": 6,
+          "outbox": 4,
+          "fouls": 9,
+          "corners": 4,
+          "offsides": 1,
+          "poss": 43,
+          "yellow": 1,
+          "red": null,
+          "saves": 5,
+          "passes": 420,
+          "passacc": 344,
+          "passpct": 82,
+          "xg": 1.69,
+          "gprev": 0.27
+        },
+        "away": {
+          "sog": 9,
+          "soff": 6,
+          "shots": 18,
+          "blocked": 3,
+          "inbox": 10,
+          "outbox": 8,
+          "fouls": 11,
+          "corners": 5,
+          "offsides": 2,
+          "poss": 57,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 557,
+          "passacc": 480,
+          "passpct": 86,
+          "xg": 1.31,
+          "gprev": 0.27
+        }
+      }
     },
     {
       "id": 1489417,
@@ -3352,7 +3436,49 @@
         "pB": 0.6105
       },
       "backfilled": false,
-      "hit": true
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 1,
+          "soff": 3,
+          "shots": 5,
+          "blocked": 1,
+          "inbox": 2,
+          "outbox": 3,
+          "fouls": 14,
+          "corners": 1,
+          "offsides": 5,
+          "poss": 33,
+          "yellow": 3,
+          "red": 1,
+          "saves": 0,
+          "passes": 301,
+          "passacc": 228,
+          "passpct": 76,
+          "xg": 0.2,
+          "gprev": 0.1
+        },
+        "away": {
+          "sog": 1,
+          "soff": 4,
+          "shots": 6,
+          "blocked": 1,
+          "inbox": 5,
+          "outbox": 1,
+          "fouls": 14,
+          "corners": 6,
+          "offsides": 2,
+          "poss": 67,
+          "yellow": 1,
+          "red": 0,
+          "saves": 2,
+          "passes": 623,
+          "passacc": 553,
+          "passpct": 89,
+          "xg": 0.86,
+          "gprev": 0.1
+        }
+      }
     },
     {
       "id": 1489413,
@@ -3368,7 +3494,49 @@
         "pB": 0.3537
       },
       "backfilled": false,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 2,
+          "soff": 8,
+          "shots": 15,
+          "blocked": 5,
+          "inbox": 9,
+          "outbox": 6,
+          "fouls": 10,
+          "corners": 4,
+          "offsides": 2,
+          "poss": 51,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 451,
+          "passacc": 385,
+          "passpct": 85,
+          "xg": 1.46,
+          "gprev": 0.56
+        },
+        "away": {
+          "sog": 3,
+          "soff": 1,
+          "shots": 7,
+          "blocked": 3,
+          "inbox": 5,
+          "outbox": 2,
+          "fouls": 16,
+          "corners": 2,
+          "offsides": 0,
+          "poss": 49,
+          "yellow": 3,
+          "red": null,
+          "saves": 2,
+          "passes": 442,
+          "passacc": 356,
+          "passpct": 81,
+          "xg": 0.4,
+          "gprev": 0.56
+        }
+      }
     },
     {
       "id": 1489414,
@@ -3384,7 +3552,49 @@
         "pB": 0.2529
       },
       "backfilled": false,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 3,
+          "soff": 6,
+          "shots": 15,
+          "blocked": 6,
+          "inbox": 8,
+          "outbox": 7,
+          "fouls": 11,
+          "corners": 8,
+          "offsides": 0,
+          "poss": 61,
+          "yellow": 3,
+          "red": null,
+          "saves": 3,
+          "passes": 587,
+          "passacc": 512,
+          "passpct": 87,
+          "xg": 0.81,
+          "gprev": -0.55
+        },
+        "away": {
+          "sog": 4,
+          "soff": 6,
+          "shots": 12,
+          "blocked": 2,
+          "inbox": 9,
+          "outbox": 3,
+          "fouls": 16,
+          "corners": 2,
+          "offsides": 3,
+          "poss": 39,
+          "yellow": 4,
+          "red": null,
+          "saves": 2,
+          "passes": 367,
+          "passacc": 281,
+          "passpct": 77,
+          "xg": 1.83,
+          "gprev": -0.55
+        }
+      }
     },
     {
       "id": 1489415,
@@ -3400,7 +3610,49 @@
         "pB": 0.7218
       },
       "backfilled": false,
-      "hit": true
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 2,
+          "soff": 3,
+          "shots": 6,
+          "blocked": 1,
+          "inbox": 3,
+          "outbox": 3,
+          "fouls": 10,
+          "corners": 5,
+          "offsides": 1,
+          "poss": 45,
+          "yellow": 2,
+          "red": null,
+          "saves": 5,
+          "passes": 435,
+          "passacc": 369,
+          "passpct": 85,
+          "xg": 0.24,
+          "gprev": -0.79
+        },
+        "away": {
+          "sog": 10,
+          "soff": 13,
+          "shots": 35,
+          "blocked": 12,
+          "inbox": 23,
+          "outbox": 12,
+          "fouls": 7,
+          "corners": 8,
+          "offsides": 1,
+          "poss": 55,
+          "yellow": 0,
+          "red": null,
+          "saves": 1,
+          "passes": 526,
+          "passacc": 462,
+          "passpct": 88,
+          "xg": 3.6,
+          "gprev": -0.79
+        }
+      }
     },
     {
       "id": 1489420,
@@ -3416,7 +3668,49 @@
         "pB": 0.4068
       },
       "backfilled": false,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 2,
+          "shots": 8,
+          "blocked": 2,
+          "inbox": 3,
+          "outbox": 5,
+          "fouls": 9,
+          "corners": 3,
+          "offsides": 1,
+          "poss": 53,
+          "yellow": 1,
+          "red": null,
+          "saves": 0,
+          "passes": 523,
+          "passacc": 478,
+          "passpct": 91,
+          "xg": 0.46,
+          "gprev": -1.11
+        },
+        "away": {
+          "sog": 1,
+          "soff": 3,
+          "shots": 6,
+          "blocked": 2,
+          "inbox": 3,
+          "outbox": 3,
+          "fouls": 13,
+          "corners": 2,
+          "offsides": 2,
+          "poss": 47,
+          "yellow": 1,
+          "red": null,
+          "saves": 2,
+          "passes": 455,
+          "passacc": 402,
+          "passpct": 88,
+          "xg": 0.73,
+          "gprev": -1.11
+        }
+      }
     },
     {
       "id": 1489422,
@@ -3432,7 +3726,49 @@
         "pB": 0.8456
       },
       "backfilled": false,
-      "hit": true
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 2,
+          "soff": 7,
+          "shots": 12,
+          "blocked": 3,
+          "inbox": 8,
+          "outbox": 4,
+          "fouls": 16,
+          "corners": 3,
+          "offsides": 4,
+          "poss": 33,
+          "yellow": 2,
+          "red": null,
+          "saves": 4,
+          "passes": 267,
+          "passacc": 201,
+          "passpct": 75,
+          "xg": 0.57,
+          "gprev": 0.15
+        },
+        "away": {
+          "sog": 6,
+          "soff": 8,
+          "shots": 17,
+          "blocked": 3,
+          "inbox": 12,
+          "outbox": 5,
+          "fouls": 13,
+          "corners": 7,
+          "offsides": 4,
+          "poss": 67,
+          "yellow": 1,
+          "red": null,
+          "saves": 2,
+          "passes": 557,
+          "passacc": 493,
+          "passpct": 89,
+          "xg": 1.49,
+          "gprev": 0.15
+        }
+      }
     },
     {
       "id": 1489419,
@@ -3448,7 +3784,49 @@
         "pB": 0.4067
       },
       "backfilled": false,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 6,
+          "soff": 11,
+          "shots": 24,
+          "blocked": 7,
+          "inbox": 15,
+          "outbox": 9,
+          "fouls": 12,
+          "corners": 5,
+          "offsides": 3,
+          "poss": 55,
+          "yellow": 1,
+          "red": null,
+          "saves": 2,
+          "passes": 545,
+          "passacc": 485,
+          "passpct": 89,
+          "xg": 1.63,
+          "gprev": 0.73
+        },
+        "away": {
+          "sog": 2,
+          "soff": 7,
+          "shots": 13,
+          "blocked": 4,
+          "inbox": 5,
+          "outbox": 8,
+          "fouls": 6,
+          "corners": 2,
+          "offsides": 2,
+          "poss": 45,
+          "yellow": 0,
+          "red": null,
+          "saves": 6,
+          "passes": 446,
+          "passacc": 406,
+          "passpct": 91,
+          "xg": 0.69,
+          "gprev": 0.73
+        }
+      }
     },
     {
       "id": 1539013,
@@ -3464,7 +3842,49 @@
         "pB": 0.2341
       },
       "backfilled": false,
-      "hit": true
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 14,
+          "shots": 19,
+          "blocked": 1,
+          "inbox": 11,
+          "outbox": 8,
+          "fouls": 6,
+          "corners": 2,
+          "offsides": 3,
+          "poss": 58,
+          "yellow": 3,
+          "red": null,
+          "saves": 1,
+          "passes": 487,
+          "passacc": 401,
+          "passpct": 82,
+          "xg": 2.35,
+          "gprev": -0.63
+        },
+        "away": {
+          "sog": 1,
+          "soff": 3,
+          "shots": 4,
+          "blocked": 0,
+          "inbox": 3,
+          "outbox": 1,
+          "fouls": 16,
+          "corners": 4,
+          "offsides": 1,
+          "poss": 42,
+          "yellow": 2,
+          "red": null,
+          "saves": 1,
+          "passes": 355,
+          "passacc": 269,
+          "passpct": 76,
+          "xg": 0.27,
+          "gprev": -0.63
+        }
+      }
     },
     {
       "id": 1489418,
@@ -3480,7 +3900,49 @@
         "pB": 0.426
       },
       "backfilled": false,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 5,
+          "soff": 5,
+          "shots": 12,
+          "blocked": 2,
+          "inbox": 6,
+          "outbox": 6,
+          "fouls": 3,
+          "corners": 0,
+          "offsides": 1,
+          "poss": 65,
+          "yellow": 0,
+          "red": null,
+          "saves": 0,
+          "passes": 755,
+          "passacc": 706,
+          "passpct": 94,
+          "xg": 1.62,
+          "gprev": -0.49
+        },
+        "away": {
+          "sog": 3,
+          "soff": 6,
+          "shots": 10,
+          "blocked": 1,
+          "inbox": 6,
+          "outbox": 4,
+          "fouls": 7,
+          "corners": 3,
+          "offsides": 3,
+          "poss": 35,
+          "yellow": 1,
+          "red": null,
+          "saves": 2,
+          "passes": 397,
+          "passacc": 346,
+          "passpct": 87,
+          "xg": 1.44,
+          "gprev": -0.49
+        }
+      }
     },
     {
       "id": 1489421,
@@ -3496,7 +3958,49 @@
         "pB": 0.8838
       },
       "backfilled": false,
-      "hit": true
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 1,
+          "soff": 2,
+          "shots": 5,
+          "blocked": 2,
+          "inbox": 2,
+          "outbox": 3,
+          "fouls": 13,
+          "corners": 2,
+          "offsides": 1,
+          "poss": 27,
+          "yellow": 3,
+          "red": null,
+          "saves": 1,
+          "passes": 285,
+          "passacc": 228,
+          "passpct": 80,
+          "xg": 0.74,
+          "gprev": -0.28
+        },
+        "away": {
+          "sog": 4,
+          "soff": 7,
+          "shots": 12,
+          "blocked": 1,
+          "inbox": 6,
+          "outbox": 6,
+          "fouls": 7,
+          "corners": 6,
+          "offsides": 3,
+          "poss": 73,
+          "yellow": 0,
+          "red": null,
+          "saves": 0,
+          "passes": 799,
+          "passacc": 735,
+          "passpct": 92,
+          "xg": 2.14,
+          "gprev": -0.28
+        }
+      }
     },
     {
       "id": 1561329,
