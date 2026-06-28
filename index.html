@@ -915,6 +915,15 @@
     return {eA, pA:eA*(1-drawW), pB:(1-eA)*(1-drawW), pD:drawW};
   }
 
+  // Knockout: no draws — a tie is resolved in extra time / penalties, someone advances.
+  // Use the same pure two-way Elo the Monte-Carlo sim uses (pWinKO), so the bracket's
+  // displayed "% to advance" matches the engine that drives the championship forecast.
+  function advanceProbs(a,b,neutral){
+    const ra=effRating(a)+(neutral?0:HOME_ADV), rb=effRating(b);
+    const advA=1/(1+Math.pow(10,((rb-ra)/400)));
+    return {advA, advB:1-advA};
+  }
+
   // pure learning step (rating update + standings + log). Does NOT touch the pre-match ledger.
   function learn(s,a,ga,gb,b,neutral,stageW,isSeed){
     const eA=1/(1+Math.pow(10,((s.teams[b].rating-(s.teams[a].rating+(neutral?0:HOME_ADV)))/400)));
@@ -1307,13 +1316,13 @@
       return;
     }
     const koCard=(m)=>{
-      // model prediction for this matchup
+      // model prediction for this matchup (knockout = no draw; use advance probability)
       let pred='';
       if(state.teams[m.home] && state.teams[m.away]){
-        const pr=probs(m.home,m.away,true);
-        const favHome=pr.pA>=pr.pB;
-        const fav=favHome?m.home:m.away, fp=Math.round((favHome?pr.pA:pr.pB)*100);
-        pred=`<div class="ko-pred">model: <b>${fav}</b> ${fp}%</div>`;
+        const ap=advanceProbs(m.home,m.away,true);
+        const favHome=ap.advA>=ap.advB;
+        const fav=favHome?m.home:m.away, fp=Math.round((favHome?ap.advA:ap.advB)*100);
+        pred=`<div class="ko-pred">model: <b>${fav}</b> ${fp}% to advance</div>`;
       }
       let score='';
       if(m.played){
