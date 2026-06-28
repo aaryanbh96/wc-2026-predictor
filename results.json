@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-28T23:07:53Z",
+  "updated": "2026-06-28T23:15:13Z",
   "matches": [
     {
       "id": 1489369,
@@ -4016,7 +4016,49 @@
         "pB": 0.3018
       },
       "backfilled": false,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 1,
+          "soff": 4,
+          "shots": 6,
+          "blocked": 1,
+          "inbox": 1,
+          "outbox": 5,
+          "fouls": 10,
+          "corners": 1,
+          "offsides": 1,
+          "poss": 58,
+          "yellow": 0,
+          "red": null,
+          "saves": 5,
+          "passes": 550,
+          "passacc": 468,
+          "passpct": 85,
+          "xg": 0.13,
+          "gprev": 0.04
+        },
+        "away": {
+          "sog": 7,
+          "soff": 5,
+          "shots": 12,
+          "blocked": 0,
+          "inbox": 9,
+          "outbox": 3,
+          "fouls": 16,
+          "corners": 4,
+          "offsides": 0,
+          "poss": 42,
+          "yellow": 2,
+          "red": null,
+          "saves": 1,
+          "passes": 380,
+          "passacc": 298,
+          "passpct": 78,
+          "xg": 1.32,
+          "gprev": 0.04
+        }
+      }
     }
   ],
   "upcoming": [
