@@ -122,6 +122,8 @@ def main():
         fixture = fx.get("fixture") or {}
         teams = fx.get("teams") or {}
         goals = fx.get("goals") or {}
+        league = fx.get("league") or {}
+        rnd = league.get("round") or ""
         status = ((fixture.get("status") or {}).get("short")) or ""
         fid = fixture.get("id")
         utc = fixture.get("date")  # ISO8601 with offset
@@ -139,13 +141,13 @@ def main():
             if away not in VALID:
                 unmatched.add(away)
             matches.append({"id": fid, "utc": utc, "home": home, "away": away,
-                            "hg": int(hg), "ag": int(ag)})
+                            "hg": int(hg), "ag": int(ag), "round": rnd})
         elif status in LIVE_STATUSES:
             if home in VALID and away in VALID:
-                live.append({"id": fid, "utc": utc, "home": home, "away": away})
+                live.append({"id": fid, "utc": utc, "home": home, "away": away, "round": rnd})
         elif status in UPCOMING_STATUSES:
             if home in VALID and away in VALID:
-                upcoming.append({"id": fid, "utc": utc, "home": home, "away": away})
+                upcoming.append({"id": fid, "utc": utc, "home": home, "away": away, "round": rnd})
 
     matches.sort(key=lambda x: x.get("utc") or "")
     live.sort(key=lambda x: x.get("utc") or "")
