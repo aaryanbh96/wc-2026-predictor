@@ -104,6 +104,58 @@ def fetch():
         sys.exit(0)
 
 
+# Map the API's verbose stat type names to compact keys for our results.json.
+_STAT_KEYS = {
+    "Shots on Goal": "sog", "Shots off Goal": "soff", "Total Shots": "shots",
+    "Blocked Shots": "blocked", "Shots insidebox": "inbox", "Shots outsidebox": "outbox",
+    "Fouls": "fouls", "Corner Kicks": "corners", "Offsides": "offsides",
+    "Ball Possession": "poss", "Yellow Cards": "yellow", "Red Cards": "red",
+    "Goalkeeper Saves": "saves", "Total passes": "passes", "Passes accurate": "passacc",
+    "Passes %": "passpct", "expected_goals": "xg", "goals_prevented": "gprev",
+}
+
+
+def _num(v):
+    """Convert API stat value to a number. Handles '58%' strings, '0.13' strings, None."""
+    if v is None:
+        return None
+    if isinstance(v, (int, float)):
+        return v
+    s = str(v).strip().replace("%", "")
+    try:
+        return float(s) if "." in s else int(s)
+    except ValueError:
+        return None
+
+
+def fetch_stats(fixture_id):
+    """Fetch one match's statistics. Returns {home:{...}, away:{...}} of compact stats,
+    or None on any error (so a stats hiccup never breaks the main pipeline)."""
+    if not KEY or fixture_id is None:
+        return None
+    url = f"https://v3.football.api-sports.io/fixtures/statistics?fixture={fixture_id}"
+    req = urllib.request.Request(url, headers={"x-apisports-key": KEY})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = json.load(r)
+    except Exception as e:
+        print(f"stats fetch failed for {fixture_id}: {e}", file=sys.stderr)
+        return None
+    resp = data.get("response") or []
+    if len(resp) < 2:
+        return None  # stats not available yet for this match
+    out = {}
+    # response[0] is home team, response[1] is away (matches fixture team order)
+    for slot, side in zip(resp, ("home", "away")):
+        d = {}
+        for st in (slot.get("statistics") or []):
+            key = _STAT_KEYS.get(st.get("type"))
+            if key:
+                d[key] = _num(st.get("value"))
+        out[side] = d
+    return out
+
+
 def main():
     data = fetch()
 
@@ -155,14 +207,18 @@ def main():
 
     # ---- freeze pre-match predictions (same logic as before) ----
     prev_pred = {}
+    prev_stats = {}   # fixture id -> cached stats blob (fetch-once, never re-fetch)
     if os.path.exists(OUT):
         try:
             prev = json.load(open(OUT))
             for mm in (prev.get("matches", []) + prev.get("upcoming", []) + prev.get("live", [])):
                 if mm.get("predicted") and mm.get("id") is not None:
                     prev_pred[mm["id"]] = mm["predicted"]
+                if mm.get("stats") and mm.get("id") is not None:
+                    prev_stats[mm["id"]] = mm["stats"]
         except Exception:
             prev_pred = {}
+            prev_stats = {}
 
     model = Model()
     for mm in matches:
@@ -210,6 +266,25 @@ def main():
             p = model.predict(mm["home"], mm["away"], neutral=True)
             if p:
                 mm["predicted"] = {"pA": round(p[0], 4), "pD": round(p[1], 4), "pB": round(p[2], 4)}
+
+    # ---- per-match statistics (xG, possession, shots, etc.) ----
+    # Fetch-once: reuse cached stats; only call the stats endpoint for finished matches
+    # that don't already have them. Cap new fetches per run to protect the API budget.
+    MAX_STATS_FETCHES = 12
+    fetched = 0
+    for mm in matches:
+        fid = mm.get("id")
+        if fid is None:
+            continue
+        if fid in prev_stats:
+            mm["stats"] = prev_stats[fid]          # already have them — reuse
+        elif fetched < MAX_STATS_FETCHES:
+            s = fetch_stats(fid)
+            if s:
+                mm["stats"] = s
+                fetched += 1
+    if fetched:
+        print(f"Fetched stats for {fetched} newly-finished match(es).")
 
     out = {
         "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
