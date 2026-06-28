@@ -128,6 +128,34 @@ def compute_status(group_of, finished, remaining):
                 status[t] = "eliminated"
             else:
                 status[t] = "alive"
+
+    # ---- Best-thirds resolution (only when the group stage is COMPLETE) ----
+    # During the group stage, 3rd-place hopefuls are correctly "alive". But once every
+    # group game is played, the 8 best third-place teams advance and the rest are out —
+    # a cross-group comparison the per-group logic above can't resolve. Resolve it here.
+    group_done = (len(remaining) == 0)
+    if group_done:
+        # final standings per group (single scenario, since nothing remains)
+        thirds = []  # (team, group, pts, gd, gf)
+        for g, teams in groups.items():
+            tbl = _standings_from(fin_by_group.get(g, []), teams)
+            order = _rank(tbl, teams)
+            # top 2 are definitely through
+            for t in order[:2]:
+                status[t] = "qualified"
+            # 4th (and lower) are definitely out
+            for t in order[3:]:
+                status[t] = "eliminated"
+            # 3rd place enters the best-thirds pool
+            if len(order) >= 3:
+                t3 = order[2]
+                s = tbl[t3]
+                thirds.append((t3, g, s["pts"], s["gd"], s["gf"]))
+        # rank the third-place teams; best 8 advance, rest eliminated
+        thirds.sort(key=lambda x: (x[2], x[3], x[4]), reverse=True)
+        for i, (t, g, *_rest) in enumerate(thirds):
+            status[t] = "qualified" if i < 8 else "eliminated"
+
     return status
 
 
