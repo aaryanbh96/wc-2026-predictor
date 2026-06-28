@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-28T02:15:13Z",
+  "updated": "2026-06-28T04:00:26Z",
   "matches": [
     {
       "id": 1489369,
@@ -875,6 +875,36 @@
       },
       "backfilled": false,
       "hit": true
+    },
+    {
+      "id": 1489418,
+      "utc": "2026-06-28T02:00:00+00:00",
+      "home": "Algeria",
+      "away": "Austria",
+      "hg": 3,
+      "ag": 3,
+      "predicted": {
+        "pA": 0.3285,
+        "pD": 0.2456,
+        "pB": 0.426
+      },
+      "backfilled": false,
+      "hit": false
+    },
+    {
+      "id": 1489421,
+      "utc": "2026-06-28T02:00:00+00:00",
+      "home": "Jordan",
+      "away": "Argentina",
+      "hg": 1,
+      "ag": 3,
+      "predicted": {
+        "pA": 0.0249,
+        "pD": 0.0913,
+        "pB": 0.8838
+      },
+      "backfilled": false,
+      "hit": true
     }
   ],
   "upcoming": [
@@ -1033,30 +1063,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1489418,
-      "utc": "2026-06-28T02:00:00+00:00",
-      "home": "Algeria",
-      "away": "Austria",
-      "predicted": {
-        "pA": 0.3285,
-        "pD": 0.2456,
-        "pB": 0.426
-      }
-    },
-    {
-      "id": 1489421,
-      "utc": "2026-06-28T02:00:00+00:00",
-      "home": "Jordan",
-      "away": "Argentina",
-      "predicted": {
-        "pA": 0.0249,
-        "pD": 0.0913,
-        "pB": 0.8838
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -1235,6 +1242,44 @@
           "win": 0.0348
         }
       ]
+    },
+    {
+      "date": "2026-06-27",
+      "games_played": 72,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1906
+        },
+        {
+          "team": "France",
+          "win": 0.1696
+        },
+        {
+          "team": "Spain",
+          "win": 0.1174
+        },
+        {
+          "team": "England",
+          "win": 0.0953
+        },
+        {
+          "team": "Brazil",
+          "win": 0.0787
+        },
+        {
+          "team": "Netherlands",
+          "win": 0.0553
+        },
+        {
+          "team": "Portugal",
+          "win": 0.0454
+        },
+        {
+          "team": "Mexico",
+          "win": 0.0319
+        }
+      ]
     }
   ],
   "status": {
@@ -1275,9 +1320,9 @@
     "Senegal": "alive",
     "Iraq": "eliminated",
     "Argentina": "qualified",
-    "Austria": "alive",
+    "Austria": "qualified",
     "Algeria": "alive",
-    "Jordan": "alive",
+    "Jordan": "eliminated",
     "Colombia": "qualified",
     "Congo DR": "alive",
     "Portugal": "qualified",
