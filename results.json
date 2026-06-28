@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-28T22:00:24Z",
+  "updated": "2026-06-28T22:15:18Z",
   "matches": [
     {
       "id": 1489369,
@@ -711,7 +711,49 @@
         "pB": 0.1021
       },
       "backfilled": true,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 7,
+          "soff": 12,
+          "shots": 27,
+          "blocked": 8,
+          "inbox": 16,
+          "outbox": 11,
+          "fouls": 10,
+          "corners": 11,
+          "offsides": 2,
+          "poss": 74,
+          "yellow": 1,
+          "red": null,
+          "saves": 1,
+          "passes": 800,
+          "passacc": 734,
+          "passpct": 92,
+          "xg": 2.1,
+          "gprev": 1.45
+        },
+        "away": {
+          "sog": 1,
+          "soff": 3,
+          "shots": 6,
+          "blocked": 2,
+          "inbox": 2,
+          "outbox": 4,
+          "fouls": 1,
+          "corners": 1,
+          "offsides": 3,
+          "poss": 26,
+          "yellow": 1,
+          "red": null,
+          "saves": 7,
+          "passes": 278,
+          "passacc": 205,
+          "passpct": 74,
+          "xg": 0.2,
+          "gprev": 1.45
+        }
+      }
     },
     {
       "id": 1489377,
@@ -727,7 +769,49 @@
         "pB": 0.3054
       },
       "backfilled": true,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 3,
+          "soff": 7,
+          "shots": 15,
+          "blocked": 5,
+          "inbox": 9,
+          "outbox": 6,
+          "fouls": 15,
+          "corners": 2,
+          "offsides": 0,
+          "poss": 54,
+          "yellow": 2,
+          "red": null,
+          "saves": 2,
+          "passes": 455,
+          "passacc": 391,
+          "passpct": 86,
+          "xg": 1.35,
+          "gprev": -0.36
+        },
+        "away": {
+          "sog": 3,
+          "soff": 3,
+          "shots": 14,
+          "blocked": 8,
+          "inbox": 10,
+          "outbox": 4,
+          "fouls": 15,
+          "corners": 7,
+          "offsides": 1,
+          "poss": 46,
+          "yellow": 2,
+          "red": null,
+          "saves": 3,
+          "passes": 398,
+          "passacc": 323,
+          "passpct": 81,
+          "xg": 1.08,
+          "gprev": -0.36
+        }
+      }
     },
     {
       "id": 1489379,
@@ -743,7 +827,49 @@
         "pB": 0.6135
       },
       "backfilled": true,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 3,
+          "soff": 3,
+          "shots": 7,
+          "blocked": 1,
+          "inbox": 4,
+          "outbox": 3,
+          "fouls": 11,
+          "corners": 4,
+          "offsides": 0,
+          "poss": 33,
+          "yellow": 1,
+          "red": null,
+          "saves": 9,
+          "passes": 322,
+          "passacc": 236,
+          "passpct": 73,
+          "xg": 0.66,
+          "gprev": -0.35
+        },
+        "away": {
+          "sog": 10,
+          "soff": 10,
+          "shots": 27,
+          "blocked": 7,
+          "inbox": 16,
+          "outbox": 11,
+          "fouls": 6,
+          "corners": 14,
+          "offsides": 6,
+          "poss": 67,
+          "yellow": 0,
+          "red": null,
+          "saves": 2,
+          "passes": 612,
+          "passacc": 540,
+          "passpct": 88,
+          "xg": 1.72,
+          "gprev": -0.35
+        }
+      }
     },
     {
       "id": 1489378,
@@ -759,7 +885,49 @@
         "pB": 0.181
       },
       "backfilled": true,
-      "hit": false
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 8,
+          "shots": 17,
+          "blocked": 5,
+          "inbox": 10,
+          "outbox": 7,
+          "fouls": 10,
+          "corners": 4,
+          "offsides": 2,
+          "poss": 49,
+          "yellow": 1,
+          "red": null,
+          "saves": 6,
+          "passes": 409,
+          "passacc": 314,
+          "passpct": 77,
+          "xg": 1.5,
+          "gprev": -0.28
+        },
+        "away": {
+          "sog": 8,
+          "soff": 4,
+          "shots": 14,
+          "blocked": 2,
+          "inbox": 10,
+          "outbox": 4,
+          "fouls": 8,
+          "corners": 1,
+          "offsides": 0,
+          "poss": 51,
+          "yellow": 0,
+          "red": null,
+          "saves": 2,
+          "passes": 446,
+          "passacc": 376,
+          "passpct": 84,
+          "xg": 1.24,
+          "gprev": -0.28
+        }
+      }
     },
     {
       "id": 1489383,
@@ -768,7 +936,49 @@
       "away": "Senegal",
       "hg": 3,
       "ag": 1,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 8,
+          "soff": 1,
+          "shots": 11,
+          "blocked": 2,
+          "inbox": 7,
+          "outbox": 4,
+          "fouls": 5,
+          "corners": 6,
+          "offsides": 1,
+          "poss": 53,
+          "yellow": null,
+          "red": null,
+          "saves": 2,
+          "passes": 575,
+          "passacc": 505,
+          "passpct": 88,
+          "xg": 1.79,
+          "gprev": -0.94
+        },
+        "away": {
+          "sog": 2,
+          "soff": 3,
+          "shots": 6,
+          "blocked": 1,
+          "inbox": 4,
+          "outbox": 2,
+          "fouls": 9,
+          "corners": 4,
+          "offsides": 3,
+          "poss": 47,
+          "yellow": null,
+          "red": null,
+          "saves": 5,
+          "passes": 502,
+          "passacc": 430,
+          "passpct": 86,
+          "xg": 0.53,
+          "gprev": -0.94
+        }
+      }
     },
     {
       "id": 1539016,
@@ -777,7 +987,49 @@
       "away": "Norway",
       "hg": 1,
       "ag": 4,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 1,
+          "soff": 8,
+          "shots": 11,
+          "blocked": 2,
+          "inbox": 8,
+          "outbox": 3,
+          "fouls": 12,
+          "corners": 2,
+          "offsides": 1,
+          "poss": 39,
+          "yellow": 1,
+          "red": null,
+          "saves": 2,
+          "passes": 334,
+          "passacc": 271,
+          "passpct": 81,
+          "xg": 0.8,
+          "gprev": -0.4
+        },
+        "away": {
+          "sog": 5,
+          "soff": 4,
+          "shots": 12,
+          "blocked": 3,
+          "inbox": 11,
+          "outbox": 1,
+          "fouls": 13,
+          "corners": 5,
+          "offsides": 0,
+          "poss": 61,
+          "yellow": 0,
+          "red": null,
+          "saves": 0,
+          "passes": 537,
+          "passacc": 477,
+          "passpct": 89,
+          "xg": 2.52,
+          "gprev": -0.4
+        }
+      }
     },
     {
       "id": 1489381,
@@ -786,7 +1038,49 @@
       "away": "Algeria",
       "hg": 3,
       "ag": 0,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 6,
+          "soff": 4,
+          "shots": 10,
+          "blocked": 0,
+          "inbox": 4,
+          "outbox": 6,
+          "fouls": 13,
+          "corners": 2,
+          "offsides": 3,
+          "poss": 48,
+          "yellow": null,
+          "red": null,
+          "saves": 0,
+          "passes": 561,
+          "passacc": 504,
+          "passpct": 90,
+          "xg": 1.47,
+          "gprev": -0.78
+        },
+        "away": {
+          "sog": 0,
+          "soff": 4,
+          "shots": 7,
+          "blocked": 3,
+          "inbox": 3,
+          "outbox": 4,
+          "fouls": 8,
+          "corners": 2,
+          "offsides": 1,
+          "poss": 52,
+          "yellow": null,
+          "red": null,
+          "saves": 3,
+          "passes": 609,
+          "passacc": 563,
+          "passpct": 92,
+          "xg": 0.3,
+          "gprev": -0.78
+        }
+      }
     },
     {
       "id": 1489382,
@@ -795,7 +1089,49 @@
       "away": "Jordan",
       "hg": 3,
       "ag": 1,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 6,
+          "shots": 11,
+          "blocked": 1,
+          "inbox": 6,
+          "outbox": 5,
+          "fouls": 12,
+          "corners": 4,
+          "offsides": 3,
+          "poss": 63,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 580,
+          "passacc": 487,
+          "passpct": 84,
+          "xg": 1.69,
+          "gprev": -1.71
+        },
+        "away": {
+          "sog": 4,
+          "soff": 5,
+          "shots": 11,
+          "blocked": 2,
+          "inbox": 7,
+          "outbox": 4,
+          "fouls": 7,
+          "corners": 3,
+          "offsides": 1,
+          "poss": 37,
+          "yellow": 0,
+          "red": null,
+          "saves": 1,
+          "passes": 332,
+          "passacc": 241,
+          "passpct": 73,
+          "xg": 1.15,
+          "gprev": -1.71
+        }
+      }
     },
     {
       "id": 1539003,
@@ -804,7 +1140,49 @@
       "away": "Congo DR",
       "hg": 1,
       "ag": 1,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 1,
+          "soff": 4,
+          "shots": 7,
+          "blocked": 2,
+          "inbox": 5,
+          "outbox": 2,
+          "fouls": 9,
+          "corners": 5,
+          "offsides": 3,
+          "poss": 75,
+          "yellow": 3,
+          "red": null,
+          "saves": 1,
+          "passes": 783,
+          "passacc": 724,
+          "passpct": 92,
+          "xg": 0.65,
+          "gprev": -0.47
+        },
+        "away": {
+          "sog": 2,
+          "soff": 3,
+          "shots": 8,
+          "blocked": 3,
+          "inbox": 2,
+          "outbox": 6,
+          "fouls": 10,
+          "corners": 4,
+          "offsides": 2,
+          "poss": 25,
+          "yellow": 1,
+          "red": null,
+          "saves": 0,
+          "passes": 249,
+          "passacc": 195,
+          "passpct": 78,
+          "xg": 0.87,
+          "gprev": -0.47
+        }
+      }
     },
     {
       "id": 1489384,
@@ -813,7 +1191,49 @@
       "away": "Croatia",
       "hg": 4,
       "ag": 2,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 11,
+          "soff": 6,
+          "shots": 22,
+          "blocked": 5,
+          "inbox": 20,
+          "outbox": 2,
+          "fouls": 10,
+          "corners": 8,
+          "offsides": 0,
+          "poss": 52,
+          "yellow": null,
+          "red": null,
+          "saves": 3,
+          "passes": 474,
+          "passacc": 406,
+          "passpct": 86,
+          "xg": 3.2,
+          "gprev": -0.67
+        },
+        "away": {
+          "sog": 5,
+          "soff": 3,
+          "shots": 10,
+          "blocked": 2,
+          "inbox": 4,
+          "outbox": 6,
+          "fouls": 12,
+          "corners": 2,
+          "offsides": 1,
+          "poss": 48,
+          "yellow": null,
+          "red": null,
+          "saves": 7,
+          "passes": 443,
+          "passacc": 381,
+          "passpct": 86,
+          "xg": 0.7,
+          "gprev": -0.67
+        }
+      }
     },
     {
       "id": 1489385,
@@ -822,7 +1242,49 @@
       "away": "Panama",
       "hg": 1,
       "ag": 0,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 2,
+          "soff": 4,
+          "shots": 8,
+          "blocked": 2,
+          "inbox": 7,
+          "outbox": 1,
+          "fouls": 9,
+          "corners": 2,
+          "offsides": 4,
+          "poss": 38,
+          "yellow": 1,
+          "red": null,
+          "saves": 4,
+          "passes": 351,
+          "passacc": 292,
+          "passpct": 83,
+          "xg": 1.31,
+          "gprev": 0.04
+        },
+        "away": {
+          "sog": 4,
+          "soff": 5,
+          "shots": 11,
+          "blocked": 2,
+          "inbox": 6,
+          "outbox": 5,
+          "fouls": 11,
+          "corners": 2,
+          "offsides": 1,
+          "poss": 62,
+          "yellow": 2,
+          "red": null,
+          "saves": 2,
+          "passes": 583,
+          "passacc": 503,
+          "passpct": 86,
+          "xg": 0.73,
+          "gprev": 0.04
+        }
+      }
     },
     {
       "id": 1489386,
@@ -831,7 +1293,49 @@
       "away": "Colombia",
       "hg": 1,
       "ag": 3,
-      "round": "Group Stage - 1"
+      "round": "Group Stage - 1",
+      "stats": {
+        "home": {
+          "sog": 2,
+          "soff": 4,
+          "shots": 8,
+          "blocked": 2,
+          "inbox": 4,
+          "outbox": 4,
+          "fouls": 14,
+          "corners": 3,
+          "offsides": 0,
+          "poss": 39,
+          "yellow": 1,
+          "red": null,
+          "saves": 1,
+          "passes": 319,
+          "passacc": 243,
+          "passpct": 76,
+          "xg": 1.16,
+          "gprev": 0.19
+        },
+        "away": {
+          "sog": 4,
+          "soff": 7,
+          "shots": 15,
+          "blocked": 4,
+          "inbox": 10,
+          "outbox": 5,
+          "fouls": 11,
+          "corners": 4,
+          "offsides": 3,
+          "poss": 61,
+          "yellow": 1,
+          "red": null,
+          "saves": 1,
+          "passes": 519,
+          "passacc": 444,
+          "passpct": 86,
+          "xg": 1.61,
+          "gprev": 0.19
+        }
+      }
     },
     {
       "id": 1539004,
