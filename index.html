@@ -428,6 +428,20 @@
     .tsstatus-grid{grid-template-columns:1fr !important;gap:22px;}
   }
 
+  /* knockout bracket */
+  .ko-rounds{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;}
+  .ko-col{min-width:200px;flex-shrink:0;}
+  .ko-col-head{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--mut);margin-bottom:10px;font-weight:600;}
+  .ko-col-head .ko-n{color:var(--dim);}
+  .ko-match{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;position:relative;}
+  .ko-match.done{border-color:color-mix(in srgb,var(--accent) 20%,var(--line));}
+  .ko-team{font-size:13px;color:var(--ink);display:flex;align-items:center;gap:6px;padding:2px 0;}
+  .ko-team.ko-win{font-weight:700;color:var(--accent);}
+  .ko-score{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600;}
+  .ko-pred{margin-top:6px;padding-top:6px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:var(--mut);}
+  .ko-pred b{color:var(--ink);}
+
   /* micro-interactions: subtle, tasteful hover/tap feedback */
   .tchip{transition:transform .14s ease, border-color .14s ease;}
   .tchip:hover{transform:translateY(-2px);}
@@ -678,6 +692,7 @@
     <div class="tsnap-facts" id="tsnap-facts"></div>
     <div class="tsnap-progress" id="tsnap-progress"></div>
     <div class="tsnap-status" id="tsnap-status"></div>
+    <div class="tsnap-bracket" id="tsnap-bracket"></div>
   </section>
 
   <section class="panel" id="p-groups">
@@ -1257,6 +1272,71 @@
           </div>`;
       }
     }
+
+    // ---- knockout bracket ----
+    renderBracket();
+  }
+
+  function renderBracket(){
+    const box=$('tsnap-bracket'); if(!box) return;
+    // gather all knockout fixtures from finished + upcoming + live, with their round + result
+    const ROUND_ORDER=['Round of 32','Round of 16','Quarter-finals','Semi-finals','3rd Place Final','Final'];
+    const roundLabel=(r)=>{ // normalize feed round strings
+      const x=(r||'').toLowerCase();
+      if(x.includes('32')) return 'Round of 32';
+      if(x.includes('16')) return 'Round of 16';
+      if(x.includes('quarter')) return 'Quarter-finals';
+      if(x.includes('semi')) return 'Semi-finals';
+      if(x.includes('3rd')||x.includes('third')) return '3rd Place Final';
+      if(x==='final'||x.includes('final')) return 'Final';
+      return null;
+    };
+    const ko={};
+    const pushKo=(m, played)=>{
+      const r=roundLabel(m.round); if(!r) return;
+      (ko[r]=ko[r]||[]).push({...m, played});
+    };
+    (state.frozenMatches||[]).forEach(m=>{ if(m.round && roundLabel(m.round)) pushKo(m,true); });
+    (state.upcoming||[]).forEach(m=>pushKo(m,false));
+    (state.live||[]).forEach(m=>pushKo(m,false));
+
+    const rounds=ROUND_ORDER.filter(r=>ko[r] && ko[r].length);
+    if(!rounds.length){
+      box.innerHTML=`<div class="sechead fc-head" style="margin:34px 0 10px;">Knockout bracket</div>
+        <p class="prose">The bracket appears here once the knockout fixtures are set — right after the group stage wraps up.</p>`;
+      return;
+    }
+    const koCard=(m)=>{
+      // model prediction for this matchup
+      let pred='';
+      if(state.teams[m.home] && state.teams[m.away]){
+        const pr=probs(m.home,m.away,true);
+        const favHome=pr.pA>=pr.pB;
+        const fav=favHome?m.home:m.away, fp=Math.round((favHome?pr.pA:pr.pB)*100);
+        pred=`<div class="ko-pred">model: <b>${fav}</b> ${fp}%</div>`;
+      }
+      let score='';
+      if(m.played){
+        const hw=m.hg>m.ag, aw=m.ag>m.hg;
+        score=`<div class="ko-score">${m.hg}–${m.ag}</div>`;
+        return `<div class="ko-match done">
+          <div class="ko-team ${hw?'ko-win':''}">${flag(m.home)} ${m.home}</div>
+          <div class="ko-team ${aw?'ko-win':''}">${flag(m.away)} ${m.away}</div>
+          ${score}${pred}</div>`;
+      }
+      return `<div class="ko-match">
+        <div class="ko-team">${flag(m.home)} ${m.home}</div>
+        <div class="ko-team">${flag(m.away)} ${m.away}</div>
+        ${pred}</div>`;
+    };
+    box.innerHTML=`<div class="sechead fc-head" style="margin:34px 0 4px;">Knockout bracket</div>
+      <p class="hint" style="margin:0 0 16px;">Real fixtures from the tournament, with the model's neutral-venue call for each tie.</p>
+      <div class="ko-rounds">
+        ${rounds.map(r=>`<div class="ko-col">
+          <div class="ko-col-head">${r} <span class="ko-n">${ko[r].length}</span></div>
+          ${ko[r].sort((a,b)=>(a.utc||'').localeCompare(b.utc||'')).map(koCard).join('')}
+        </div>`).join('')}
+      </div>`;
   }
 
   function renderGroups(){
