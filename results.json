@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-29T19:15:13Z",
+  "updated": "2026-06-29T20:45:12Z",
   "matches": [
     {
       "id": 1489369,
@@ -4121,18 +4121,6 @@
   ],
   "upcoming": [
     {
-      "id": 1565176,
-      "utc": "2026-06-29T20:30:00+00:00",
-      "home": "Germany",
-      "away": "Paraguay",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.5776,
-        "pD": 0.1896,
-        "pB": 0.2328
-      }
-    },
-    {
       "id": 1562345,
       "utc": "2026-06-30T01:00:00+00:00",
       "home": "Netherlands",
@@ -4289,7 +4277,20 @@
       }
     }
   ],
-  "live": [],
+  "live": [
+    {
+      "id": 1565176,
+      "utc": "2026-06-29T20:30:00+00:00",
+      "home": "Germany",
+      "away": "Paraguay",
+      "round": "Round of 32",
+      "predicted": {
+        "pA": 0.5776,
+        "pD": 0.1896,
+        "pB": 0.2328
+      }
+    }
+  ],
   "daily": [
     {
       "date": "2026-06-22",
