@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-29T17:15:13Z",
+  "updated": "2026-06-29T19:15:13Z",
   "matches": [
     {
       "id": 1489369,
@@ -4059,6 +4059,64 @@
           "gprev": 0.04
         }
       }
+    },
+    {
+      "id": 1562344,
+      "utc": "2026-06-29T17:00:00+00:00",
+      "home": "Brazil",
+      "away": "Japan",
+      "hg": 2,
+      "ag": 1,
+      "round": "Round of 32",
+      "predicted": {
+        "pA": 0.5138,
+        "pD": 0.2124,
+        "pB": 0.2738
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 7,
+          "soff": 6,
+          "shots": 19,
+          "blocked": 6,
+          "inbox": 12,
+          "outbox": 7,
+          "fouls": 4,
+          "corners": 6,
+          "offsides": 1,
+          "poss": 69,
+          "yellow": 2,
+          "red": null,
+          "saves": 1,
+          "passes": 676,
+          "passacc": 624,
+          "passpct": 92,
+          "xg": 1.69,
+          "gprev": -0.35
+        },
+        "away": {
+          "sog": 2,
+          "soff": 1,
+          "shots": 5,
+          "blocked": 2,
+          "inbox": 2,
+          "outbox": 3,
+          "fouls": 12,
+          "corners": 2,
+          "offsides": 0,
+          "poss": 31,
+          "yellow": 3,
+          "red": null,
+          "saves": 4,
+          "passes": 308,
+          "passacc": 258,
+          "passpct": 84,
+          "xg": 0.23,
+          "gprev": -0.35
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4231,20 +4289,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1562344,
-      "utc": "2026-06-29T17:00:00+00:00",
-      "home": "Brazil",
-      "away": "Japan",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.5138,
-        "pD": 0.2124,
-        "pB": 0.2738
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
