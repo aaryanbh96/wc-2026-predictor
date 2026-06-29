@@ -2000,7 +2000,7 @@
       const k=home+'|'+away;
       // find matching prediction from state.live if present
       const sm=(state.live||[]).find(m=>m.home===home&&m.away===away);
-      byKey[k]={home,away,predicted:sm&&sm.predicted,ls};
+      byKey[k]={home,away,predicted:sm&&sm.predicted,round:sm&&sm.round,ls};
     });
     // fallback: matches in state.live the worker hasn't reported AND hasn't cleared
     (state.live||[]).forEach(m=>{
@@ -2011,24 +2011,38 @@
       // don't show it. Only show state.live matches before the worker has any data.
       if(haveWorkerData && liveCleared[k]) return;
       if(haveWorkerData && !liveScores[k] && workerSeenLive) return;
-      byKey[k]={home:m.home,away:m.away,predicted:m.predicted};
+      byKey[k]={home:m.home,away:m.away,predicted:m.predicted,round:m.round};
     });
     const lv=Object.values(byKey);
     if(!lv.length){ block.innerHTML=''; return; }
     const cards=lv.map(m=>{
       const p = m.predicted || (()=>{ const pr=probs(m.home,m.away,true); return {pA:pr.pA,pD:pr.pD,pB:pr.pB}; })();
-      const pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
-      const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
       const ls=m.ls || liveScores[m.home+'|'+m.away];
       const hasScore = ls && ls.hg!=null;
       const score = hasScore ? `<span class="live-score">${ls.hg}<span class="live-dash">–</span>${ls.ag}</span>` : '<span class="vs">v</span>';
       const minute = ls && ls.status==='HT' ? 'HT' : (ls && ls.minute!=null ? ls.minute+"'" : 'LIVE');
+      const ko=isKnockoutRound(m.round);
+      let bars, labels, callLine;
+      if(ko){
+        // knockout: no draw — fold into 2-way "to advance"
+        const t=(p.pA+p.pB)||1, aA=Math.round(p.pA/t*100), aB=100-Math.round(p.pA/t*100);
+        const fav=aA>=aB?m.home:m.away, favP=Math.max(aA,aB);
+        bars=`<i style="width:${aA}%;background:var(--a)"></i><i style="width:${aB}%;background:var(--b)"></i>`;
+        labels=`<span><b>${m.home}</b> ${aA}%</span><span style="color:var(--dim)">to advance</span><span><b>${m.away}</b> ${aB}%</span>`;
+        callLine=`Model's pre-match call: favored ${fav} ${favP}% to advance`;
+      } else {
+        const pA=Math.round(p.pA*100),pD=Math.round(p.pD*100),pB=Math.round(p.pB*100);
+        const fav=p.pA>=p.pB?m.home:m.away, favP=Math.max(pA,pB);
+        bars=`<i style="width:${pA}%;background:var(--a)"></i><i style="width:${pD}%;background:var(--draw)"></i><i style="width:${pB}%;background:var(--b)"></i>`;
+        labels=`<span><b>${m.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${m.away}</b> ${pB}%</span>`;
+        callLine=`Model's pre-match call: favored ${fav} ${favP}%`;
+      }
       return `<div class="live-card">
         <div class="top"><span class="teams">${fl(m.home)} ${score} ${fl(m.away)}</span>
           <span class="live-badge"><span class="live-dot"></span>${minute}</span></div>
-        <div class="pbar" style="margin-top:10px;"><i style="width:${pA}%;background:var(--a)"></i><i style="width:${pD}%;background:var(--draw)"></i><i style="width:${pB}%;background:var(--b)"></i></div>
-        <div class="plab"><span><b>${m.home}</b> ${pA}%</span><span>draw ${pD}%</span><span><b>${m.away}</b> ${pB}%</span></div>
-        <div class="plab" style="margin-top:4px;"><span class="ko">Model's pre-match call: favored ${fav} ${favP}%</span></div>
+        <div class="pbar" style="margin-top:10px;">${bars}</div>
+        <div class="plab">${labels}</div>
+        <div class="plab" style="margin-top:4px;"><span class="ko">${callLine}</span></div>
       </div>`;
     }).join('');
     block.innerHTML=`<div class="sechead" style="margin:0 0 10px;color:var(--bad);">● Live now</div>${cards}`;
