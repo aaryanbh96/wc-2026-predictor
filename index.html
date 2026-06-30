@@ -287,6 +287,10 @@
 
   .fc{width:100%;border-collapse:collapse;font-size:13px;}
   .fc tr.elim td{opacity:.4;}
+  .fc tr.elim td.tcell{opacity:1;color:var(--dim);}
+  .fc .elim-tag{display:inline-block;margin-left:6px;font-family:var(--mono);font-size:9px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 40%,transparent);
+    border-radius:4px;padding:1px 5px;vertical-align:middle;opacity:1;}
   /* brighter, more readable forecast labels */
   .fc-head{color:var(--ink)!important;font-size:13px!important;}
   #fc-meta{color:var(--mut)!important;}
@@ -600,8 +604,8 @@
   <!-- slim announcement teaser — links down to the full announcements section -->
   <button id="note-teaser" class="note-teaser" onclick="document.getElementById('announcements')?.scrollIntoView({behavior:'smooth'})">
     <span class="note-teaser-dot"></span>
-    <span class="note-teaser-date">Jun 25</span>
-    <span class="note-teaser-text">Brutal day for the model — just 2 of 6 calls landed.</span>
+    <span class="note-teaser-date">Jun 29</span>
+    <span class="note-teaser-text">Knockouts begin — and the model's favorites Germany & Netherlands are already out.</span>
     <span class="note-teaser-cta">Read ↓</span>
   </button>
 
@@ -638,6 +642,10 @@
          .ann block and edit the date + text. To hide the section, set display:none on #announcements. -->
     <div id="announcements" class="ann-section" style="scroll-margin-top:20px;">
       <div class="sechead fc-head" style="margin:32px 0 14px;">📣 From the builder</div>
+      <div class="ann">
+        <div class="ann-date">Jun 29, 2026</div>
+        <p class="ann-text">The knockouts are here, and they were unkind to the model's favorites. Germany (favored 71% to advance) drew Paraguay 1–1 and went out on penalties — brutal, because the underlying numbers say they were robbed: 1.49 expected goals to Paraguay's 0.42, 75% possession, 21 shots. Sometimes you dominate and still lose. Netherlands also exited, drawing Morocco 1–1, but there the model had it near a coin-flip and Morocco were the better side (1.4 xG to 0.23) — a deserved result. Brazil and Canada advanced. Eliminated teams are now greyed out across the site, and you can dig into every match's xG and shot data in the new Match stats tab.</p>
+      </div>
       <div class="ann">
         <div class="ann-date">Jun 25, 2026</div>
         <p class="ann-text">Brutal day for the model — just 2 of 6 calls landed. It had USA at 83% (lost to Türkiye) and Germany at 77% (lost to Ecuador), and both went down. Upsets are exactly when these ratings learn the most. Humbling, but that's the game.</p>
@@ -1895,14 +1903,14 @@
     countUpPct($('champ-pct'), parseFloat(fmt(fc.tally[champ].win)));
     maybeCelebrateChampion(champ);
     const cj=$('champ-jump'); if(cj) cj.onclick=()=>{ const t=$('fc-anchor'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); };
+    const effStat=effectiveStatus();
     const rows=ranked.map((t,i)=>{
       const r=fc.tally[t], wp=pct(r.win);
       const w=Math.max(2,Math.round(100*wp/maxWin));
-      const st=(state.status||{})[t];
-      const dead=st==='eliminated';
+      const dead=effStat[t]==='eliminated';
       return `<tr${dead?' class="elim"':''} style="--row:${teamColor(t)}">
         <td class="rank">${i+1}</td>
-        <td class="tcell">${flag(t)} ${t} <span class="grp">${state.teams[t].group}</span></td>
+        <td class="tcell">${flag(t)} ${t} <span class="grp">${state.teams[t].group}</span>${dead?'<span class="elim-tag">out</span>':''}</td>
         <td class="winpct"><span class="winbar" style="width:${w}%;background:${teamColor(t)}"></span><span>${fmt(r.win)}%</span></td>
         <td class="dim">${fmt(r.final)}</td>
         <td class="dim">${fmt(r.sf)}</td>
