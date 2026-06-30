@@ -439,6 +439,7 @@
   .ko-team{font-size:13px;color:var(--ink);display:flex;align-items:center;gap:6px;padding:2px 0;}
   .ko-team.ko-win{font-weight:700;color:var(--accent);}
   .ko-score{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600;}
+  .ko-pens{font-size:10px;color:var(--mut);font-weight:400;}
   .ko-pred{margin-top:6px;padding-top:6px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:var(--mut);}
   .ko-pred b{color:var(--ink);}
 
@@ -970,9 +971,15 @@
     const st=Object.assign({}, state.status||{});
     (state.frozenMatches||[]).forEach(m=>{
       if(!isKnockoutRound(m.round)) return;
-      if(m.hg==null||m.ag==null||m.hg===m.ag) return;
-      const loser = m.hg>m.ag ? m.away : m.home;
-      st[loser]='eliminated';
+      if(m.adv){
+        // the API told us who advanced (handles extra-time / penalties) — the other team is out
+        const loser = (m.adv===m.home) ? m.away : m.home;
+        st[loser]='eliminated';
+      } else if(m.hg!=null && m.ag!=null && m.hg!==m.ag){
+        // fallback: decisive in 90 minutes
+        st[m.hg>m.ag ? m.away : m.home]='eliminated';
+      }
+      // if level and no adv info yet (data lag), leave both in until the feed resolves it
     });
     return st;
   }
@@ -1462,8 +1469,11 @@
       }
       let score='';
       if(m.played){
-        const hw=m.hg>m.ag, aw=m.ag>m.hg;
-        score=`<div class="ko-score">${m.hg}–${m.ag}</div>`;
+        // winner: prefer the API's adv field (handles ET/pens), else the 90-min score
+        const winner = m.adv || (m.hg>m.ag ? m.home : (m.ag>m.hg ? m.away : null));
+        const hw = winner===m.home, aw = winner===m.away;
+        const penStr = m.pens ? ` <span class="ko-pens">(${m.pens[0]}–${m.pens[1]} pens)</span>` : '';
+        score=`<div class="ko-score">${m.hg}–${m.ag}${penStr}</div>`;
         return `<div class="ko-match done">
           <div class="ko-team ${hw?'ko-win':''}">${flag(m.home)} ${m.home}</div>
           <div class="ko-team ${aw?'ko-win':''}">${flag(m.away)} ${m.away}</div>
