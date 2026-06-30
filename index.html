@@ -2224,7 +2224,14 @@
       state.live = data.live || [];                // in-progress matches (shared)
       state.status = data.status || {};            // qualified/eliminated/alive per team (shared)
       const lockedNow = autoLockUpcoming();
-      if(applied>0 || lockedNow>0){ runForecast(); renderForecast(); }
+      // Recompute the forecast when new results landed, matches locked, OR the set of
+      // eliminated teams changed (e.g. knockout 'adv' data arriving for an already-applied
+      // match — which doesn't increment `applied` but DOES change who can still win).
+      const elimSig = Object.entries(effectiveStatus())
+        .filter(([,v])=>v==='eliminated').map(([t])=>t).sort().join(',');
+      const elimChanged = elimSig !== (state._lastElimSig||'');
+      state._lastElimSig = elimSig;
+      if(applied>0 || lockedNow>0 || elimChanged){ runForecast(); renderForecast(); }
       renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
       // HONEST freshness, but only alarm when it actually matters: a match is LIVE
       // and yet scores aren't refreshing. Before kickoff there's genuinely nothing new
@@ -2342,7 +2349,12 @@
   })();
 
   fillAll(); refreshStats(); renderRatings();
-  if(!state.forecast) runForecast();
+  // Recompute the forecast on load if there's no cache, OR if the cache is stale relative
+  // to who's currently eliminated (e.g. knockout losers that the saved forecast still ranks).
+  (function(){
+    const elimNow=Object.entries(effectiveStatus()).filter(([,v])=>v==='eliminated').map(([t])=>t).sort().join(',');
+    if(!state.forecast || elimNow!==(state._lastElimSig||'')){ state._lastElimSig=elimNow; runForecast(); }
+  })();
   renderForecast();
   // live scores: fetch once now, then poll every 30s (worker is cheap; only spends an
   // API request when a WC match is actually live)
