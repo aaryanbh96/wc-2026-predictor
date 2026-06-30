@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-30T17:15:12Z",
+  "updated": "2026-06-30T19:00:21Z",
   "matches": [
     {
       "id": 1489369,
@@ -4297,6 +4297,65 @@
           "gprev": -0.83
         }
       }
+    },
+    {
+      "id": 1564789,
+      "utc": "2026-06-30T17:00:00+00:00",
+      "home": "Côte d'Ivoire",
+      "away": "Norway",
+      "hg": 1,
+      "ag": 2,
+      "round": "Round of 32",
+      "adv": "Norway",
+      "predicted": {
+        "pA": 0.3699,
+        "pD": 0.268,
+        "pB": 0.3621
+      },
+      "backfilled": false,
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 8,
+          "shots": 12,
+          "blocked": 1,
+          "inbox": 9,
+          "outbox": 3,
+          "fouls": 6,
+          "corners": 12,
+          "offsides": 2,
+          "poss": 46,
+          "yellow": 0,
+          "red": null,
+          "saves": 1,
+          "passes": 390,
+          "passacc": 332,
+          "passpct": 85,
+          "xg": 1.11,
+          "gprev": 0.21
+        },
+        "away": {
+          "sog": 4,
+          "soff": 2,
+          "shots": 9,
+          "blocked": 3,
+          "inbox": 8,
+          "outbox": 1,
+          "fouls": 6,
+          "corners": 3,
+          "offsides": 2,
+          "poss": 54,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 471,
+          "passacc": 413,
+          "passpct": 88,
+          "xg": 2.02,
+          "gprev": 0.21
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4445,20 +4504,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1564789,
-      "utc": "2026-06-30T17:00:00+00:00",
-      "home": "Côte d'Ivoire",
-      "away": "Norway",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.3699,
-        "pD": 0.268,
-        "pB": 0.3621
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
