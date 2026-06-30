@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-30T21:15:12Z",
+  "updated": "2026-06-30T23:00:18Z",
   "matches": [
     {
       "id": 1489369,
@@ -4356,6 +4356,65 @@
           "gprev": 0.21
         }
       }
+    },
+    {
+      "id": 1565177,
+      "utc": "2026-06-30T21:00:00+00:00",
+      "home": "France",
+      "away": "Sweden",
+      "hg": 3,
+      "ag": 0,
+      "round": "Round of 32",
+      "adv": "France",
+      "predicted": {
+        "pA": 0.7254,
+        "pD": 0.1401,
+        "pB": 0.1345
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 12,
+          "soff": 9,
+          "shots": 25,
+          "blocked": 4,
+          "inbox": 16,
+          "outbox": 9,
+          "fouls": 13,
+          "corners": 9,
+          "offsides": 3,
+          "poss": 62,
+          "yellow": null,
+          "red": null,
+          "saves": 2,
+          "passes": 551,
+          "passacc": 485,
+          "passpct": 88,
+          "xg": 3.16,
+          "gprev": 1.14
+        },
+        "away": {
+          "sog": 2,
+          "soff": 4,
+          "shots": 6,
+          "blocked": 0,
+          "inbox": 5,
+          "outbox": 1,
+          "fouls": 10,
+          "corners": 1,
+          "offsides": 1,
+          "poss": 38,
+          "yellow": null,
+          "red": null,
+          "saves": 9,
+          "passes": 343,
+          "passacc": 271,
+          "passpct": 79,
+          "xg": 0.56,
+          "gprev": 1.14
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4504,20 +4563,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1565177,
-      "utc": "2026-06-30T21:00:00+00:00",
-      "home": "France",
-      "away": "Sweden",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.7254,
-        "pD": 0.1401,
-        "pB": 0.1345
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
