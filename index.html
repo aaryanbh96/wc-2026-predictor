@@ -964,6 +964,18 @@
     const x=(r||'').toLowerCase();
     return x.includes('round of')||x.includes('quarter')||x.includes('semi')||x.includes('final');
   }
+  // Effective elimination status: group-stage status from the pipeline PLUS knockout
+  // losses (a team that lost a finished knockout tie is eliminated immediately).
+  function effectiveStatus(){
+    const st=Object.assign({}, state.status||{});
+    (state.frozenMatches||[]).forEach(m=>{
+      if(!isKnockoutRound(m.round)) return;
+      if(m.hg==null||m.ag==null||m.hg===m.ag) return;
+      const loser = m.hg>m.ag ? m.away : m.home;
+      st[loser]='eliminated';
+    });
+    return st;
+  }
   // Build a prediction label for a match. For knockouts, fold the draw into a 2-way
   // "to advance" call so it never shows a draw; for group games, show the 3-way split.
   function predLabel(m){
@@ -1366,8 +1378,8 @@
       <div class="tsprog-head"><span><b>${played}</b> of ${TOTAL} matches played${live?` · <span style="color:var(--bad)">${live} live now</span>`:''}</span><span>${pctDone}%</span></div>
       <div class="tsprog-bar"><i style="width:${pctDone}%"></i></div>`;
 
-    // advancing / eliminated summary from qualification status
-    const status=state.status||{};
+    // advancing / eliminated summary from qualification status (+ knockout eliminations)
+    const status=effectiveStatus();
     const qualified=[], eliminated=[], alive=[];
     Object.keys(state.teams).forEach(t=>{
       const s=status[t];
@@ -1663,7 +1675,7 @@
   function computeForecast(nsim, overrides){
     nsim=nsim||NSIM;
     const all=names();
-    const elim=state.status||{};
+    const elim=effectiveStatus();   // group-stage + knockout eliminations
     EFF={}; all.forEach(n=> EFF[n]= (overrides&&overrides[n]!=null)? overrides[n] : effRating(n));
     const groups={}; all.forEach(n=>{ (groups[state.teams[n].group]=groups[state.teams[n].group]||[]).push(n); });
     const gkeys=Object.keys(groups).sort();
