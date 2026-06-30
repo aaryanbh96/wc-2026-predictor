@@ -192,8 +192,20 @@ def main():
                 unmatched.add(home)
             if away not in VALID:
                 unmatched.add(away)
-            matches.append({"id": fid, "utc": utc, "home": home, "away": away,
-                            "hg": int(hg), "ag": int(ag), "round": rnd})
+            rec = {"id": fid, "utc": utc, "home": home, "away": away,
+                   "hg": int(hg), "ag": int(ag), "round": rnd}
+            # Who actually advanced? For knockouts decided in ET/penalties the 90-min score
+            # can be level, so capture the API's winner flag + penalty score.
+            hw = (teams.get("home") or {}).get("winner")
+            aw = (teams.get("away") or {}).get("winner")
+            if hw is True:
+                rec["adv"] = home
+            elif aw is True:
+                rec["adv"] = away
+            pen = (fx.get("score") or {}).get("penalty") or {}
+            if pen.get("home") is not None and pen.get("away") is not None:
+                rec["pens"] = [pen.get("home"), pen.get("away")]
+            matches.append(rec)
         elif status in LIVE_STATUSES:
             if home in VALID and away in VALID:
                 live.append({"id": fid, "utc": utc, "home": home, "away": away, "round": rnd})
@@ -246,10 +258,19 @@ def main():
                 model.learn(mm["home"], mm["hg"], mm["ag"], mm["away"], neutral=True)
         if mm.get("predicted"):
             pr = mm["predicted"]
-            top = max(pr["pA"], pr["pB"], pr["pD"])
-            pick = "A" if top == pr["pA"] else ("B" if top == pr["pB"] else "D")
-            outcome = "A" if mm["hg"] > mm["ag"] else ("B" if mm["hg"] < mm["ag"] else "D")
-            mm["hit"] = (pick == outcome)
+            is_ko = any(s in (mm.get("round") or "").lower()
+                        for s in ("round of", "quarter", "semi", "final"))
+            if is_ko and mm.get("adv"):
+                # knockout: grade on who ADVANCED (handles ET/penalties), not the 90-min score.
+                # fold the draw out — pick the side the model favored to go through.
+                pick = "A" if pr["pA"] >= pr["pB"] else "B"
+                outcome = "A" if mm["adv"] == mm["home"] else "B"
+                mm["hit"] = (pick == outcome)
+            else:
+                top = max(pr["pA"], pr["pB"], pr["pD"])
+                pick = "A" if top == pr["pA"] else ("B" if top == pr["pB"] else "D")
+                outcome = "A" if mm["hg"] > mm["ag"] else ("B" if mm["hg"] < mm["ag"] else "D")
+                mm["hit"] = (pick == outcome)
 
     for mm in upcoming:
         if mm["id"] in prev_pred:
