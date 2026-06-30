@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-30T01:15:12Z",
+  "updated": "2026-06-30T04:00:18Z",
   "matches": [
     {
       "id": 1489369,
@@ -4175,6 +4175,64 @@
           "gprev": 0.59
         }
       }
+    },
+    {
+      "id": 1562345,
+      "utc": "2026-06-30T01:00:00+00:00",
+      "home": "Netherlands",
+      "away": "Morocco",
+      "hg": 1,
+      "ag": 1,
+      "round": "Round of 32",
+      "predicted": {
+        "pA": 0.3977,
+        "pD": 0.2568,
+        "pB": 0.3456
+      },
+      "backfilled": false,
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 2,
+          "soff": 1,
+          "shots": 6,
+          "blocked": 3,
+          "inbox": 4,
+          "outbox": 2,
+          "fouls": 18,
+          "corners": 5,
+          "offsides": 3,
+          "poss": 30,
+          "yellow": 0,
+          "red": null,
+          "saves": 5,
+          "passes": 373,
+          "passacc": 293,
+          "passpct": 79,
+          "xg": 0.23,
+          "gprev": -0.83
+        },
+        "away": {
+          "sog": 5,
+          "soff": 4,
+          "shots": 11,
+          "blocked": 2,
+          "inbox": 7,
+          "outbox": 4,
+          "fouls": 15,
+          "corners": 8,
+          "offsides": 0,
+          "poss": 70,
+          "yellow": 1,
+          "red": null,
+          "saves": 1,
+          "passes": 878,
+          "passacc": 800,
+          "passpct": 91,
+          "xg": 1.4,
+          "gprev": -0.83
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4323,20 +4381,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1562345,
-      "utc": "2026-06-30T01:00:00+00:00",
-      "home": "Netherlands",
-      "away": "Morocco",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.3977,
-        "pD": 0.2568,
-        "pB": 0.3456
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -4589,6 +4634,44 @@
         {
           "team": "Mexico",
           "win": 0.0304
+        }
+      ]
+    },
+    {
+      "date": "2026-06-29",
+      "games_played": 76,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1945
+        },
+        {
+          "team": "France",
+          "win": 0.1667
+        },
+        {
+          "team": "Spain",
+          "win": 0.1201
+        },
+        {
+          "team": "Brazil",
+          "win": 0.0993
+        },
+        {
+          "team": "England",
+          "win": 0.0866
+        },
+        {
+          "team": "Netherlands",
+          "win": 0.0501
+        },
+        {
+          "team": "Portugal",
+          "win": 0.0452
+        },
+        {
+          "team": "Mexico",
+          "win": 0.0312
         }
       ]
     }
