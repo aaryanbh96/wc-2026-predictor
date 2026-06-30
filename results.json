@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-30T05:00:19Z",
+  "updated": "2026-06-30T05:39:49Z",
   "matches": [
     {
       "id": 1489369,
@@ -9,6 +9,7 @@
       "hg": 2,
       "ag": 0,
       "round": "Group Stage - 1",
+      "adv": "Mexico",
       "predicted": {
         "pA": 0.6798,
         "pD": 0.1549,
@@ -67,6 +68,7 @@
       "hg": 2,
       "ag": 1,
       "round": "Group Stage - 1",
+      "adv": "Korea Republic",
       "predicted": {
         "pA": 0.3671,
         "pD": 0.2692,
@@ -183,6 +185,7 @@
       "hg": 4,
       "ag": 1,
       "round": "Group Stage - 1",
+      "adv": "USA",
       "predicted": {
         "pA": 0.5052,
         "pD": 0.2155,
@@ -357,6 +360,7 @@
       "hg": 0,
       "ag": 1,
       "round": "Group Stage - 1",
+      "adv": "Scotland",
       "predicted": {
         "pA": 0.3002,
         "pD": 0.228,
@@ -415,6 +419,7 @@
       "hg": 2,
       "ag": 0,
       "round": "Group Stage - 1",
+      "adv": "Australia",
       "predicted": {
         "pA": 0.4766,
         "pD": 0.2262,
@@ -473,6 +478,7 @@
       "hg": 7,
       "ag": 1,
       "round": "Group Stage - 1",
+      "adv": "Germany",
       "predicted": {
         "pA": 0.7343,
         "pD": 0.1373,
@@ -589,6 +595,7 @@
       "hg": 1,
       "ag": 0,
       "round": "Group Stage - 1",
+      "adv": "Côte d'Ivoire",
       "predicted": {
         "pA": 0.299,
         "pD": 0.2273,
@@ -647,6 +654,7 @@
       "hg": 5,
       "ag": 1,
       "round": "Group Stage - 1",
+      "adv": "Sweden",
       "predicted": {
         "pA": 0.4412,
         "pD": 0.2397,
@@ -937,6 +945,7 @@
       "hg": 3,
       "ag": 1,
       "round": "Group Stage - 1",
+      "adv": "France",
       "stats": {
         "home": {
           "sog": 8,
@@ -988,6 +997,7 @@
       "hg": 1,
       "ag": 4,
       "round": "Group Stage - 1",
+      "adv": "Norway",
       "stats": {
         "home": {
           "sog": 1,
@@ -1039,6 +1049,7 @@
       "hg": 3,
       "ag": 0,
       "round": "Group Stage - 1",
+      "adv": "Argentina",
       "stats": {
         "home": {
           "sog": 6,
@@ -1090,6 +1101,7 @@
       "hg": 3,
       "ag": 1,
       "round": "Group Stage - 1",
+      "adv": "Austria",
       "stats": {
         "home": {
           "sog": 4,
@@ -1192,6 +1204,7 @@
       "hg": 4,
       "ag": 2,
       "round": "Group Stage - 1",
+      "adv": "England",
       "stats": {
         "home": {
           "sog": 11,
@@ -1243,6 +1256,7 @@
       "hg": 1,
       "ag": 0,
       "round": "Group Stage - 1",
+      "adv": "Ghana",
       "stats": {
         "home": {
           "sog": 2,
@@ -1294,6 +1308,7 @@
       "hg": 1,
       "ag": 3,
       "round": "Group Stage - 1",
+      "adv": "Colombia",
       "stats": {
         "home": {
           "sog": 2,
@@ -1396,6 +1411,7 @@
       "hg": 4,
       "ag": 1,
       "round": "Group Stage - 2",
+      "adv": "Switzerland",
       "stats": {
         "home": {
           "sog": 7,
@@ -1447,6 +1463,7 @@
       "hg": 6,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "Canada",
       "stats": {
         "home": {
           "sog": 10,
@@ -1498,6 +1515,7 @@
       "hg": 1,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "Mexico",
       "stats": {
         "home": {
           "sog": 4,
@@ -1549,6 +1567,7 @@
       "hg": 2,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "USA",
       "stats": {
         "home": {
           "sog": 2,
@@ -1600,6 +1619,7 @@
       "hg": 0,
       "ag": 1,
       "round": "Group Stage - 2",
+      "adv": "Morocco",
       "stats": {
         "home": {
           "sog": 0,
@@ -1651,6 +1671,7 @@
       "hg": 3,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "Brazil",
       "stats": {
         "home": {
           "sog": 5,
@@ -1702,6 +1723,7 @@
       "hg": 0,
       "ag": 1,
       "round": "Group Stage - 2",
+      "adv": "Paraguay",
       "stats": {
         "home": {
           "sog": 5,
@@ -1753,6 +1775,7 @@
       "hg": 5,
       "ag": 1,
       "round": "Group Stage - 2",
+      "adv": "Netherlands",
       "stats": {
         "home": {
           "sog": 7,
@@ -1804,6 +1827,7 @@
       "hg": 2,
       "ag": 1,
       "round": "Group Stage - 2",
+      "adv": "Germany",
       "stats": {
         "home": {
           "sog": 7,
@@ -1906,6 +1930,7 @@
       "hg": 0,
       "ag": 4,
       "round": "Group Stage - 2",
+      "adv": "Japan",
       "stats": {
         "home": {
           "sog": 0,
@@ -1957,6 +1982,7 @@
       "hg": 4,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "Spain",
       "stats": {
         "home": {
           "sog": 8,
@@ -2110,6 +2136,7 @@
       "hg": 1,
       "ag": 3,
       "round": "Group Stage - 2",
+      "adv": "Egypt",
       "stats": {
         "home": {
           "sog": 5,
@@ -2161,6 +2188,7 @@
       "hg": 2,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "Argentina",
       "stats": {
         "home": {
           "sog": 5,
@@ -2212,6 +2240,7 @@
       "hg": 3,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "France",
       "predicted": {
         "pA": 0.8661,
         "pD": 0.0966,
@@ -2270,6 +2299,7 @@
       "hg": 3,
       "ag": 2,
       "round": "Group Stage - 2",
+      "adv": "Norway",
       "predicted": {
         "pA": 0.4342,
         "pD": 0.2424,
@@ -2328,6 +2358,7 @@
       "hg": 1,
       "ag": 2,
       "round": "Group Stage - 2",
+      "adv": "Algeria",
       "predicted": {
         "pA": 0.2664,
         "pD": 0.2082,
@@ -2386,6 +2417,7 @@
       "hg": 5,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "Portugal",
       "predicted": {
         "pA": 0.7442,
         "pD": 0.1341,
@@ -2502,6 +2534,7 @@
       "hg": 0,
       "ag": 1,
       "round": "Group Stage - 2",
+      "adv": "Croatia",
       "predicted": {
         "pA": 0.1921,
         "pD": 0.1683,
@@ -2560,6 +2593,7 @@
       "hg": 1,
       "ag": 0,
       "round": "Group Stage - 2",
+      "adv": "Colombia",
       "predicted": {
         "pA": 0.63,
         "pD": 0.1715,
@@ -2618,6 +2652,7 @@
       "hg": 2,
       "ag": 1,
       "round": "Group Stage - 3",
+      "adv": "Switzerland",
       "predicted": {
         "pA": 0.3696,
         "pD": 0.2681,
@@ -2676,6 +2711,7 @@
       "hg": 3,
       "ag": 1,
       "round": "Group Stage - 3",
+      "adv": "Bosnia and Herzegovina",
       "predicted": {
         "pA": 0.4326,
         "pD": 0.243,
@@ -2734,6 +2770,7 @@
       "hg": 4,
       "ag": 2,
       "round": "Group Stage - 3",
+      "adv": "Morocco",
       "predicted": {
         "pA": 0.8348,
         "pD": 0.106,
@@ -2792,6 +2829,7 @@
       "hg": 0,
       "ag": 3,
       "round": "Group Stage - 3",
+      "adv": "Brazil",
       "predicted": {
         "pA": 0.1703,
         "pD": 0.1574,
@@ -2850,6 +2888,7 @@
       "hg": 0,
       "ag": 3,
       "round": "Group Stage - 3",
+      "adv": "Mexico",
       "predicted": {
         "pA": 0.087,
         "pD": 0.1183,
@@ -2908,6 +2947,7 @@
       "hg": 1,
       "ag": 0,
       "round": "Group Stage - 3",
+      "adv": "South Africa",
       "predicted": {
         "pA": 0.2235,
         "pD": 0.1846,
@@ -2966,6 +3006,7 @@
       "hg": 2,
       "ag": 1,
       "round": "Group Stage - 3",
+      "adv": "Ecuador",
       "predicted": {
         "pA": 0.1045,
         "pD": 0.1262,
@@ -3024,6 +3065,7 @@
       "hg": 0,
       "ag": 2,
       "round": "Group Stage - 3",
+      "adv": "Côte d'Ivoire",
       "predicted": {
         "pA": 0.1802,
         "pD": 0.1623,
@@ -3140,6 +3182,7 @@
       "hg": 1,
       "ag": 3,
       "round": "Group Stage - 3",
+      "adv": "Netherlands",
       "predicted": {
         "pA": 0.0696,
         "pD": 0.1106,
@@ -3198,6 +3241,7 @@
       "hg": 3,
       "ag": 2,
       "round": "Group Stage - 3",
+      "adv": "Türkiye",
       "predicted": {
         "pA": 0.0624,
         "pD": 0.1074,
@@ -3314,6 +3358,7 @@
       "hg": 5,
       "ag": 0,
       "round": "Group Stage - 3",
+      "adv": "Senegal",
       "predicted": {
         "pA": 0.5605,
         "pD": 0.1956,
@@ -3372,6 +3417,7 @@
       "hg": 1,
       "ag": 4,
       "round": "Group Stage - 3",
+      "adv": "France",
       "predicted": {
         "pA": 0.2328,
         "pD": 0.1896,
@@ -3430,6 +3476,7 @@
       "hg": 0,
       "ag": 1,
       "round": "Group Stage - 3",
+      "adv": "Spain",
       "predicted": {
         "pA": 0.2113,
         "pD": 0.1782,
@@ -3604,6 +3651,7 @@
       "hg": 1,
       "ag": 5,
       "round": "Group Stage - 3",
+      "adv": "Belgium",
       "predicted": {
         "pA": 0.1369,
         "pD": 0.1413,
@@ -3662,6 +3710,7 @@
       "hg": 2,
       "ag": 1,
       "round": "Group Stage - 3",
+      "adv": "Croatia",
       "predicted": {
         "pA": 0.3401,
         "pD": 0.2531,
@@ -3720,6 +3769,7 @@
       "hg": 0,
       "ag": 2,
       "round": "Group Stage - 3",
+      "adv": "England",
       "predicted": {
         "pA": 0.0516,
         "pD": 0.1028,
@@ -3836,6 +3886,7 @@
       "hg": 3,
       "ag": 1,
       "round": "Group Stage - 3",
+      "adv": "Congo DR",
       "predicted": {
         "pA": 0.5756,
         "pD": 0.1903,
@@ -3952,6 +4003,7 @@
       "hg": 1,
       "ag": 3,
       "round": "Group Stage - 3",
+      "adv": "Argentina",
       "predicted": {
         "pA": 0.0249,
         "pD": 0.0913,
@@ -4010,6 +4062,7 @@
       "hg": 0,
       "ag": 1,
       "round": "Round of 32",
+      "adv": "Canada",
       "predicted": {
         "pA": 0.4692,
         "pD": 0.229,
@@ -4068,6 +4121,7 @@
       "hg": 2,
       "ag": 1,
       "round": "Round of 32",
+      "adv": "Brazil",
       "predicted": {
         "pA": 0.5138,
         "pD": 0.2124,
@@ -4126,6 +4180,11 @@
       "hg": 1,
       "ag": 1,
       "round": "Round of 32",
+      "adv": "Paraguay",
+      "pens": [
+        3,
+        4
+      ],
       "predicted": {
         "pA": 0.5776,
         "pD": 0.1896,
@@ -4184,6 +4243,11 @@
       "hg": 1,
       "ag": 1,
       "round": "Round of 32",
+      "adv": "Morocco",
+      "pens": [
+        2,
+        3
+      ],
       "predicted": {
         "pA": 0.3977,
         "pD": 0.2568,
