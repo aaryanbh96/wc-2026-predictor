@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-30T23:00:18Z",
+  "updated": "2026-07-01T01:00:18Z",
   "matches": [
     {
       "id": 1489369,
@@ -4419,18 +4419,6 @@
   ],
   "upcoming": [
     {
-      "id": 1567306,
-      "utc": "2026-07-01T01:00:00+00:00",
-      "home": "Mexico",
-      "away": "Ecuador",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.5338,
-        "pD": 0.2051,
-        "pB": 0.261
-      }
-    },
-    {
       "id": 1567307,
       "utc": "2026-07-01T16:00:00+00:00",
       "home": "England",
@@ -4854,6 +4842,44 @@
         {
           "team": "Mexico",
           "win": 0.0312
+        }
+      ]
+    },
+    {
+      "date": "2026-06-30",
+      "games_played": 78,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1875
+        },
+        {
+          "team": "France",
+          "win": 0.1752
+        },
+        {
+          "team": "Spain",
+          "win": 0.1163
+        },
+        {
+          "team": "Brazil",
+          "win": 0.1003
+        },
+        {
+          "team": "England",
+          "win": 0.0906
+        },
+        {
+          "team": "Netherlands",
+          "win": 0.0522
+        },
+        {
+          "team": "Portugal",
+          "win": 0.0428
+        },
+        {
+          "team": "Mexico",
+          "win": 0.0307
         }
       ]
     }
