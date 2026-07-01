@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-01T02:15:12Z",
+  "updated": "2026-07-01T04:15:12Z",
   "matches": [
     {
       "id": 1489369,
@@ -4415,6 +4415,65 @@
           "gprev": 1.14
         }
       }
+    },
+    {
+      "id": 1567306,
+      "utc": "2026-07-01T01:00:00+00:00",
+      "home": "Mexico",
+      "away": "Ecuador",
+      "hg": 2,
+      "ag": 0,
+      "round": "Round of 32",
+      "adv": "Mexico",
+      "predicted": {
+        "pA": 0.5336,
+        "pD": 0.2052,
+        "pB": 0.2612
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 3,
+          "soff": 9,
+          "shots": 15,
+          "blocked": 3,
+          "inbox": 10,
+          "outbox": 5,
+          "fouls": 10,
+          "corners": 3,
+          "offsides": 0,
+          "poss": 43,
+          "yellow": 0,
+          "red": 0,
+          "saves": 1,
+          "passes": 319,
+          "passacc": 249,
+          "passpct": 78,
+          "xg": 1.02,
+          "gprev": -0.57
+        },
+        "away": {
+          "sog": 1,
+          "soff": 5,
+          "shots": 7,
+          "blocked": 1,
+          "inbox": 5,
+          "outbox": 2,
+          "fouls": 14,
+          "corners": 8,
+          "offsides": 1,
+          "poss": 57,
+          "yellow": 3,
+          "red": 1,
+          "saves": 1,
+          "passes": 407,
+          "passacc": 340,
+          "passpct": 84,
+          "xg": 0.73,
+          "gprev": -0.57
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4551,20 +4610,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1567306,
-      "utc": "2026-07-01T01:00:00+00:00",
-      "home": "Mexico",
-      "away": "Ecuador",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.5336,
-        "pD": 0.2052,
-        "pB": 0.2612
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
