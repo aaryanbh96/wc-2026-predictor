@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-01T20:15:15Z",
+  "updated": "2026-07-01T23:00:24Z",
   "matches": [
     {
       "id": 1489369,
@@ -4533,6 +4533,65 @@
           "gprev": -0.04
         }
       }
+    },
+    {
+      "id": 1567308,
+      "utc": "2026-07-01T20:00:00+00:00",
+      "home": "Belgium",
+      "away": "Senegal",
+      "hg": 3,
+      "ag": 2,
+      "round": "Round of 32",
+      "adv": "Belgium",
+      "predicted": {
+        "pA": 0.5345,
+        "pD": 0.2049,
+        "pB": 0.2606
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 5,
+          "soff": 9,
+          "shots": 19,
+          "blocked": 5,
+          "inbox": 11,
+          "outbox": 8,
+          "fouls": 21,
+          "corners": 4,
+          "offsides": 2,
+          "poss": 52,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 699,
+          "passacc": 602,
+          "passpct": 86,
+          "xg": 1.8,
+          "gprev": -0.61
+        },
+        "away": {
+          "sog": 5,
+          "soff": 10,
+          "shots": 16,
+          "blocked": 1,
+          "inbox": 10,
+          "outbox": 6,
+          "fouls": 12,
+          "corners": 2,
+          "offsides": 2,
+          "poss": 48,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 639,
+          "passacc": 536,
+          "passpct": 84,
+          "xg": 3.22,
+          "gprev": -0.61
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4657,20 +4716,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1567308,
-      "utc": "2026-07-01T20:00:00+00:00",
-      "home": "Belgium",
-      "away": "Senegal",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.5345,
-        "pD": 0.2049,
-        "pB": 0.2606
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
