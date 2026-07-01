@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-01T16:15:13Z",
+  "updated": "2026-07-01T18:15:11Z",
   "matches": [
     {
       "id": 1489369,
@@ -4474,6 +4474,65 @@
           "gprev": -0.57
         }
       }
+    },
+    {
+      "id": 1567307,
+      "utc": "2026-07-01T16:00:00+00:00",
+      "home": "England",
+      "away": "Congo DR",
+      "hg": 2,
+      "ag": 1,
+      "round": "Round of 32",
+      "adv": "England",
+      "predicted": {
+        "pA": 0.7256,
+        "pD": 0.1401,
+        "pB": 0.1343
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 7,
+          "soff": 6,
+          "shots": 16,
+          "blocked": 3,
+          "inbox": 13,
+          "outbox": 3,
+          "fouls": 10,
+          "corners": 5,
+          "offsides": 0,
+          "poss": 60,
+          "yellow": 1,
+          "red": null,
+          "saves": 1,
+          "passes": 515,
+          "passacc": 467,
+          "passpct": 91,
+          "xg": 2.04,
+          "gprev": -0.04
+        },
+        "away": {
+          "sog": 2,
+          "soff": 2,
+          "shots": 6,
+          "blocked": 2,
+          "inbox": 2,
+          "outbox": 4,
+          "fouls": 12,
+          "corners": 3,
+          "offsides": 4,
+          "poss": 40,
+          "yellow": 1,
+          "red": null,
+          "saves": 5,
+          "passes": 365,
+          "passacc": 299,
+          "passpct": 82,
+          "xg": 0.76,
+          "gprev": -0.04
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4610,20 +4669,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1567307,
-      "utc": "2026-07-01T16:00:00+00:00",
-      "home": "England",
-      "away": "Congo DR",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.7256,
-        "pD": 0.1401,
-        "pB": 0.1343
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
