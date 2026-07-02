@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-02T21:00:22Z",
+  "updated": "2026-07-02T23:12:09Z",
   "matches": [
     {
       "id": 1489369,
@@ -4714,18 +4714,6 @@
   ],
   "upcoming": [
     {
-      "id": 1567309,
-      "utc": "2026-07-02T23:00:00+00:00",
-      "home": "Portugal",
-      "away": "Croatia",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.4336,
-        "pD": 0.2426,
-        "pB": 0.3238
-      }
-    },
-    {
       "id": 1567312,
       "utc": "2026-07-03T03:00:00+00:00",
       "home": "Switzerland",
@@ -4834,7 +4822,20 @@
       }
     }
   ],
-  "live": [],
+  "live": [
+    {
+      "id": 1567309,
+      "utc": "2026-07-02T23:00:00+00:00",
+      "home": "Portugal",
+      "away": "Croatia",
+      "round": "Round of 32",
+      "predicted": {
+        "pA": 0.4336,
+        "pD": 0.2426,
+        "pB": 0.3238
+      }
+    }
+  ],
   "daily": [
     {
       "date": "2026-06-22",
