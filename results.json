@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-01T23:00:24Z",
+  "updated": "2026-07-02T00:15:11Z",
   "matches": [
     {
       "id": 1489369,
@@ -4596,18 +4596,6 @@
   ],
   "upcoming": [
     {
-      "id": 1562586,
-      "utc": "2026-07-02T00:00:00+00:00",
-      "home": "USA",
-      "away": "Bosnia and Herzegovina",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.4277,
-        "pD": 0.2449,
-        "pB": 0.3274
-      }
-    },
-    {
       "id": 1567311,
       "utc": "2026-07-02T19:00:00+00:00",
       "home": "Spain",
@@ -4716,7 +4704,20 @@
       }
     }
   ],
-  "live": [],
+  "live": [
+    {
+      "id": 1562586,
+      "utc": "2026-07-02T00:00:00+00:00",
+      "home": "USA",
+      "away": "Bosnia and Herzegovina",
+      "round": "Round of 32",
+      "predicted": {
+        "pA": 0.4277,
+        "pD": 0.2449,
+        "pB": 0.3274
+      }
+    }
+  ],
   "daily": [
     {
       "date": "2026-06-22",
