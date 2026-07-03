@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-03T03:15:13Z",
+  "updated": "2026-07-03T04:58:25Z",
   "matches": [
     {
       "id": 1489369,
@@ -4769,6 +4769,51 @@
           "gprev": -0.45
         }
       }
+    },
+    {
+      "id": 1567312,
+      "utc": "2026-07-03T03:00:00+00:00",
+      "home": "Switzerland",
+      "away": "Algeria",
+      "hg": 2,
+      "ag": 0,
+      "round": "Round of 32",
+      "adv": "Switzerland",
+      "predicted": {
+        "pA": 0.5615,
+        "pD": 0.1953,
+        "pB": 0.2432
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "blocked": 2,
+          "sog": 5,
+          "saves": 2,
+          "soff": 4,
+          "shots": 11,
+          "corners": 4,
+          "offsides": 0,
+          "yellow": 0,
+          "fouls": 10,
+          "red": 0,
+          "poss": 44
+        },
+        "away": {
+          "blocked": 3,
+          "sog": 2,
+          "saves": 2,
+          "soff": 3,
+          "shots": 8,
+          "corners": 2,
+          "offsides": 2,
+          "yellow": 2,
+          "fouls": 12,
+          "red": 0,
+          "poss": 56
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4869,20 +4914,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1567312,
-      "utc": "2026-07-03T03:00:00+00:00",
-      "home": "Switzerland",
-      "away": "Algeria",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.5615,
-        "pD": 0.1953,
-        "pB": 0.2432
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -5249,6 +5281,44 @@
         {
           "team": "Belgium",
           "win": 0.0413
+        }
+      ]
+    },
+    {
+      "date": "2026-07-02",
+      "games_played": 85,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1819
+        },
+        {
+          "team": "France",
+          "win": 0.1684
+        },
+        {
+          "team": "Spain",
+          "win": 0.1227
+        },
+        {
+          "team": "Brazil",
+          "win": 0.0943
+        },
+        {
+          "team": "England",
+          "win": 0.0916
+        },
+        {
+          "team": "Portugal",
+          "win": 0.0625
+        },
+        {
+          "team": "Netherlands",
+          "win": 0.0449
+        },
+        {
+          "team": "Mexico",
+          "win": 0.0381
         }
       ]
     }
