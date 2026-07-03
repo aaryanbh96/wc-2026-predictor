@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-02T23:12:09Z",
+  "updated": "2026-07-03T01:15:12Z",
   "matches": [
     {
       "id": 1489369,
@@ -4710,6 +4710,65 @@
           "gprev": -0.57
         }
       }
+    },
+    {
+      "id": 1567309,
+      "utc": "2026-07-02T23:00:00+00:00",
+      "home": "Portugal",
+      "away": "Croatia",
+      "hg": 2,
+      "ag": 1,
+      "round": "Round of 32",
+      "adv": "Portugal",
+      "predicted": {
+        "pA": 0.4336,
+        "pD": 0.2426,
+        "pB": 0.3238
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 3,
+          "soff": 8,
+          "shots": 15,
+          "blocked": 4,
+          "inbox": 10,
+          "outbox": 5,
+          "fouls": 6,
+          "corners": 9,
+          "offsides": 1,
+          "poss": 60,
+          "yellow": 1,
+          "red": null,
+          "saves": 5,
+          "passes": 576,
+          "passacc": 526,
+          "passpct": 91,
+          "xg": 2.18,
+          "gprev": -0.45
+        },
+        "away": {
+          "sog": 6,
+          "soff": 6,
+          "shots": 14,
+          "blocked": 2,
+          "inbox": 11,
+          "outbox": 3,
+          "fouls": 12,
+          "corners": 5,
+          "offsides": 4,
+          "poss": 40,
+          "yellow": 2,
+          "red": null,
+          "saves": 2,
+          "passes": 366,
+          "passacc": 311,
+          "passpct": 85,
+          "xg": 1.34,
+          "gprev": -0.45
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4822,20 +4881,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1567309,
-      "utc": "2026-07-02T23:00:00+00:00",
-      "home": "Portugal",
-      "away": "Croatia",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.4336,
-        "pD": 0.2426,
-        "pB": 0.3238
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
