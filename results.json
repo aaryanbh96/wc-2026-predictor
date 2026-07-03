@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-03T18:15:12Z",
+  "updated": "2026-07-03T21:00:23Z",
   "matches": [
     {
       "id": 1489369,
@@ -4814,6 +4814,69 @@
           "poss": 56
         }
       }
+    },
+    {
+      "id": 1565178,
+      "utc": "2026-07-03T18:00:00+00:00",
+      "home": "Australia",
+      "away": "Egypt",
+      "hg": 1,
+      "ag": 1,
+      "round": "Round of 32",
+      "adv": "Egypt",
+      "pens": [
+        2,
+        4
+      ],
+      "predicted": {
+        "pA": 0.3577,
+        "pD": 0.265,
+        "pB": 0.3773
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 1,
+          "soff": 6,
+          "shots": 16,
+          "blocked": 9,
+          "inbox": 10,
+          "outbox": 6,
+          "fouls": 12,
+          "corners": 4,
+          "offsides": 0,
+          "poss": 42,
+          "yellow": 0,
+          "red": null,
+          "saves": 3,
+          "passes": 507,
+          "passacc": 404,
+          "passpct": 80,
+          "xg": 0.87,
+          "gprev": -0.9
+        },
+        "away": {
+          "sog": 4,
+          "soff": 4,
+          "shots": 14,
+          "blocked": 6,
+          "inbox": 8,
+          "outbox": 6,
+          "fouls": 14,
+          "corners": 7,
+          "offsides": 3,
+          "poss": 58,
+          "yellow": 2,
+          "red": null,
+          "saves": 1,
+          "passes": 723,
+          "passacc": 614,
+          "passpct": 85,
+          "xg": 1.36,
+          "gprev": -0.9
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4914,20 +4977,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1565178,
-      "utc": "2026-07-03T18:00:00+00:00",
-      "home": "Australia",
-      "away": "Egypt",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.3577,
-        "pD": 0.265,
-        "pB": 0.3773
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
