@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-03T22:15:12Z",
+  "updated": "2026-07-04T00:45:12Z",
   "matches": [
     {
       "id": 1489369,
@@ -4877,6 +4877,65 @@
           "gprev": -0.9
         }
       }
+    },
+    {
+      "id": 1565179,
+      "utc": "2026-07-03T22:00:00+00:00",
+      "home": "Argentina",
+      "away": "Cabo Verde",
+      "hg": 3,
+      "ag": 2,
+      "round": "Round of 32",
+      "adv": "Argentina",
+      "predicted": {
+        "pA": 0.7998,
+        "pD": 0.1167,
+        "pB": 0.0835
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 10,
+          "soff": 5,
+          "shots": 22,
+          "blocked": 7,
+          "inbox": 15,
+          "outbox": 7,
+          "fouls": 13,
+          "corners": 8,
+          "offsides": 3,
+          "poss": 64,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 843,
+          "passacc": 776,
+          "passpct": 92,
+          "xg": 2.15,
+          "gprev": -0.6
+        },
+        "away": {
+          "sog": 5,
+          "soff": 4,
+          "shots": 13,
+          "blocked": 4,
+          "inbox": 6,
+          "outbox": 7,
+          "fouls": 12,
+          "corners": 7,
+          "offsides": 2,
+          "poss": 36,
+          "yellow": 1,
+          "red": null,
+          "saves": 8,
+          "passes": 466,
+          "passacc": 401,
+          "passpct": 86,
+          "xg": 0.36,
+          "gprev": -0.6
+        }
+      }
     }
   ],
   "upcoming": [
@@ -4965,20 +5024,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1565179,
-      "utc": "2026-07-03T22:00:00+00:00",
-      "home": "Argentina",
-      "away": "Cabo Verde",
-      "round": "Round of 32",
-      "predicted": {
-        "pA": 0.7998,
-        "pD": 0.1167,
-        "pB": 0.0835
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
