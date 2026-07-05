@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-05T20:15:12Z",
+  "updated": "2026-07-05T22:15:12Z",
   "matches": [
     {
       "id": 1489369,
@@ -5113,6 +5113,65 @@
           "gprev": 0.37
         }
       }
+    },
+    {
+      "id": 1568100,
+      "utc": "2026-07-05T20:00:00+00:00",
+      "home": "Brazil",
+      "away": "Norway",
+      "hg": 1,
+      "ag": 2,
+      "round": "Round of 16",
+      "adv": "Norway",
+      "predicted": {
+        "pA": 0.6225,
+        "pD": 0.1741,
+        "pB": 0.2034
+      },
+      "backfilled": false,
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 6,
+          "shots": 14,
+          "blocked": 4,
+          "inbox": 10,
+          "outbox": 4,
+          "fouls": 7,
+          "corners": 5,
+          "offsides": 1,
+          "poss": 33,
+          "yellow": 1,
+          "red": null,
+          "saves": 3,
+          "passes": 326,
+          "passacc": 277,
+          "passpct": 85,
+          "xg": 1.93,
+          "gprev": 1.0
+        },
+        "away": {
+          "sog": 5,
+          "soff": 3,
+          "shots": 9,
+          "blocked": 1,
+          "inbox": 7,
+          "outbox": 2,
+          "fouls": 6,
+          "corners": 5,
+          "offsides": 1,
+          "poss": 67,
+          "yellow": 0,
+          "red": null,
+          "saves": 4,
+          "passes": 677,
+          "passacc": 616,
+          "passpct": 91,
+          "xg": 0.73,
+          "gprev": 1.0
+        }
+      }
     }
   ],
   "upcoming": [
@@ -5189,20 +5248,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1568100,
-      "utc": "2026-07-05T20:00:00+00:00",
-      "home": "Brazil",
-      "away": "Norway",
-      "round": "Round of 16",
-      "predicted": {
-        "pA": 0.6225,
-        "pD": 0.1741,
-        "pB": 0.2034
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
