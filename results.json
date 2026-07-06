@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-06T19:15:13Z",
+  "updated": "2026-07-06T21:11:36Z",
   "matches": [
     {
       "id": 1489369,
@@ -5231,6 +5231,51 @@
           "gprev": -0.15
         }
       }
+    },
+    {
+      "id": 1576756,
+      "utc": "2026-07-06T19:00:00+00:00",
+      "home": "Portugal",
+      "away": "Spain",
+      "hg": 0,
+      "ag": 1,
+      "round": "Round of 16",
+      "adv": "Spain",
+      "predicted": {
+        "pA": 0.3129,
+        "pD": 0.2357,
+        "pB": 0.4514
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "blocked": 3,
+          "sog": 2,
+          "saves": 5,
+          "soff": 4,
+          "offsides": 2,
+          "shots": 9,
+          "yellow": 2,
+          "corners": 3,
+          "fouls": 9,
+          "red": 0,
+          "poss": 44
+        },
+        "away": {
+          "blocked": 3,
+          "sog": 6,
+          "saves": 2,
+          "soff": 6,
+          "offsides": 1,
+          "shots": 15,
+          "yellow": 1,
+          "corners": 7,
+          "fouls": 13,
+          "red": 0,
+          "poss": 56
+        }
+      }
     }
   ],
   "upcoming": [
@@ -5295,20 +5340,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1576756,
-      "utc": "2026-07-06T19:00:00+00:00",
-      "home": "Portugal",
-      "away": "Spain",
-      "round": "Round of 16",
-      "predicted": {
-        "pA": 0.3129,
-        "pD": 0.2357,
-        "pB": 0.4514
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
