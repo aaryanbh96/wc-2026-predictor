@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-06T01:15:14Z",
+  "updated": "2026-07-06T03:15:14Z",
   "matches": [
     {
       "id": 1489369,
@@ -5172,6 +5172,65 @@
           "gprev": 1.0
         }
       }
+    },
+    {
+      "id": 1570714,
+      "utc": "2026-07-06T01:00:00+00:00",
+      "home": "Mexico",
+      "away": "England",
+      "hg": 2,
+      "ag": 3,
+      "round": "Round of 16",
+      "adv": "England",
+      "predicted": {
+        "pA": 0.3051,
+        "pD": 0.231,
+        "pB": 0.464
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 5,
+          "soff": 7,
+          "shots": 18,
+          "blocked": 6,
+          "inbox": 10,
+          "outbox": 8,
+          "fouls": 14,
+          "corners": 10,
+          "offsides": 1,
+          "poss": 66,
+          "yellow": 2,
+          "red": 0,
+          "saves": 2,
+          "passes": 440,
+          "passacc": 407,
+          "passpct": 93,
+          "xg": 1.87,
+          "gprev": -0.15
+        },
+        "away": {
+          "sog": 5,
+          "soff": 1,
+          "shots": 6,
+          "blocked": 0,
+          "inbox": 4,
+          "outbox": 2,
+          "fouls": 7,
+          "corners": 2,
+          "offsides": 0,
+          "poss": 34,
+          "yellow": 4,
+          "red": 1,
+          "saves": 3,
+          "passes": 241,
+          "passacc": 194,
+          "passpct": 80,
+          "xg": 1.55,
+          "gprev": -0.15
+        }
+      }
     }
   ],
   "upcoming": [
@@ -5236,20 +5295,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1570714,
-      "utc": "2026-07-06T01:00:00+00:00",
-      "home": "Mexico",
-      "away": "England",
-      "round": "Round of 16",
-      "predicted": {
-        "pA": 0.3051,
-        "pD": 0.231,
-        "pB": 0.464
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
