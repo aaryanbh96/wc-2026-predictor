@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-07T20:15:15Z",
+  "updated": "2026-07-07T23:00:27Z",
   "matches": [
     {
       "id": 1489369,
@@ -5394,6 +5394,69 @@
           "gprev": -0.28
         }
       }
+    },
+    {
+      "id": 1576805,
+      "utc": "2026-07-07T20:00:00+00:00",
+      "home": "Switzerland",
+      "away": "Colombia",
+      "hg": 0,
+      "ag": 0,
+      "round": "Round of 16",
+      "adv": "Switzerland",
+      "pens": [
+        4,
+        3
+      ],
+      "predicted": {
+        "pA": 0.3361,
+        "pD": 0.2505,
+        "pB": 0.4134
+      },
+      "backfilled": false,
+      "hit": false,
+      "stats": {
+        "home": {
+          "sog": 2,
+          "soff": 0,
+          "shots": 2,
+          "blocked": 0,
+          "inbox": 2,
+          "outbox": 0,
+          "fouls": 6,
+          "corners": 1,
+          "offsides": 1,
+          "poss": 49,
+          "yellow": null,
+          "red": null,
+          "saves": 1,
+          "passes": 248,
+          "passacc": 217,
+          "passpct": 88,
+          "xg": 0.06,
+          "gprev": 0.17
+        },
+        "away": {
+          "sog": 1,
+          "soff": 1,
+          "shots": 5,
+          "blocked": 3,
+          "inbox": 3,
+          "outbox": 2,
+          "fouls": 6,
+          "corners": 4,
+          "offsides": 1,
+          "poss": 51,
+          "yellow": null,
+          "red": null,
+          "saves": 2,
+          "passes": 256,
+          "passacc": 218,
+          "passpct": 85,
+          "xg": 0.25,
+          "gprev": 0.17
+        }
+      }
     }
   ],
   "upcoming": [
@@ -5434,20 +5497,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1576805,
-      "utc": "2026-07-07T20:00:00+00:00",
-      "home": "Switzerland",
-      "away": "Colombia",
-      "round": "Round of 16",
-      "predicted": {
-        "pA": 0.3361,
-        "pD": 0.2505,
-        "pB": 0.4134
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
@@ -6004,6 +6054,44 @@
         {
           "team": "Portugal",
           "win": 0.0386
+        }
+      ]
+    },
+    {
+      "date": "2026-07-07",
+      "games_played": 96,
+      "top": [
+        {
+          "team": "Argentina",
+          "win": 0.1824
+        },
+        {
+          "team": "France",
+          "win": 0.1708
+        },
+        {
+          "team": "Spain",
+          "win": 0.1547
+        },
+        {
+          "team": "England",
+          "win": 0.1121
+        },
+        {
+          "team": "Belgium",
+          "win": 0.0592
+        },
+        {
+          "team": "Netherlands",
+          "win": 0.0486
+        },
+        {
+          "team": "Brazil",
+          "win": 0.046
+        },
+        {
+          "team": "Portugal",
+          "win": 0.0402
         }
       ]
     }
