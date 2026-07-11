@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-11T21:15:14Z",
+  "updated": "2026-07-11T23:59:43Z",
   "matches": [
     {
       "id": 1489369,
@@ -5575,6 +5575,65 @@
           "gprev": 0.54
         }
       }
+    },
+    {
+      "id": 1581037,
+      "utc": "2026-07-11T21:00:00+00:00",
+      "home": "Norway",
+      "away": "England",
+      "hg": 1,
+      "ag": 2,
+      "round": "Quarter-finals",
+      "adv": "England",
+      "predicted": {
+        "pA": 0.2133,
+        "pD": 0.1792,
+        "pB": 0.6075
+      },
+      "backfilled": false,
+      "hit": true,
+      "stats": {
+        "home": {
+          "sog": 4,
+          "soff": 6,
+          "shots": 13,
+          "blocked": 3,
+          "inbox": 10,
+          "outbox": 3,
+          "fouls": 10,
+          "corners": 7,
+          "offsides": 1,
+          "poss": 47,
+          "yellow": 1,
+          "red": null,
+          "saves": 6,
+          "passes": 563,
+          "passacc": 483,
+          "passpct": 86,
+          "xg": 0.77,
+          "gprev": -0.61
+        },
+        "away": {
+          "sog": 8,
+          "soff": 3,
+          "shots": 14,
+          "blocked": 3,
+          "inbox": 8,
+          "outbox": 6,
+          "fouls": 8,
+          "corners": 4,
+          "offsides": 5,
+          "poss": 53,
+          "yellow": 0,
+          "red": null,
+          "saves": 3,
+          "passes": 621,
+          "passacc": 563,
+          "passpct": 91,
+          "xg": 1.09,
+          "gprev": -0.61
+        }
+      }
     }
   ],
   "upcoming": [
@@ -5603,20 +5662,7 @@
       }
     }
   ],
-  "live": [
-    {
-      "id": 1581037,
-      "utc": "2026-07-11T21:00:00+00:00",
-      "home": "Norway",
-      "away": "England",
-      "round": "Quarter-finals",
-      "predicted": {
-        "pA": 0.2133,
-        "pD": 0.1792,
-        "pB": 0.6075
-      }
-    }
-  ],
+  "live": [],
   "daily": [
     {
       "date": "2026-06-22",
