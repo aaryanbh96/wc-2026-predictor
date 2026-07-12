@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-11T23:59:43Z",
+  "updated": "2026-07-12T01:15:14Z",
   "matches": [
     {
       "id": 1489369,
@@ -5638,18 +5638,6 @@
   ],
   "upcoming": [
     {
-      "id": 1582681,
-      "utc": "2026-07-12T01:00:00+00:00",
-      "home": "Argentina",
-      "away": "Switzerland",
-      "round": "Quarter-finals",
-      "predicted": {
-        "pA": 0.6224,
-        "pD": 0.1741,
-        "pB": 0.2035
-      }
-    },
-    {
       "id": 1585131,
       "utc": "2026-07-14T19:00:00+00:00",
       "home": "France",
@@ -5662,7 +5650,20 @@
       }
     }
   ],
-  "live": [],
+  "live": [
+    {
+      "id": 1582681,
+      "utc": "2026-07-12T01:00:00+00:00",
+      "home": "Argentina",
+      "away": "Switzerland",
+      "round": "Quarter-finals",
+      "predicted": {
+        "pA": 0.6224,
+        "pD": 0.1741,
+        "pB": 0.2035
+      }
+    }
+  ],
   "daily": [
     {
       "date": "2026-06-22",
