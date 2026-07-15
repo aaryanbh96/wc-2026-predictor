@@ -1883,6 +1883,67 @@
     const champ=ranked[0], cp=pct(fc.tally[champ].win);
     const cc=teamColor(champ);
     const chasers=ranked.slice(1,4).map(t=>`<span class="pill" style="--tc:${teamColor(t)}">${flag(t)}<b>${t}</b><span>${fmt(fc.tally[t].win)}%</span></span>`).join('');
+    // If the FINAL has been played, the hero stops predicting and starts celebrating:
+    // real champions, real podium, and the model's locked final call for the record.
+    const finalM=(state.frozenMatches||[]).find(m=>{
+      const r=(m.round||'').toLowerCase();
+      return r==='final' && (m.adv || (m.hg!=null&&m.ag!=null&&m.hg!==m.ag));
+    });
+    if(finalM){
+      const winner = finalM.adv || (finalM.hg>finalM.ag?finalM.home:finalM.away);
+      const runnerUp = winner===finalM.home ? finalM.away : finalM.home;
+      const wc=teamColor(winner);
+      const penStr=finalM.pens?` (${finalM.pens[0]}–${finalM.pens[1]} pens)`:'';
+      const score=`${finalM.hg}–${finalM.ag}${penStr}`;
+      // third place from the 3rd-place game if it's in the data
+      const thirdM=(state.frozenMatches||[]).find(m=>{
+        const r=(m.round||'').toLowerCase();
+        return (r.includes('3rd')||r.includes('third')) && (m.adv || (m.hg!=null&&m.ag!=null&&m.hg!==m.ag));
+      });
+      const third = thirdM ? (thirdM.adv || (thirdM.hg>thirdM.ag?thirdM.home:thirdM.away)) : null;
+      // the model's locked pre-match call for the final, folded to 2-way
+      let callLine='';
+      if(finalM.predicted){
+        const p=finalM.predicted, t=(p.pA+p.pB)||1;
+        const cA=Math.round(p.pA/t*100), cB=100-Math.round(p.pA/t*100);
+        const homeWon = winner===finalM.home;
+        const winPct = homeWon?cA:cB;
+        const verdict = cA===cB ? `a dead-even ${cA}–${cB} — it truly couldn't split them`
+          : (winPct>50 ? `${winner} ${winPct}% — on the record, and right`
+                       : `${winner===finalM.home?finalM.away:finalM.home} ${100-winPct}% — on the record, and wrong`);
+        callLine=`<div class="cap" style="margin-top:10px;">The model's locked final call: ${verdict}.</div>`;
+      }
+      const podium=[
+        `<span class="pill" style="--tc:${teamColor(runnerUp)}">${flag(runnerUp)}<b>${runnerUp}</b><span>runner-up</span></span>`,
+        third?`<span class="pill" style="--tc:${teamColor(third)}">${flag(third)}<b>${third}</b><span>third place</span></span>`:''
+      ].join('');
+      $('champ-hero').innerHTML=`<div class="champ" style="--champ:${wc}">
+        <svg class="champ-trophy" viewBox="0 0 100 130" aria-hidden="true">
+          <defs>
+            <linearGradient id="goldgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f5e08c"/><stop offset="45%" stop-color="#e6c25a"/>
+              <stop offset="75%" stop-color="#c99a3a"/><stop offset="100%" stop-color="#9c7320"/>
+            </linearGradient>
+          </defs>
+          <g fill="url(#goldgrad)">
+            <path d="M30 14h40v14a20 20 0 0 1-40 0z"/>
+            <path d="M30 18h-10a14 14 0 0 0 14 18v-7a7 7 0 0 1-7-7zM70 18h10a14 14 0 0 1-14 18v-7a7 7 0 0 0 7-7z"/>
+            <rect x="45" y="46" width="10" height="20" rx="1"/>
+            <path d="M34 66h32l-3 12H37z"/>
+            <rect x="30" y="80" width="40" height="9" rx="2"/>
+            <rect x="24" y="92" width="52" height="11" rx="3"/>
+          </g>
+        </svg>
+        <div class="eyebrow"><span class="dot"></span>World Champions</div>
+        <h2 class="name">${flagBig(winner)}${winner}</h2>
+        <div class="line">
+          <div class="odds"><div class="big">${score}</div><div class="cap">in the final v ${runnerUp}</div></div>
+          <div class="chase"><div class="cap">Final podium</div>${podium}</div>
+        </div>
+        ${callLine}
+        </div>`;
+      maybeCelebrateChampion(winner);
+    } else {
     $('champ-hero').innerHTML=`<div class="champ" style="--champ:${cc}">
       <svg class="champ-trophy" viewBox="0 0 100 130" aria-hidden="true">
         <defs>
@@ -1911,6 +1972,7 @@
     countUpPct($('champ-pct'), parseFloat(fmt(fc.tally[champ].win)));
     maybeCelebrateChampion(champ);
     const cj=$('champ-jump'); if(cj) cj.onclick=()=>{ const t=$('fc-anchor'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); };
+    }
     const effStat=effectiveStatus();
     const rows=ranked.map((t,i)=>{
       const r=fc.tally[t], wp=pct(r.win);
