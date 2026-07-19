@@ -2044,7 +2044,10 @@
       return `${day} · ${new Date(utc).toLocaleTimeString('en-US',{timeZone:PT,hour:'2-digit',minute:'2-digit'})} PT`;
     };
     const cards=day.map(f=>{
-      const pr=probs(f.home,f.away,true);
+      // Display the FROZEN locked call when it exists (that's what "call locked" means);
+      // only compute live for matches the pipeline hasn't locked yet.
+      const pr = f.predicted ? {pA:f.predicted.pA, pD:f.predicted.pD, pB:f.predicted.pB}
+                             : probs(f.home,f.away,true);
       const pend=findPending(f.home,f.away);
       const ko=isKnockoutRound(f.round);
       const badge = `<span class="lockflag">🔒 call locked</span>`;
