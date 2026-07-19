@@ -604,8 +604,8 @@
   <!-- slim announcement teaser — links down to the full announcements section -->
   <button id="note-teaser" class="note-teaser" onclick="document.getElementById('announcements')?.scrollIntoView({behavior:'smooth'})">
     <span class="note-teaser-dot"></span>
-    <span class="note-teaser-date">Jul 15</span>
-    <span class="note-teaser-text">Spain v Argentina for the World Cup — and the model has it locked at exactly 50-50.</span>
+    <span class="note-teaser-date">Jul 19</span>
+    <span class="note-teaser-text">SPAIN ARE WORLD CHAMPIONS 🏆 — 1–0 in extra time, and the best team won.</span>
     <span class="note-teaser-cta">Read ↓</span>
   </button>
 
@@ -642,6 +642,10 @@
          .ann block and edit the date + text. To hide the section, set display:none on #announcements. -->
     <div id="announcements" class="ann-section" style="scroll-margin-top:20px;">
       <div class="sechead fc-head" style="margin:32px 0 14px;">📣 From the builder</div>
+      <div class="ann">
+        <div class="ann-date">Jul 19, 2026</div>
+        <p class="ann-text"><b>SPAIN ARE WORLD CHAMPIONS.</b> 1–0 in extra time over Argentina, and the best team in the tournament won it — methodical, surgical, elegant to the last pass. My call before the game was Spain 1–0 or 2–0 inside 90 minutes; it needed extra time, but the scoreline landed. And the model? The card all week said 50–50 — but that was the rounding talking. The raw locked call folded to 50.35%–49.65% Spain — the thinnest edge a prediction can carry, hiding inside the rounding, on the record, and right. Half a percent from a coin flip, and the coin knew. Congratulations to Argentina on a champion's tournament — that comeback against England showed why they never stop being dangerous — but tonight belonged to Spain. Truly world champions. The forecast is now frozen as the model's final testimony, the champion card above shows the real podium, and a full tournament wrap-up — every call, graded honestly — is coming soon. What a World Cup.</p>
+      </div>
       <div class="ann">
         <div class="ann-date">Jul 15, 2026</div>
         <p class="ann-text">The semifinals are done, and we have a final: <b>Spain v Argentina</b>. Fittingly, the model has locked it at exactly 50–50 — a genuine coin flip, and honestly the numbers are telling the truth: run the simulation again and again and the edge flickers between them, Spain appearing on top slightly more often. The semis themselves were everything. France–Spain was locked at 51–49 France, about as close as a call gets, and Spain won it 2–0 — I was rooting for them, and what an elegant team they are: methodical, surgical, always a pass ahead. England–Argentina was the other side of football: Argentina went 1–0 down and came back to win 2–1, which is exactly why they're world champions — that comeback gear is what makes them so dangerous. Saturday's third-place game has France favored at 54% over England, and I think they take it. Sunday, my money is on Spain. Either way, a 50–50 World Cup final is as good as this game gets — it's going to be a hell of a watch.</p>
@@ -1930,13 +1934,21 @@
       let callLine='';
       if(finalM.predicted){
         const p=finalM.predicted, t=(p.pA+p.pB)||1;
-        const cA=Math.round(p.pA/t*100), cB=100-Math.round(p.pA/t*100);
+        const eH=p.pA/t, eA=p.pB/t;                       // unrounded 2-way shares
         const homeWon = winner===finalM.home;
-        const winPct = homeWon?cA:cB;
-        const verdict = cA===cB ? `a dead-even ${cA}–${cB} — it truly couldn't split them`
-          : (winPct>50 ? `${winner} ${winPct}% — on the record, and right`
-                       : `${winner===finalM.home?finalM.away:finalM.home} ${100-winPct}% — on the record, and wrong`);
-        callLine=`<div class="cap" style="margin-top:10px;">The model's locked final call: ${verdict}.</div>`;
+        const winShare = homeWon?eH:eA;
+        const pctW=(winShare*100).toFixed(1), pctL=(100-winShare*100).toFixed(1);
+        let verdict;
+        if(Math.abs(eH-eA)<0.02){
+          // effectively a coin flip — but say which way the hair leaned, and whether it was right
+          verdict = winShare>=0.5
+            ? `${pctW}–${pctL} — as close as a call gets, and the hair-thin lean was on ${winner}. Right.`
+            : `${pctL}–${pctW} the other way — as close as a call gets, and the hair fell wrong.`;
+        } else {
+          verdict = winShare>0.5 ? `${winner} ${Math.round(winShare*100)}% — on the record, and right`
+                                 : `${winner===finalM.home?finalM.away:finalM.home} ${Math.round((1-winShare)*100)}% — on the record, and wrong`;
+        }
+        callLine=`<div class="cap" style="margin-top:10px;">The model's locked final call: ${verdict}</div>`;
       }
       const podium=[
         `<span class="pill" style="--tc:${teamColor(runnerUp)}">${flag(runnerUp)}<b>${runnerUp}</b><span>runner-up</span></span>`,
