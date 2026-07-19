@@ -983,6 +983,14 @@
   }
   // Effective elimination status: group-stage status from the pipeline PLUS knockout
   // losses (a team that lost a finished knockout tie is eliminated immediately).
+  // Has the Final been played? Once true, the forecast freezes — the last pre-final
+  // simulation stands as the model's final word (no post-hoc ~100% champion).
+  function tournamentDone(){
+    return (state.frozenMatches||[]).some(m=>{
+      const r=(m.round||'').toLowerCase();
+      return r==='final' && (m.adv || (m.hg!=null&&m.ag!=null&&m.hg!==m.ag));
+    });
+  }
   function effectiveStatus(){
     const st=Object.assign({}, state.status||{});
     (state.frozenMatches||[]).forEach(m=>{
@@ -1668,6 +1676,10 @@
   };
   $('shock-reset').onclick=()=>{ shocks={}; $('shock-slider').value=0; $('shock-val').textContent='0'; renderShockControls(); runShockSim(); };
   $('rerun-sim').onclick=()=>{
+    if(tournamentDone()){
+      $('fc-meta').textContent='The final has been played — the forecast is frozen as the model\u2019s last pre-final word. No hindsight re-runs.';
+      return;
+    }
     $('forecast-out').innerHTML='<div class="loading"><span>Running simulation</span><span class="dots"><i></i><i></i><i></i></span></div>';
     setTimeout(()=>{ runForecast(); renderForecast(); },30);
   };
@@ -1992,7 +2004,9 @@
       <tr><th></th><th>team</th><th>win</th><th>final</th><th>semi</th><th>quarter</th><th>last 16</th></tr>
       ${rows}</table>`;
     $('fc-nsim').textContent=fc.nsim.toLocaleString();
-    $('fc-meta').textContent=`Last simulated ${ptDateTime(fc.at)} · ${fc.nsim.toLocaleString()} runs from the latest ratings — this is the live forecast, so it can differ slightly from the daily chart (frozen each evening) and shift run-to-run as results come in. Third-place qualifiers approximated by rating; an estimate, not the official bracket.`;
+    $('fc-meta').textContent= tournamentDone()
+      ? `Frozen — this is the model's last simulation from before the final (${ptDateTime(fc.at)}, ${fc.nsim.toLocaleString()} runs). The tournament is over; the forecast stands as called, right or wrong.`
+      : `Last simulated ${ptDateTime(fc.at)} · ${fc.nsim.toLocaleString()} runs from the latest ratings — this is the live forecast, so it can differ slightly from the daily chart (frozen each evening) and shift run-to-run as results come in. Third-place qualifiers approximated by rating; an estimate, not the official bracket.`;
     renderChanged();
   }
 
@@ -2309,7 +2323,8 @@
         .filter(([,v])=>v==='eliminated').map(([t])=>t).sort().join(',');
       const elimChanged = elimSig !== (state._lastElimSig||'');
       state._lastElimSig = elimSig;
-      if(applied>0 || lockedNow>0 || elimChanged){ runForecast(); renderForecast(); }
+      if(!tournamentDone() && (applied>0 || lockedNow>0 || elimChanged)){ runForecast(); renderForecast(); }
+      else if(tournamentDone()){ renderForecast(); } // re-render (crowns champion card) but never re-simulate
       renderUpcoming(); renderToday(); renderTrackRecord(); renderDaily(); renderLive(); renderGroups(); refreshStats();
       // HONEST freshness, but only alarm when it actually matters: a match is LIVE
       // and yet scores aren't refreshing. Before kickoff there's genuinely nothing new
@@ -2431,7 +2446,8 @@
   // to who's currently eliminated (e.g. knockout losers that the saved forecast still ranks).
   (function(){
     const elimNow=Object.entries(effectiveStatus()).filter(([,v])=>v==='eliminated').map(([t])=>t).sort().join(',');
-    if(!state.forecast || elimNow!==(state._lastElimSig||'')){ state._lastElimSig=elimNow; runForecast(); }
+    if(!state.forecast){ state._lastElimSig=elimNow; runForecast(); }
+    else if(elimNow!==(state._lastElimSig||'') && !tournamentDone()){ state._lastElimSig=elimNow; runForecast(); }
   })();
   renderForecast();
   // live scores: fetch once now, then poll every 30s (worker is cheap; only spends an
