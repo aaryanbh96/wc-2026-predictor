@@ -1748,6 +1748,19 @@
       const livingWins=all.reduce((s,t)=>s+(elim[t]==='eliminated'?0:tally[t].win),0);
       if(livingWins>0){ all.forEach(t=>{ if(elim[t]!=='eliminated') tally[t].win += tally[t].win/livingWins*removedWins; }); }
     }
+    // FINAL SPECIAL CASE: when the final fixture is locked and its two teams are the only
+    // survivors, the championship odds ARE the locked call (folded 2-way). A full-tournament
+    // Monte Carlo replay adds only noise here — at 20k sims the run-to-run jitter (~±0.4%)
+    // is as large as the real edge, so the "predicted champion" would flip randomly between
+    // runs. Pin it to the frozen call so every surface tells the same story, deterministically.
+    const finPending=(state.upcoming||[]).concat(state.live||[]).find(m=>
+      (m.round||'').toLowerCase()==='final' && m.predicted &&
+      elim[m.home]!=='eliminated' && elim[m.away]!=='eliminated');
+    if(finPending && !tournamentDone()){
+      const p=finPending.predicted, t2=(p.pA+p.pB)||1;
+      tally[finPending.home].win = nsim*(p.pA/t2);
+      tally[finPending.away].win = nsim*(p.pB/t2);
+    }
     return {tally, nsim};
   }
   function runForecast(nsim){
